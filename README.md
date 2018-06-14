@@ -13,5 +13,10 @@ The site will offer in-depth analysis of match-by-match performance and track us
     * _Did a Carry Champion manage to farm efficiently while hitting their item spikes at appropriate times?_
     * _Did a Jungle Champion control and secure neutral objectives for their team?_
     * _Did a user participate in taking objectives?_
+<<<<<<< HEAD
     * _How well does the userâ€™s Champion pick synergize with their team?_
   * With user input, the site will be able to approximate the general weight of each statistic on a per Champion and per role basis. This will give the user a glimpse into the rating system used by Riot and show the user why they managed to get an A+ ranking but the S ranking eludes them.
+=======
+    * _How well does the user’s Champion pick synergize with their team?_
+  * With user input, the site will be able to approximate the general weight of each statistic on a per Champion and per role basis. This will give the user a glimpse into the rating system used by Riot and show the user why they managed to get an A+ ranking but the S ranking eludes them.
+>>>>>>> bf05ee8272f35a1323c24dc0ab46b707b17b5601
