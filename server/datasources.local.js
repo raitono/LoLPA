@@ -1,5 +1,3 @@
-require('dotenv-safe').config();
-
 module.exports = {
 	mysqlDs: {
 		connector: "mysql",
