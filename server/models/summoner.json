@@ -1,0 +1,41 @@
+{
+  "name": "Summoner",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "id": {
+      "type": "number",
+      "required": true
+    },
+    "accountId": {
+      "type": "number",
+      "required": true
+    },
+    "profileIconId": {
+      "type": "number",
+      "required": true
+    },
+    "summonerLevel": {
+      "type": "number",
+      "required": true
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "revisionDate": {
+      "type": "date",
+      "required": true
+    },
+    "lastUpdated": {
+      "type": "date"
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}
