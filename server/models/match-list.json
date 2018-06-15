@@ -1,0 +1,42 @@
+{
+  "name": "Match_List",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "id": {
+      "type": "number",
+      "required": true
+    },
+    "summonerId": {
+      "type": "number",
+      "required": true
+    },
+    "gameId": {
+      "type": "number",
+      "required": true
+    },
+    "championId": {
+      "type": "number",
+      "required": true
+    },
+    "lane": {
+      "type": "string",
+      "required": true
+    },
+    "role": {
+      "type": "string",
+      "required": true
+    },
+    "timestamp": {
+      "type": "date",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

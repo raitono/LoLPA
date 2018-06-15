@@ -1,0 +1,38 @@
+{
+  "name": "Item",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "id": {
+      "type": "number",
+      "required": true
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "goldSellsFor": {
+      "type": "number",
+      "required": true
+    },
+    "goldTotal": {
+      "type": "number",
+      "required": true
+    },
+    "goldBase": {
+      "type": "number",
+      "required": true
+    },
+    "purchasable": {
+      "type": "boolean",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

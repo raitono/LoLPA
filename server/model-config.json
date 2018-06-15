@@ -35,10 +35,35 @@
     "dataSource": "db",
     "public": false
   },
-  "Note": {
-    "dataSource": "db"
-  },
   "Spell": {
+    "dataSource": "mysqlDs",
+    "public": true
+  },
+  "Champion": {
+    "dataSource": "mysqlDs",
+    "public": true
+  },
+  "Match": {
+    "dataSource": "mysqlDs",
+    "public": true
+  },
+  "Match_List": {
+    "dataSource": "mysqlDs",
+    "public": true
+  },
+  "Item": {
+    "dataSource": "mysqlDs",
+    "public": true
+  },
+  "Participant": {
+    "dataSource": "mysqlDs",
+    "public": true
+  },
+  "Season": {
+    "dataSource": "mysqlDs",
+    "public": true
+  },
+  "Summoner": {
     "dataSource": "mysqlDs",
     "public": true
   }
