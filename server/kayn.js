@@ -20,4 +20,4 @@ let kayn = Kayn(process.env.RIOT_API_KEY)({
 	}
 });
 
-module.export = kayn;
+module.exports = kayn;
