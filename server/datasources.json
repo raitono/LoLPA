@@ -2,15 +2,5 @@
   "db": {
     "name": "db",
     "connector": "memory"
-  },
-  "mysqlDs": {
-    "host": "127.0.0.1",
-    "port": 3306,
-    "url": "",
-    "database": "riot",
-    "password": "@CM!92Rj]jy.!L6-mQ)/",
-    "name": "mysqlDs",
-    "user": "SVCLOLPAWEB",
-    "connector": "mysql"
   }
 }
