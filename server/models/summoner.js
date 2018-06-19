@@ -7,7 +7,6 @@ module.exports = function(Summoner) {
 		return new Promise(function(resolve, reject) {
 			Summoner.getByNameFromRiot(name)
 			.then(function(s) {
-				console.info(s);
 				Summoner.create(s)
 				.then(function () {
 					resolve(201);
