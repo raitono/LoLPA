@@ -6,7 +6,7 @@ var loopback = require('loopback');
 var boot = require('loopback-boot');
 
 var app = module.exports = loopback();
-var cronJobs = require('./cron.js');
+const cronJobs = require('./cron.js');
 
 app.start = function() {
   // start the web server

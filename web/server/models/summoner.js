@@ -1,6 +1,9 @@
 'use strict';
 
-let kayn = require('../kayn');
+const kayn = require('../kayn');
+const abraxas = require('abraxas');
+
+let gearman = abraxas.Client.connect({ servers: ['127.0.0.1:4730'], defaultEncoding:'utf8' });
 
 module.exports = function(Summoner) {
 	Summoner.track = function(name, cb) {
