@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const app = express();
 
 const Gearman = require('abraxas');
+const Summoner = require('./Summoner.js');
 
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({
@@ -25,12 +26,9 @@ app.listen(port, () => {
 		defaultEncoding : 'utf8'
 	});
 
-	worker.registerWorker("toUpper", function(task) {
-		debug(`toUpper: ${task.payload}`);
-		return task.payload.toUpperCase();
-	});
-
-	debug(`Gearman listening on ${port}`);
+	Summoner.registerWorkers(worker);
+	
+	//worker.submitJob('toUpper', 'test').then(function(result){ debug(result); });
 });
 
 module.exports = app;

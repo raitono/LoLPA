@@ -2,6 +2,7 @@
   "name": "lolpa-gearman",
   "version": "0.0.0",
   "description": "Gearman server for LoLPA",
+  "homepage": "https://github.com/raitono/LoLPA#readme",
   "main": "index.js",
   "scripts": {
     "dev": "nodemon app.js",
@@ -24,5 +25,12 @@
     "mocha": "^5.2.0",
     "nodemon": "^1.17.5",
     "supertest": "^3.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/raitono/LoLPA"
+  },
+  "bugs": {
+    "url": "https://github.com/raitono/LoLPA/issues"
   }
 }
