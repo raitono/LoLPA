@@ -1,3 +1,7 @@
 {
+  "rules": {
+    "indent": [ "warn", "tab" ],
+	"max-len": ["warn", {"ignoreStrings": true}]
+  },
   "extends": "loopback"
 }

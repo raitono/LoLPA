@@ -1,10 +1,11 @@
+/* eslint strict: ["error", "never"] */
 module.exports = {
 	mysqlDs: {
-		connector: "mysql",
+		connector: 'mysql',
 		hostname: process.env.DB_HOST || 'localhost',
 		port: process.env.DB_PORT || 3306,
 		user: process.env.DB_USER,
 		password: process.env.DB_PASS,
-		database: 'riot'
-	}
+		database: 'riot',
+	},
 };

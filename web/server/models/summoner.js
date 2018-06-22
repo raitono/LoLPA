@@ -4,8 +4,8 @@ const kayn = require('../kayn');
 const abraxas = require('abraxas');
 
 let gearman = abraxas.Client.connect({
-	servers : [ '127.0.0.1:4730' ],
-	defaultEncoding : 'utf8'
+	servers: ['127.0.0.1:4730'],
+	defaultEncoding: 'utf8',
 });
 
 module.exports = function(Summoner) {
@@ -40,12 +40,12 @@ module.exports = function(Summoner) {
 	};
 	Summoner.remoteMethod(
 		'track', {
-			accepts : {
-				arg : 'name',
-				type : 'string',
-				required : true
+			accepts: {
+				arg: 'name',
+				type: 'string',
+				required: true,
 			},
-			description : 'Add a Summoner to the database and begin tracking them'
+			description: 'Add a Summoner to the database and begin tracking them',
 		}
 	);
 
@@ -67,20 +67,20 @@ module.exports = function(Summoner) {
 	};
 	Summoner.remoteMethod(
 		'getByNameFromRiot', {
-			http : {
-				path : '/getByNameFromRiot/:name',
-				verb : 'get'
+			http: {
+				path: '/getByNameFromRiot/:name',
+				verb: 'get',
 			},
-			accepts : {
-				arg : 'name',
-				type : 'string',
-				required : true
+			accepts: {
+				arg: 'name',
+				type: 'string',
+				required: true,
 			},
-			returns : {
-				arg : 'Summoner',
-				type : 'object'
+			returns: {
+				arg: 'Summoner',
+				type: 'object',
 			},
-			description : "Retrieve a Summoner from the Riot API by their Summoner name"
+			description: 'Retrieve a Summoner from the Riot API by their Summoner name',
 		}
 	);
 };

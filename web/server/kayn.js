@@ -1,6 +1,8 @@
-const { Kayn, LRUCache, REGIONS } = require('kayn');
+'use strict';
 
-const cache = new LRUCache({ max: 1000 });
+const {Kayn, LRUCache, REGIONS} = require('kayn');
+
+const cache = new LRUCache({max: 1000});
 
 let kayn = Kayn(process.env.RIOT_API_KEY)({
 	region: REGIONS.NORTH_AMERICA,
@@ -16,8 +18,8 @@ let kayn = Kayn(process.env.RIOT_API_KEY)({
 		cache,
 		timeToLives: {
 			useDefault: true,
-		}
-	}
+		},
+	},
 });
 
 module.exports = kayn;
