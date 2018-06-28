@@ -1,4 +1,11 @@
-const debug = require('debug')('worker:Summoner');
+const debug = require('debug')('lolpa-gearman:Summoner');
+const mysql = require('mysql').createConnection({
+	host: process.env.DB_HOST || 'localhost',
+	user: process.env.DB_USER,
+	password: process.env.DB_PASS,
+	port: process.env.DB_PORT || 3306,
+	database: 'riot',
+});
 
 /**
  *	Find Summoner in database
@@ -10,6 +17,19 @@ const debug = require('debug')('worker:Summoner');
  */
 let update = function(task) {
 	debug('update');
+
+	mysql.connect(function(err) {
+		if (err) throw err;
+		debug('MySQL Connected');
+
+		debug('SELECT * FROM Summoners WHERE name = \''+task.payload+'\'');
+		mysql.query('SELECT * FROM Summoners WHERE name = \''+task.payload+'\'',
+			function(err, result) {
+				if (err) throw err;
+				debug(result);
+				return result;
+			});
+	});
 };
 
 module.exports.registerWorkers = function(worker) {
@@ -18,4 +38,6 @@ module.exports.registerWorkers = function(worker) {
 		return task.payload.toUpperCase();
 	});
 	worker.registerWorker('update', update);
+
+	debug('Workers registered');
 };
