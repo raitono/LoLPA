@@ -351,3 +351,6 @@ ASALocalRun/
 
 # dotenv config
 .env
+
+# Angular IDE
+.settings/
