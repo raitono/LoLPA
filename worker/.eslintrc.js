@@ -13,11 +13,10 @@ module.exports = {
 	"rules": {
 		"linebreak-style":0,
 		"no-tabs":0,
-		"max-len": [2, {
-			code: 100,
-			tabWidth: 2,
-			ignoreUrls: true,
-			ignorePattern: '^goog\.(module|require)',
+		"max-len": [1, {
+			"code": 100,
+			"tabWidth": 2,
+			"ignoreUrls": true,
 		}],
 	},
 };
