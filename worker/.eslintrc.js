@@ -13,6 +13,7 @@ module.exports = {
 	"rules": {
 		"linebreak-style":0,
 		"no-tabs":0,
+		"indent": ["warn", "tab"],
 		"max-len": [1, {
 			"code": 100,
 			"tabWidth": 2,
