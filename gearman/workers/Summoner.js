@@ -27,9 +27,15 @@ let update = function(task) {
 		} else {
 			debug('Summoner does not exist');
 
+			Kayn.Summoner.by.name(task.payload)
+				.then(function(s) {
+					return s;
+				})
+				.catch(function(reason) {
+					debug(reason);
+					return reason;
+				});
 		}
-
-		return result;
 	});
 };
 
