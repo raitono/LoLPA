@@ -1,5 +1,5 @@
 const debug = require('debug')('lolpa-gearman:Summoner');
-const Mysql = require('./Database');
+const Mysql = require('../Database');
 let db = new Mysql({
 	host: process.env.DB_HOST || 'localhost',
 	user: process.env.DB_USER,
