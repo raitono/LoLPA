@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const app = express();
 
 const Gearman = require('abraxas');
-const Summoner = require('./Summoner.js');
+const Summoner = require('./workers/Summoner.js');
 
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({
