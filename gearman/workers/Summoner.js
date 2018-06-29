@@ -1,5 +1,7 @@
 const debug = require('debug')('lolpa-gearman:Summoner');
 const Mysql = require('../Database');
+const Kayn	= require('../kayn');
+
 let db = new Mysql({
 	host: process.env.DB_HOST || 'localhost',
 	user: process.env.DB_USER,
@@ -19,11 +21,12 @@ let db = new Mysql({
 let update = function(task) {
 	debug('update ' + task.payload);
 
-	db.query('SELECT * FROM Summoners WHERE name = \''+task.payload+'\'').then(function(result) {
+	db.query('SELECT * FROM Summoner WHERE name = \''+task.payload+'\'').then(function(result) {
 		if (result[0]) {
 			debug('Summoner exists');
 		} else {
 			debug('Summoner does not exist');
+
 		}
 
 		return result;
