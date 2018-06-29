@@ -1,5 +1,6 @@
 const debug = require('debug')('lolpa-gearman:Summoner');
-const mysql = require('mysql').createConnection({
+const Mysql = require('./Database');
+let db = new Mysql({
 	host: process.env.DB_HOST || 'localhost',
 	user: process.env.DB_USER,
 	password: process.env.DB_PASS,
@@ -16,19 +17,16 @@ const mysql = require('mysql').createConnection({
  *	@param {object} task - Gearman task. task.payload contains the summoner name to update
  */
 let update = function(task) {
-	debug('update');
+	debug('update ' + task.payload);
 
-	mysql.connect(function(err) {
-		if (err) throw err;
-		debug('MySQL Connected');
+	db.query('SELECT * FROM Summoners WHERE name = \''+task.payload+'\'').then(function(result) {
+		if (result[0]) {
+			debug('Summoner exists');
+		} else {
+			debug('Summoner does not exist');
+		}
 
-		debug('SELECT * FROM Summoners WHERE name = \''+task.payload+'\'');
-		mysql.query('SELECT * FROM Summoners WHERE name = \''+task.payload+'\'',
-			function(err, result) {
-				if (err) throw err;
-				debug(result);
-				return result;
-			});
+		return result;
 	});
 };
 

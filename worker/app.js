@@ -28,8 +28,7 @@ app.listen(port, () => {
 
 	Summoner.registerWorkers(worker);
 
-	debug('Calling update');
-	worker.submitJob('update', 'Raitono').then(function(result) {
+	worker.submitJob('update', 'SushiDojo').then(function(result) {
 		debug(result);
 	});
 });

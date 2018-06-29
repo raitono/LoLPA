@@ -3,6 +3,7 @@ module.exports = {
         "browser": true,
         "node": true,
         "mocha": true,
+		"es6":true,
     },
     "parser": "babel-eslint",
     "parserOptions": {
