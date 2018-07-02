@@ -1,14 +1,8 @@
 const debug = require('debug')('lolpa-gearman:Summoner');
-const Mysql = require('../Database');
-const Kayn	= require('../kayn');
+const request = require('request-promise-native');
 
-let db = new Mysql({
-	host: process.env.DB_HOST || 'localhost',
-	user: process.env.DB_USER,
-	password: process.env.DB_PASS,
-	port: process.env.DB_PORT || 3306,
-	database: 'riot',
-});
+const Kayn	= require('../kayn');
+const webServer = require('../util/web-server');
 
 /**
  *	Find Summoner in database
@@ -21,8 +15,9 @@ let db = new Mysql({
  */
 let update = function(summonerName) {
 	return new Promise(function(resolve, reject) {
-		db.query('SELECT * FROM Summoner WHERE name = \''+summonerName+'\'').then(function(result) {
-			if (result[0]) {
+		request(webServer.URLs.summonerNameExists(summonerName)).then(function(dbSummoners) {
+			dbSummoners = JSON.parse(dbSummoners);
+			if (dbSummoners.length) {
 				debug('Summoner exists');
 			} else {
 				debug('Summoner does not exist');
@@ -30,15 +25,13 @@ let update = function(summonerName) {
 				Kayn.Summoner.by.name(summonerName)
 					.then(function(s) {
 						resolve(JSON.stringify(s)); // Because the Promise returns the string [object Object] and not the actual object
-					})
-					.catch(function(reason) {
+					}).catch(function(reason) {
 						reject(reason);
 					});
 			}
-		})
-			.catch(function(reason) {
-				reject(reason);
-			});
+		}).catch(function(reason) {
+			reject(reason);
+		});
 	});
 };
 
@@ -51,10 +44,9 @@ module.exports.registerWorkers = function(worker) {
 		debug('update ' + task.payload);
 		update(task.payload).then(function(s) {
 			task.end(s);
-		})
-			.catch(function(reason) {
-				debug(reason);
-			});
+		}).catch(function(reason) {
+			debug(reason);
+		});
 	});
 
 	debug('Workers registered');

@@ -28,7 +28,7 @@ app.listen(port, () => {
 
 	Summoner.registerWorkers(worker);
 
-	worker.submitJob('update', 'Raitono').then(function(result) {
+	worker.submitJob('update', 'SushiDojo').then(function(result) {
 		let rawSummoner = JSON.parse(result);
 		debug(rawSummoner);
 	})
