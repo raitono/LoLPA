@@ -20,6 +20,7 @@ module.exports = {
 			"tabWidth": 2,
 			"ignoreUrls": true,
 			"ignoreComments": true,
+			"ignoreStrings": true,
 		}],
 	},
 };
