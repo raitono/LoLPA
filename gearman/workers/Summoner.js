@@ -15,20 +15,24 @@ const webServer = require('../util/web-server');
  */
 let update = function(summonerName) {
 	return new Promise(function(resolve, reject) {
-		request(webServer.URLs.summonerNameExists(summonerName)).then(function(dbSummoners) {
-			dbSummoners = JSON.parse(dbSummoners);
-			if (dbSummoners.length) {
-				debug('Summoner exists');
-			} else {
-				debug('Summoner does not exist');
+		Kayn.Summoner.by.name(summonerName).then(function(rawSummoner) {
+			let options = {
+				method: 'POST',
+				uri: webServer.URLs.upsertWithWhere('{"name": "'+summonerName+'"}'),
+				body: {
+					Summoner: rawSummoner,
+				},
+				json: true,
+			};
 
-				Kayn.Summoner.by.name(summonerName)
-					.then(function(s) {
-						resolve(JSON.stringify(s)); // Because the Promise returns the string [object Object] and not the actual object
-					}).catch(function(reason) {
-						reject(reason);
-					});
-			}
+			request(options).then(function(dbResult) {
+				dbResult = JSON.parse(dbResult); // We just get a string back. Parse it so we can use it as an object
+
+				debug(dbResult);
+				resolve(dbResult);
+			}).catch(function(reason) {
+				reject(reason);
+			});
 		}).catch(function(reason) {
 			reject(reason);
 		});
