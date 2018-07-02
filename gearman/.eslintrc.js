@@ -19,6 +19,7 @@ module.exports = {
 			"code": 100,
 			"tabWidth": 2,
 			"ignoreUrls": true,
+			"ignoreComments": true,
 		}],
 	},
 };
