@@ -20,16 +20,18 @@ let update = function(summonerName) {
 				method: 'POST',
 				uri: webServer.URLs.upsertWithWhere('{"name": "'+summonerName+'"}'),
 				body: {
-					Summoner: rawSummoner,
+					id: rawSummoner.id,
+					accountId: rawSummoner.accountId,
+					profileIconId: rawSummoner.profileIconId,
+					summonerLevel: rawSummoner.summonerLevel,
+					name: rawSummoner.name,
+					revisionDate: rawSummoner.revisionDate,
 				},
 				json: true,
 			};
 
 			request(options).then(function(dbResult) {
-				dbResult = JSON.parse(dbResult); // We just get a string back. Parse it so we can use it as an object
-
-				debug(dbResult);
-				resolve(dbResult);
+				resolve(JSON.stringify(dbResult));
 			}).catch(function(reason) {
 				reject(reason);
 			});

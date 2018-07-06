@@ -30,11 +30,10 @@ app.listen(port, () => {
 
 	worker.submitJob('update', 'Raitono').then(function(result) {
 		let rawSummoner = JSON.parse(result);
-		debug(rawSummoner);
-	})
-		.catch(function(reason) {
-			debug(reason);
-		});
+		debug('Updated summoner: ' + rawSummoner.name);
+	}).catch(function(reason) {
+		debug(reason);
+	});
 });
 
 module.exports = app;
