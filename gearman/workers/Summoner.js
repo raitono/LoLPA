@@ -46,7 +46,7 @@ module.exports.registerWorkers = function(worker) {
 		debug('toUpper ' + task.payload);
 		return task.payload.toUpperCase();
 	});
-	worker.registerWorker('update', function(task) {
+	worker.registerWorker('updateSummoner', function(task) {
 		debug('update ' + task.payload);
 		update(task.payload).then(function(s) {
 			task.end(s);
