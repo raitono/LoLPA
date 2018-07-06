@@ -20,6 +20,7 @@ app.listen(port, () => {
 	Gearman.Server.listen({
 		port: 4730,
 	});
+	debug('Gearman listening on port 4730');
 
 	let worker = Gearman.Client.connect({
 		servers: ['127.0.0.1:4730'],
@@ -29,8 +30,14 @@ app.listen(port, () => {
 	Summoner.registerWorkers(worker);
 
 	worker.submitJob('updateSummoner', 'CaptainPuddin').then(function(result) {
-		let rawSummoner = JSON.parse(result);
-		debug('Updated summoner: ' + rawSummoner.name);
+		let dbSummoner = JSON.parse(result);
+		debug('Updated summoner: ' + dbSummoner.name);
+
+		worker.submitJob('updateMatchList', result).then(function(mlResult) {
+			debug('Updated match list for ' + dbSummoner.name);
+		}).catch(function(reason) {
+			debug(reason);
+		});
 	}).catch(function(reason) {
 		debug(reason);
 	});
