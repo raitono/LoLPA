@@ -11,64 +11,64 @@ const webServer = require('../util/web-server');
  * @param {Object} summoner Summoner whose matches we are updating
  * @return {Promise}
  */
-let updateMatchList = function(summoner) {
-	return new Promise(function(resolve, reject) {
-		getMatchList(summoner);
-	});
-};
+let updateMatchList = function(summoner, options) {
+	let dbSummoner = {};
 
-/**
- * Attach a match list to the summoner containing matches from last updated date to last revision date.
- * If last update date is null, start at the current season's start date.
- * @param {Object} summoner Summoner whose matches we are updating
- * @param {Object} options OPTIONAL - MatchList filtering options
- * @return {Promise}
- */
-let getMatchList = function(summoner, options) {
-	return new Promise(function(resolve, reject) {
-		let dbSummoner = {};
-		let matchOptions = {};
+	try {
+		dbSummoner = JSON.parse(summoner);
+	} catch (e) {
+		dbSummoner = summoner;
+	}
 
-		try {
-			dbSummoner = JSON.parse(summoner);
-		} catch (e) {
-			dbSummoner = summoner;
-		} finally {
-			if (util.isNullOrUndefined(options)) {
-				options = {
-					beginTime: null,
-					endTime: null,
-				};
-			}
+	if (util.isNullOrUndefined(options)) {
+		options = {
+			beginTime: null,
+			endTime: null,
+		};
+	}
+
+	return getMatchDates(options.beginTime || dbSummoner.lastUpdated,
+			options.endTime || dbSummoner.revisionDate)
+		.then(function(matchOptions) {
+			options = matchOptions;
 			debug(options);
-			getMatchDates(options.beginTime || dbSummoner.lastUpdated,
-				options.endTime || dbSummoner.revisionDate).then(function(dates) {
-				matchOptions = {
-					beginTime: dates.beginTime,
-					endTime: dates.endTime,
-				};
-
-				Kayn.Matchlist.by.accountID(dbSummoner.accountId)
-					.query(matchOptions).then(function(result) {
-						if (util.isNullOrUndefined(dbSummoner.matchList)) {
-							dbSummoner.matchList = [];
-						}
-
-						Array.prototype.push.apply(dbSummoner.matchList, result.matches);
-
-						getNextMatchList(dbSummoner, dates.endTime);
-					}).catch(function(reason) {
-						if (reason.statusCode == 404) {
-							// This just means they don't have any matches during the time period
-							getNextMatchList(dbSummoner, dates.endTime);
-						} else {
-							debug(reason);
-							reject();
-						}
-					});
+			return Kayn.Matchlist.by.accountID(dbSummoner.accountId).query(options);
+		}).then(function(riotMatchList) {
+			return({
+				options,
+				riotMatchList,
 			});
-		}
-	});
+		}).catch(function(reason) {
+			if (reason.statusCode == 404) {
+				// This just means they don't have any matches during the time period
+				return({
+					options,
+					riotMatchList: null,
+				});
+			} else {
+				debug(reason);
+				reject(reason);
+			}
+		}).then(function(result) {
+			if(result.options.beginTime < new Date(dbSummoner.revisionDate).getTime()) {
+				if (util.isNullOrUndefined(dbSummoner.matchList)) {
+					dbSummoner.matchList = [];
+				}
+				
+				if (!util.isNullOrUndefined(result.riotMatchList)) {
+					Array.prototype.push.apply(dbSummoner.matchList, result.riotMatchList.matches);
+				}
+				
+				return updateMatchList(dbSummoner, {
+					beginTime: result.options.endTime,
+					endTime: result.options.endTime + 604800000,
+				});
+			} else {
+				debug('Success! Time to get the actual matches now.');
+			}
+		}).catch(function(reason) {
+			debug(reason);
+		});
 };
 
 /**
@@ -80,7 +80,7 @@ let getMatchList = function(summoner, options) {
 let getMatchDates = function(beginTime, endTime) {
 	return new Promise(function(resolve, reject) {
 		if (util.isNullOrUndefined(beginTime)) {
-			request(webServer.URLs.Season.get('{"endDate": null}')).then(function(dbSeason) {
+			return request(webServer.URLs.Season.get('{"endDate": null}')).then(function(dbSeason) {
 				dbSeason = JSON.parse(dbSeason)[0];
 				let seasonStart = new Date(dbSeason.startDate).getTime();
 				resolve({
@@ -100,33 +100,11 @@ let getMatchDates = function(beginTime, endTime) {
 	});
 };
 
-/**
- * Used to continue the MatchList loop. Needed because of the possibility of getting a 404 when the
- * summoner has no matches for a particular date range. This allows me to call it in the catch.
- * @param {Object} summoner JSON Summoner object
- * @param {long} beginTime UNIX milliseconds for when the next date range is to begin. Compared to the Summoner's revisionDate to determine if we can stop
- * @return {Promise}
- */
-let getNextMatchList = function(summoner, beginTime) {
-	return new Promise(function(resolve, reject) {
-		if (beginTime <= new Date(summoner.revisionDate).getTime()) {
-			getMatchList(summoner, {
-				beginTime: beginTime,
-				endTime: beginTime + 604800000,
-			}).catch(function(reason) {
-				debug(reason);
-			});
-		} else {
-			debug(summoner.matchList);
-			resolve();
-		}
-	});
-};
-
 module.exports.registerWorkers = function(worker) {
 	worker.registerWorker('updateMatchList', function(task) {
 		debug('update Match List:', JSON.parse(task.payload).name);
 		updateMatchList(task.payload).then(function(r) {
+			debug('End task');
 			task.end(r);
 		}).catch(function(reason) {
 			debug(reason);
