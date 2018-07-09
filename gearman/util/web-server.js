@@ -12,4 +12,9 @@ module.exports.URLs = {
 			return process.env.WEB_SERVER + '/Seasons?filter={"where":'+whereClause+'}';
 		},
 	},
+	MatchList: {
+		put: function() {
+			return process.env.WEB_SERVER + '/Match_Lists';
+		},
+	},
 };

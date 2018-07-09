@@ -6,7 +6,8 @@ const bodyParser = require('body-parser');
 const app = express();
 
 const Gearman = require('abraxas');
-const Summoner = require('./workers/Summoner.js');
+const Summoner = require('./workers/Summoner');
+const Match = require('./workers/Match');
 
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({
@@ -28,6 +29,7 @@ app.listen(port, () => {
 	});
 
 	Summoner.registerWorkers(worker);
+	Match.registerWorkers(worker);
 
 	worker.submitJob('updateSummoner', 'CaptainPuddin').then(function(result) {
 		let dbSummoner = JSON.parse(result);
