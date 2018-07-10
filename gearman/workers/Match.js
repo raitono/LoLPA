@@ -64,9 +64,47 @@ let updateMatchList = function(summoner, options) {
 					endTime: result.options.endTime + 604800000,
 				});
 			} else {
-				debug('Success! Time to get the actual matches now.');
+				let batch = [];
+				dbSummoner.matchList.forEach((matchList) => {
+					batch.push(matchList.gameId);
+				});
+
+				return Promise.all(batch.map(Kayn.Match.get));
 			}
+		}).then(function(matches) {
+			if (util.isNullOrUndefined(matches)) {
+				// do nothing. I'm not sure why this then gets called twice, I assume it is the two returns above.
+			} else {
+				matches.forEach((match) => {
+					debug('inserting ' + match.gameId);
+					let options = {
+						method: 'POST',
+						uri: webServer.URLs.Matches.put(),
+						body: {
+							gameId: match.gameId,
+							seasonId: match.seasonId,
+							queueId: match.queueId,
+							mapId: match.mapId,
+							platformId: match.platformId,
+							gameVersion: match.gameVersion,
+							gameMode: match.gameMode,
+							gameType: match.gameType,
+							gameDuration: match.gameDuration,
+							gameCreation: match.gameCreation,
+						},
+						json: true,
+					};
+
+					return request(options);
+				});
+			}
+			return;
+		}).then(function(dbResult) {
+			return;
 		}).catch(function(reason) {
+			debug(reason);
+		})
+		.catch(function(reason) {
 			debug(reason);
 		});
 };

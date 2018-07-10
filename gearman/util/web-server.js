@@ -17,4 +17,9 @@ module.exports.URLs = {
 			return process.env.WEB_SERVER + '/Match_Lists';
 		},
 	},
+	Matches: {
+		put: function() {
+			return process.env.WEB_SERVER + '/Matches';
+		},
+	},
 };
