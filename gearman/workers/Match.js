@@ -9,6 +9,7 @@ const webServer = require('../util/web-server');
 /**
  * Pull new matches and add them to the database
  * @param {Object} summoner Summoner whose matches we are updating
+ * @param {Object} options JSON options containing beginTime and endTime in UNIX milliseconds
  * @return {Promise}
  */
 let updateMatchList = function(summoner, options) {
@@ -28,37 +29,36 @@ let updateMatchList = function(summoner, options) {
 	}
 
 	return getMatchDates(options.beginTime || dbSummoner.lastUpdated,
-			options.endTime || dbSummoner.revisionDate)
+		options.endTime || dbSummoner.revisionDate)
 		.then(function(matchOptions) {
 			options = matchOptions;
 			debug(options);
 			return Kayn.Matchlist.by.accountID(dbSummoner.accountId).query(options);
 		}).then(function(riotMatchList) {
-			return({
+			return ({
 				options,
 				riotMatchList,
 			});
 		}).catch(function(reason) {
 			if (reason.statusCode == 404) {
 				// This just means they don't have any matches during the time period
-				return({
+				return ({
 					options,
 					riotMatchList: null,
 				});
 			} else {
 				debug(reason);
-				reject(reason);
 			}
 		}).then(function(result) {
-			if(result.options.beginTime < new Date(dbSummoner.revisionDate).getTime()) {
+			if (result.options.beginTime < new Date(dbSummoner.revisionDate).getTime()) {
 				if (util.isNullOrUndefined(dbSummoner.matchList)) {
 					dbSummoner.matchList = [];
 				}
-				
+
 				if (!util.isNullOrUndefined(result.riotMatchList)) {
 					Array.prototype.push.apply(dbSummoner.matchList, result.riotMatchList.matches);
 				}
-				
+
 				return updateMatchList(dbSummoner, {
 					beginTime: result.options.endTime,
 					endTime: result.options.endTime + 604800000,
