@@ -1,21 +1,19 @@
 {
   "name": "Match_List",
   "base": "PersistedModel",
-  "idInjection": true,
+  "idInjection": false,
   "options": {
     "validateUpsert": true
   },
   "properties": {
-    "id": {
-      "type": "number",
-      "required": true
-    },
     "summonerId": {
       "type": "number",
+      "id": 1,
       "required": true
     },
     "gameId": {
       "type": "number",
+      "id": 2,
       "required": true
     },
     "championId": {
