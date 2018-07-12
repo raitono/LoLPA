@@ -2,7 +2,7 @@
 -- Host:                         127.0.0.1
 -- Server version:               5.7.20-log - MySQL Community Server (GPL)
 -- Server OS:                    Win64
--- HeidiSQL Version:             9.5.0.5278
+-- HeidiSQL Version:             9.5.0.5280
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -498,7 +498,7 @@ CREATE TABLE IF NOT EXISTS `match` (
   CONSTRAINT `FK_match_seasonId` FOREIGN KEY (`seasonId`) REFERENCES `season` (`seasonId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.match: ~13 rows (approximately)
+-- Dumping data for table riot.match: ~0 rows (approximately)
 /*!40000 ALTER TABLE `match` DISABLE KEYS */;
 /*!40000 ALTER TABLE `match` ENABLE KEYS */;
 
@@ -519,7 +519,7 @@ CREATE TABLE IF NOT EXISTS `match_list` (
   CONSTRAINT `FK_match_list_summonerId` FOREIGN KEY (`summonerId`) REFERENCES `summoner` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.match_list: ~1 rows (approximately)
+-- Dumping data for table riot.match_list: ~0 rows (approximately)
 /*!40000 ALTER TABLE `match_list` DISABLE KEYS */;
 /*!40000 ALTER TABLE `match_list` ENABLE KEYS */;
 
@@ -809,7 +809,7 @@ CREATE TABLE IF NOT EXISTS `summoner` (
   PRIMARY KEY (`id`,`accountId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.summoner: ~3 rows (approximately)
+-- Dumping data for table riot.summoner: ~0 rows (approximately)
 /*!40000 ALTER TABLE `summoner` DISABLE KEYS */;
 /*!40000 ALTER TABLE `summoner` ENABLE KEYS */;
 
@@ -887,8 +887,8 @@ CREATE TABLE IF NOT EXISTS `xref_participant_item` (
 /*!40000 ALTER TABLE `xref_participant_item` DISABLE KEYS */;
 /*!40000 ALTER TABLE `xref_participant_item` ENABLE KEYS */;
 
--- Dumping structure for table riot.xref_profile_game
-CREATE TABLE IF NOT EXISTS `xref_profile_game` (
+-- Dumping structure for table riot.xref_summoner_game
+CREATE TABLE IF NOT EXISTS `xref_summoner_game` (
   `profileId` int(11) NOT NULL,
   `gameId` int(11) unsigned NOT NULL,
   `participantId` int(11) NOT NULL,
@@ -899,9 +899,9 @@ CREATE TABLE IF NOT EXISTS `xref_profile_game` (
   CONSTRAINT `FK_xref_profile_game_participantId` FOREIGN KEY (`participantId`) REFERENCES `participant` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.xref_profile_game: ~0 rows (approximately)
-/*!40000 ALTER TABLE `xref_profile_game` DISABLE KEYS */;
-/*!40000 ALTER TABLE `xref_profile_game` ENABLE KEYS */;
+-- Dumping data for table riot.xref_summoner_game: ~0 rows (approximately)
+/*!40000 ALTER TABLE `xref_summoner_game` DISABLE KEYS */;
+/*!40000 ALTER TABLE `xref_summoner_game` ENABLE KEYS */;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
