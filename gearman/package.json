@@ -35,5 +35,8 @@
   },
   "bugs": {
     "url": "https://github.com/raitono/LoLPA/issues"
+  },
+  "engines": {
+    "node": ">7.2"
   }
 }
