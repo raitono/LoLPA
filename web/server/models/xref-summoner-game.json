@@ -1,0 +1,26 @@
+{
+  "name": "Xref_Summoner_Game",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "profileId": {
+      "type": "number",
+      "required": true
+    },
+    "gameId": {
+      "type": "number",
+      "required": true
+    },
+    "participantId": {
+      "type": "number",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

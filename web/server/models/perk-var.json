@@ -1,0 +1,38 @@
+{
+  "name": "Perk_Var",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "id": {
+      "type": "number",
+      "required": true
+    },
+    "participantStatsId": {
+      "type": "number",
+      "required": true
+    },
+    "perkId": {
+      "type": "number",
+      "required": true
+    },
+    "varId": {
+      "type": "number",
+      "required": true
+    },
+    "description": {
+      "type": "number",
+      "required": true
+    },
+    "value": {
+      "type": "number",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

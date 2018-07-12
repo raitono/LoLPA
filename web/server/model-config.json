@@ -66,5 +66,45 @@
   "Summoner": {
     "dataSource": "mysqlDs",
     "public": true
+  },
+  "Participant_Stat": {
+    "dataSource": "mysqlDs",
+    "public": true
+  },
+  "Participant_Timeline": {
+    "dataSource": "mysqlDs",
+    "public": true
+  },
+  "Participant_Timeline_Delta": {
+    "dataSource": "mysqlDs",
+    "public": true
+  },
+  "Perk": {
+    "dataSource": "mysqlDs",
+    "public": true
+  },
+  "Perk_Style": {
+    "dataSource": "mysqlDs",
+    "public": true
+  },
+  "Perk_Var": {
+    "dataSource": "mysqlDs",
+    "public": true
+  },
+  "Team_Ban": {
+    "dataSource": "mysqlDs",
+    "public": true
+  },
+  "Team_Stat": {
+    "dataSource": "mysqlDs",
+    "public": true
+  },
+  "Xref_Participant_Item": {
+    "dataSource": "mysqlDs",
+    "public": true
+  },
+  "Xref_Summoner_Game": {
+    "dataSource": "mysqlDs",
+    "public": true
   }
 }

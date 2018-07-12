@@ -1,0 +1,34 @@
+{
+  "name": "Team_Ban",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "id": {
+      "type": "number",
+      "required": true
+    },
+    "teamStatsId": {
+      "type": "number",
+      "required": true
+    },
+    "teamId": {
+      "type": "number",
+      "required": true
+    },
+    "championId": {
+      "type": "number",
+      "required": true
+    },
+    "pickTurn": {
+      "type": "number",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

@@ -1,0 +1,58 @@
+{
+  "name": "Participant_Timeline",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "id": {
+      "type": "number",
+      "required": true
+    },
+    "participantId": {
+      "type": "number",
+      "required": true
+    },
+    "goldPerMinDeltasId": {
+      "type": "number",
+      "required": true
+    },
+    "creepsPerMinDeltasId": {
+      "type": "number",
+      "required": true
+    },
+    "csDiffPerMinDeltasId": {
+      "type": "number",
+      "required": true
+    },
+    "xpPerMinDeltasId": {
+      "type": "number",
+      "required": true
+    },
+    "xpDiffPerMinDeltasId": {
+      "type": "number",
+      "required": true
+    },
+    "damageTakenPerMinDeltasId": {
+      "type": "number",
+      "required": true
+    },
+    "damageTakenDiffPerMinDeltasId": {
+      "type": "number",
+      "required": true
+    },
+    "lane": {
+      "type": "string",
+      "required": true
+    },
+    "role": {
+      "type": "string",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

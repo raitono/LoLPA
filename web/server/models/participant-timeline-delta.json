@@ -1,0 +1,30 @@
+{
+  "name": "Participant_Timeline_Delta",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "id": {
+      "type": "number",
+      "required": true
+    },
+    "participantTimelineId": {
+      "type": "number",
+      "required": true
+    },
+    "increment": {
+      "type": "string",
+      "required": true
+    },
+    "value": {
+      "type": "number",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}
