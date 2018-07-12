@@ -1,5 +1,3 @@
-'use strict';
-
 const {Kayn, LRUCache, REGIONS} = require('kayn');
 
 const cache = new LRUCache({max: 1000});

@@ -3,17 +3,16 @@ module.exports = {
         "node": true,
 		"es6":true,
     },
-    "parser": "babel-eslint",
     "parserOptions": {
         "ecmaVersion": 8,
         "sourceType": "module",
     },
     "extends": ["eslint:recommended", "google"],
 	"rules": {
-		"linebreak-style":0,
-		"no-tabs":0,
+		"linebreak-style": "off",
+		"no-tabs": "off",
 		"indent": ["warn", "tab"],
-		"max-len": [1, {
+		"max-len": ["warn", {
 			"code": 100,
 			"tabWidth": 2,
 			"ignoreUrls": true,
