@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "main": "app.js",
   "scripts": {
-    "dev": "nodemon app.js"
+    "start": "nodemon app.js"
   },
   "dependencies": {
     "abraxas": "^2.1.10",
