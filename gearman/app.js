@@ -2,7 +2,6 @@ require('dotenv-safe').config();
 
 const debug = require('debug')('lolpa-gearman:app');
 const express = require('express');
-const bodyParser = require('body-parser');
 const app = express();
 
 const Gearman = require('abraxas');
@@ -10,10 +9,6 @@ const Summoner = require('./workers/Summoner');
 const Match = require('./workers/Match');
 
 app.use(express.static('public'));
-app.use(bodyParser.urlencoded({
-	extended: false,
-}));
-app.use(bodyParser.json());
 
 const port = process.env.PORT || 8080;
 
