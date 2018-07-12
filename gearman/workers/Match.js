@@ -12,82 +12,25 @@ const webServer = require('../util/web-server');
  * @param {Object} options JSON options containing beginTime and endTime in UNIX milliseconds
  * @return {Promise}
  */
-let updateMatchList = function(summoner, options) {
-	let dbSummoner = {};
-	let retCnt = 0;
-
+let updateMatchList = (summoner) => {
 	try {
-		dbSummoner = JSON.parse(summoner);
+		summoner = JSON.parse(summoner);
 	} catch (e) {
-		dbSummoner = summoner;
+		debug(e);
 	}
 
-	if (util.isNullOrUndefined(options)) {
-		options = {
-			beginTime: null,
-			endTime: null,
-		};
-	}
-
-	// Determine the dates to pull
-	return getMatchDates(options.beginTime || dbSummoner.lastUpdated,
-		options.endTime || dbSummoner.revisionDate)
-		.then(function(matchOptions) {
-			// Send request to RIOT API
-			options = matchOptions;
-			// debug(options);
-			return Kayn.Matchlist.by.accountID(dbSummoner.accountId).query(options);
-		}).then(function(riotMatchList) {
-			// Package the options we sent and the list returned
-			return ({
-				options,
-				riotMatchList,
-			});
-		}).catch(function(reason) {
-			if (reason.statusCode == 404) {
-				// This just means they don't have any matches during the time period
-				// so return the options and a null list
-				return ({
-					options,
-					riotMatchList: null,
-				});
-			} else {
-				debug('Problem calling Kayn');
-				debug(reason);
-			}
-		}).then(function(result) {
-			// Determine if we can stop the recursive loop
-			if (result.options.beginTime < new Date(dbSummoner.revisionDate).getTime()) {
-				// We are not done yet
-				if (util.isNullOrUndefined(dbSummoner.matchList)) {
-					dbSummoner.matchList = [];
-				}
-
-				if (!util.isNullOrUndefined(result.riotMatchList)) {
-					Array.prototype.push.apply(dbSummoner.matchList, result.riotMatchList.matches);
-				}
-
-				// Call the recursive function, but with update options and the match list attached to the summoner
-				return updateMatchList(dbSummoner, {
-					beginTime: result.options.endTime,
-					endTime: result.options.endTime + 604800000, // Add a week, the max allowed time by RIOT API
-				});
-			} else {
-				// We're done. Finish the loop.
-				retCnt = retCnt + 1;
-				return;
-			}
-		}).then(function() {
+	return getMatchList(summoner)
+		.then(() => {
 			// We have all the matches. Extract the gameIds.
 			let matchBatch = [];
-			dbSummoner.matchList.forEach((matchList) => {
+			summoner.matchList.forEach((matchList) => {
 				matchBatch.push(matchList.gameId);
 			});
 
 			// Send get the matches from RIOT
 			return Promise.all(matchBatch.map(Kayn.Match.get));
 		})
-		.then(function(matches) {
+		.then((matches) => {
 			let matchInsertBatch = [];
 
 			// Batch up the insert options
@@ -112,32 +55,96 @@ let updateMatchList = function(summoner, options) {
 			});
 
 			// Insert the Matches
-			return Promise.all(matchInsertBatch.map(request));
-		}).then(function(dbResult) {
+			return Promise.all([matches, matchInsertBatch.map(request)]);
+		}).then((matchInsertResult) => {
 			// Insert match lists
 			let matchListBatch = [];
-			// dbSummoner.matchList.forEach((m) => {
-			// 	matchListBatch.push({
-			// 		method: 'PUT',
-			// 		uri: webServer.URLs.MatchList.put(),
-			// 		body: {
-			// 			summonerId: dbSummoner.id,
-			// 			gameId: matchListBatch.gameId,
-			// 			championId: matchListBatch.champion,
-			// 			lane: matchListBatch.lane,
-			// 			role: matchListBatch.role,
-			// 			timestamp: matchListBatch.timestamp,
-			// 		},
-			// 		json: true,
-			// 	});
-			// });
+			summoner.matchList.forEach((m) => {
+				matchListBatch.push({
+					method: 'PUT',
+					uri: webServer.URLs.MatchList.put(),
+					body: {
+						summonerId: summoner.id,
+						gameId: m.gameId,
+						championId: m.champion,
+						lane: m.lane,
+						role: m.role,
+						timestamp: m.timestamp,
+					},
+					json: true,
+				});
+			});
 
-			// return Promise.all(matchListBatch.map(request));
-			debug(retCnt);
-			// debug(dbSummoner.matchList);
-		}).catch(function(reason) {
+			return Promise.all(matchListBatch.map(request));
+		}).catch((reason) => {
 			debug('General problem');
 			debug(reason);
+		});
+};
+
+let getMatchList = (summoner, options) => {
+	if (!util.isObject(summoner)) {
+		try {
+			summoner = JSON.parse(summoner);
+		} catch (e) {
+			debug(e);
+		}
+	}
+
+	if (util.isNullOrUndefined(options)) {
+		options = {
+			beginTime: null,
+			endTime: null,
+		};
+	}
+
+	// Determine the dates to pull
+	return getMatchDates(options.beginTime || summoner.lastUpdated,
+		options.endTime || summoner.revisionDate)
+		.then((matchOptions) => {
+			// Send request to RIOT API
+			options = matchOptions;
+			// debug(options);
+			return Kayn.Matchlist.by.accountID(summoner.accountId).query(options);
+		}).then((riotMatchList) => {
+			// Package the options we sent and the list returned
+			return ({
+				options,
+				riotMatchList,
+			});
+		}).catch((reason) => {
+			if (reason.statusCode == 404) {
+				// This just means they don't have any matches during the time period
+				// so return the options and a null list
+				return ({
+					options,
+					riotMatchList: null,
+				});
+			} else {
+				debug('Problem calling Kayn');
+				debug(reason);
+			}
+		}).then((result) => {
+			// Determine if we can stop the recursive loop
+			if (result.options.beginTime < new Date(summoner.revisionDate).getTime()) {
+				// We are not done yet
+				if (util.isNullOrUndefined(summoner.matchList)) {
+					summoner.matchList = [];
+				}
+
+				if (!util.isNullOrUndefined(result.riotMatchList)) {
+					Array.prototype.push.apply(summoner.matchList, result.riotMatchList.matches);
+				}
+
+				// Call the recursive function, but with update options and the match list attached to the summoner
+				return getMatchList(summoner, {
+					beginTime: result.options.endTime,
+					endTime: result.options.endTime + 604800000, // Add a week, the max allowed time by RIOT API
+				});
+			} else {
+				// We're done. Finish the loop.
+				return;
+			}
 		});
 };
 
@@ -147,18 +154,18 @@ let updateMatchList = function(summoner, options) {
  * @param {Object} options OPTIONAL - JSON Object containing beginTime and endTime. If this is present, simply returns it back.
  * @return {Object} JSON object containing beginTime and endTime to be used with a match method
  */
-let getMatchDates = function(beginTime, endTime) {
-	return new Promise(function(resolve, reject) {
+let getMatchDates = (beginTime, endTime) => {
+	return new Promise((resolve, reject) => {
 		if (util.isNullOrUndefined(beginTime)) {
 			return request(webServer.URLs.Season.get('{"endDate": null}'))
-				.then(function(dbSeason) {
+				.then((dbSeason) => {
 					dbSeason = JSON.parse(dbSeason)[0];
 					let seasonStart = new Date(dbSeason.startDate).getTime();
 					resolve({
 						beginTime: seasonStart,
 						endTime: seasonStart + 604800000,
 					});
-				}).catch(function(reason) {
+				}).catch((reason) => {
 					debug('Problem getting current season');
 					debug(reason);
 					reject(reason);
@@ -172,14 +179,14 @@ let getMatchDates = function(beginTime, endTime) {
 	});
 };
 
-module.exports.registerWorkers = function(worker) {
-	worker.registerWorker('updateMatchList', function(task) {
+module.exports.registerWorkers = (worker) => {
+	worker.registerWorker('updateMatchList', (task) => {
 		debug('update Match List:', JSON.parse(task.payload).name);
 		updateMatchList(task.payload)
-			.then(function(r) {
+			.then((r) => {
 				debug('End task');
 				task.end(r);
-			}).catch(function(reason) {
+			}).catch((reason) => {
 				debug('Problem running updateMatchList');
 				debug(reason);
 			});
