@@ -18,7 +18,6 @@ CREATE DATABASE IF NOT EXISTS `riot` /*!40100 DEFAULT CHARACTER SET utf8 */;
 USE `riot`;
 
 -- Dumping structure for table riot.champion
-DROP TABLE IF EXISTS `champion`;
 CREATE TABLE IF NOT EXISTS `champion` (
   `id` int(11) NOT NULL COMMENT 'Given by Riot API',
   `name` varchar(50) NOT NULL,
@@ -171,7 +170,6 @@ INSERT INTO `champion` (`id`, `name`, `title`) VALUES
 /*!40000 ALTER TABLE `champion` ENABLE KEYS */;
 
 -- Dumping structure for table riot.champion_tag
-DROP TABLE IF EXISTS `champion_tag`;
 CREATE TABLE IF NOT EXISTS `champion_tag` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
@@ -184,7 +182,6 @@ CREATE TABLE IF NOT EXISTS `champion_tag` (
 /*!40000 ALTER TABLE `champion_tag` ENABLE KEYS */;
 
 -- Dumping structure for table riot.item
-DROP TABLE IF EXISTS `item`;
 CREATE TABLE IF NOT EXISTS `item` (
   `id` int(11) NOT NULL COMMENT 'Given by Riot API',
   `name` varchar(50) NOT NULL,
@@ -485,7 +482,6 @@ INSERT INTO `item` (`id`, `name`, `goldSellsFor`, `goldTotal`, `goldBase`, `purc
 /*!40000 ALTER TABLE `item` ENABLE KEYS */;
 
 -- Dumping structure for table riot.match
-DROP TABLE IF EXISTS `match`;
 CREATE TABLE IF NOT EXISTS `match` (
   `gameId` int(11) unsigned NOT NULL COMMENT 'Given by Riot API',
   `seasonId` int(11) NOT NULL COMMENT 'Given by Riot API',
@@ -504,24 +500,9 @@ CREATE TABLE IF NOT EXISTS `match` (
 
 -- Dumping data for table riot.match: ~13 rows (approximately)
 /*!40000 ALTER TABLE `match` DISABLE KEYS */;
-INSERT INTO `match` (`gameId`, `seasonId`, `queueId`, `mapId`, `platformId`, `gameVersion`, `gameMode`, `gameType`, `gameDuration`, `gameCreation`) VALUES
-	(2818859495, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 1171, '2018-07-04 01:09:44'),
-	(2818860492, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 1659, '2018-07-04 00:33:59'),
-	(2818887577, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 1112, '2018-07-04 01:42:41'),
-	(2818922598, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 1017, '2018-07-04 02:05:29'),
-	(2818937829, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 1355, '2018-07-04 02:26:56'),
-	(2818955571, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 1147, '2018-07-04 02:54:24'),
-	(2819029603, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 1067, '2018-07-04 04:22:34'),
-	(2821579249, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 814, '2018-07-08 00:29:37'),
-	(2821603737, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 974, '2018-07-08 00:51:34'),
-	(2821617441, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 1178, '2018-07-08 01:12:23'),
-	(2821633353, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 1591, '2018-07-08 01:37:17'),
-	(2821662804, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 1142, '2018-07-08 02:19:39'),
-	(2821677935, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 996, '2018-07-08 02:43:05');
 /*!40000 ALTER TABLE `match` ENABLE KEYS */;
 
 -- Dumping structure for table riot.match_list
-DROP TABLE IF EXISTS `match_list`;
 CREATE TABLE IF NOT EXISTS `match_list` (
   `summonerId` int(11) NOT NULL,
   `gameId` int(11) unsigned NOT NULL,
@@ -540,12 +521,9 @@ CREATE TABLE IF NOT EXISTS `match_list` (
 
 -- Dumping data for table riot.match_list: ~1 rows (approximately)
 /*!40000 ALTER TABLE `match_list` DISABLE KEYS */;
-INSERT INTO `match_list` (`summonerId`, `gameId`, `championId`, `lane`, `role`, `timestamp`) VALUES
-	(68431663, 2821677935, 9, 'NONE', 'DUO_SUPPORT', '2018-07-08 02:43:05');
 /*!40000 ALTER TABLE `match_list` ENABLE KEYS */;
 
 -- Dumping structure for table riot.participant
-DROP TABLE IF EXISTS `participant`;
 CREATE TABLE IF NOT EXISTS `participant` (
   `id` int(11) NOT NULL,
   `gameId` int(11) unsigned NOT NULL,
@@ -572,7 +550,6 @@ CREATE TABLE IF NOT EXISTS `participant` (
 /*!40000 ALTER TABLE `participant` ENABLE KEYS */;
 
 -- Dumping structure for table riot.participant_stat
-DROP TABLE IF EXISTS `participant_stat`;
 CREATE TABLE IF NOT EXISTS `participant_stat` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `participantId` int(11) NOT NULL,
@@ -649,7 +626,6 @@ CREATE TABLE IF NOT EXISTS `participant_stat` (
 /*!40000 ALTER TABLE `participant_stat` ENABLE KEYS */;
 
 -- Dumping structure for table riot.participant_timeline
-DROP TABLE IF EXISTS `participant_timeline`;
 CREATE TABLE IF NOT EXISTS `participant_timeline` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `participantId` int(11) NOT NULL,
@@ -686,7 +662,6 @@ CREATE TABLE IF NOT EXISTS `participant_timeline` (
 /*!40000 ALTER TABLE `participant_timeline` ENABLE KEYS */;
 
 -- Dumping structure for table riot.participant_timeline_delta
-DROP TABLE IF EXISTS `participant_timeline_delta`;
 CREATE TABLE IF NOT EXISTS `participant_timeline_delta` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `participantTimelineId` int(11) NOT NULL,
@@ -702,7 +677,6 @@ CREATE TABLE IF NOT EXISTS `participant_timeline_delta` (
 /*!40000 ALTER TABLE `participant_timeline_delta` ENABLE KEYS */;
 
 -- Dumping structure for table riot.perk
-DROP TABLE IF EXISTS `perk`;
 CREATE TABLE IF NOT EXISTS `perk` (
   `id` int(11) NOT NULL,
   `perkId` varchar(4) NOT NULL COMMENT 'Given by Riot API. First 2 characters show style. 84XX is style 8400.',
@@ -719,7 +693,6 @@ CREATE TABLE IF NOT EXISTS `perk` (
 /*!40000 ALTER TABLE `perk` ENABLE KEYS */;
 
 -- Dumping structure for table riot.perk_style
-DROP TABLE IF EXISTS `perk_style`;
 CREATE TABLE IF NOT EXISTS `perk_style` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `styleId` varchar(4) NOT NULL COMMENT 'Given by Riot API',
@@ -733,7 +706,6 @@ CREATE TABLE IF NOT EXISTS `perk_style` (
 /*!40000 ALTER TABLE `perk_style` ENABLE KEYS */;
 
 -- Dumping structure for table riot.perk_var
-DROP TABLE IF EXISTS `perk_var`;
 CREATE TABLE IF NOT EXISTS `perk_var` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `participantStatsId` int(11) NOT NULL,
@@ -753,7 +725,6 @@ CREATE TABLE IF NOT EXISTS `perk_var` (
 /*!40000 ALTER TABLE `perk_var` ENABLE KEYS */;
 
 -- Dumping structure for procedure riot.p_GetMatchesBySummonerId
-DROP PROCEDURE IF EXISTS `p_GetMatchesBySummonerId`;
 DELIMITER //
 CREATE DEFINER=`root`@`localhost` PROCEDURE `p_GetMatchesBySummonerId`(
 	IN `summonerId` INT,
@@ -778,7 +749,6 @@ END//
 DELIMITER ;
 
 -- Dumping structure for table riot.season
-DROP TABLE IF EXISTS `season`;
 CREATE TABLE IF NOT EXISTS `season` (
   `seasonId` int(11) NOT NULL COMMENT 'Given by Riot API',
   `number` int(11) NOT NULL,
@@ -795,7 +765,6 @@ INSERT INTO `season` (`seasonId`, `number`, `startDate`, `endDate`) VALUES
 /*!40000 ALTER TABLE `season` ENABLE KEYS */;
 
 -- Dumping structure for table riot.spell
-DROP TABLE IF EXISTS `spell`;
 CREATE TABLE IF NOT EXISTS `spell` (
   `id` int(11) NOT NULL COMMENT 'Given by Riot API',
   `version` varchar(10) DEFAULT NULL,
@@ -829,7 +798,6 @@ INSERT INTO `spell` (`id`, `version`, `name`, `key`) VALUES
 /*!40000 ALTER TABLE `spell` ENABLE KEYS */;
 
 -- Dumping structure for table riot.summoner
-DROP TABLE IF EXISTS `summoner`;
 CREATE TABLE IF NOT EXISTS `summoner` (
   `id` int(11) NOT NULL COMMENT 'Given by Riot API',
   `accountId` int(11) NOT NULL COMMENT 'Given by Riot API',
@@ -843,14 +811,9 @@ CREATE TABLE IF NOT EXISTS `summoner` (
 
 -- Dumping data for table riot.summoner: ~3 rows (approximately)
 /*!40000 ALTER TABLE `summoner` DISABLE KEYS */;
-INSERT INTO `summoner` (`id`, `accountId`, `profileIconId`, `summonerLevel`, `name`, `revisionDate`, `lastUpdated`) VALUES
-	(26056841, 40769781, 3379, 77, 'SushiDojo', '2018-07-04 04:41:24', NULL),
-	(68431663, 229105505, 3379, 40, 'CaptainPuddin', '2018-07-08 03:00:52', NULL),
-	(71591841, 230885086, 3379, 92, 'Raitono', '2018-07-04 04:41:24', NULL);
 /*!40000 ALTER TABLE `summoner` ENABLE KEYS */;
 
 -- Dumping structure for table riot.team_ban
-DROP TABLE IF EXISTS `team_ban`;
 CREATE TABLE IF NOT EXISTS `team_ban` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `teamStatsId` int(11) NOT NULL,
@@ -867,7 +830,6 @@ CREATE TABLE IF NOT EXISTS `team_ban` (
 /*!40000 ALTER TABLE `team_ban` ENABLE KEYS */;
 
 -- Dumping structure for table riot.team_stat
-DROP TABLE IF EXISTS `team_stat`;
 CREATE TABLE IF NOT EXISTS `team_stat` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `gameId` int(11) unsigned NOT NULL,
@@ -895,7 +857,6 @@ CREATE TABLE IF NOT EXISTS `team_stat` (
 /*!40000 ALTER TABLE `team_stat` ENABLE KEYS */;
 
 -- Dumping structure for table riot.xref_champion_tag
-DROP TABLE IF EXISTS `xref_champion_tag`;
 CREATE TABLE IF NOT EXISTS `xref_champion_tag` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `championId` int(11) NOT NULL,
@@ -913,7 +874,6 @@ CREATE TABLE IF NOT EXISTS `xref_champion_tag` (
 /*!40000 ALTER TABLE `xref_champion_tag` ENABLE KEYS */;
 
 -- Dumping structure for table riot.xref_participant_item
-DROP TABLE IF EXISTS `xref_participant_item`;
 CREATE TABLE IF NOT EXISTS `xref_participant_item` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `participantId` int(11) NOT NULL,
@@ -928,7 +888,6 @@ CREATE TABLE IF NOT EXISTS `xref_participant_item` (
 /*!40000 ALTER TABLE `xref_participant_item` ENABLE KEYS */;
 
 -- Dumping structure for table riot.xref_profile_game
-DROP TABLE IF EXISTS `xref_profile_game`;
 CREATE TABLE IF NOT EXISTS `xref_profile_game` (
   `profileId` int(11) NOT NULL,
   `gameId` int(11) unsigned NOT NULL,
