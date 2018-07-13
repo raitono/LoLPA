@@ -18,6 +18,7 @@
     },
     "participantId": {
       "type": "number",
+      "id": 3,
       "required": true
     }
   },

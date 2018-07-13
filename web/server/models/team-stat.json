@@ -1,17 +1,14 @@
 {
   "name": "Team_Stat",
   "base": "PersistedModel",
-  "idInjection": true,
+  "idInjection": false,
   "options": {
     "validateUpsert": true
   },
   "properties": {
-    "id": {
-      "type": "number",
-      "required": true
-    },
     "gameId": {
       "type": "number",
+      "id": true,
       "required": true
     },
     "teamId": {

@@ -1,13 +1,14 @@
 {
   "name": "Item",
   "base": "PersistedModel",
-  "idInjection": true,
+  "idInjection": false,
   "options": {
     "validateUpsert": true
   },
   "properties": {
-    "id": {
+    "itemId": {
       "type": "number",
+      "id": true,
       "required": true
     },
     "name": {

@@ -10,10 +10,6 @@
       "type": "number",
       "required": true
     },
-    "participantTimelineId": {
-      "type": "number",
-      "required": true
-    },
     "increment": {
       "type": "string",
       "required": true

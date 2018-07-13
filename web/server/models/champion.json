@@ -1,13 +1,15 @@
 {
   "name": "Champion",
   "base": "PersistedModel",
-  "idInjection": true,
+  "idInjection": false,
   "options": {
     "validateUpsert": true
   },
   "properties": {
-    "id": {
-      "type": "number"
+    "championId": {
+      "type": "number",
+      "id": true,
+      "required": true
     },
     "name": {
       "type": "string",

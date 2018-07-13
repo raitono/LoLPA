@@ -1,17 +1,14 @@
 {
   "name": "Team_Ban",
   "base": "PersistedModel",
-  "idInjection": true,
+  "idInjection": false,
   "options": {
     "validateUpsert": true
   },
   "properties": {
-    "id": {
+    "gameId": {
       "type": "number",
-      "required": true
-    },
-    "teamStatsId": {
-      "type": "number",
+      "id": true,
       "required": true
     },
     "teamId": {

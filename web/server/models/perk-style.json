@@ -1,17 +1,14 @@
 {
   "name": "Perk_Style",
   "base": "PersistedModel",
-  "idInjection": true,
+  "idInjection": false,
   "options": {
     "validateUpsert": true
   },
   "properties": {
-    "id": {
-      "type": "number",
-      "required": true
-    },
     "styleId": {
       "type": "string",
+      "id": true,
       "required": true
     },
     "name": {

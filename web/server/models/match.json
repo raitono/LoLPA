@@ -9,7 +9,7 @@
   "properties": {
     "gameId": {
       "type": "number",
-      "id": 1,
+      "id": true,
       "required": true
     },
     "seasonId": {

@@ -1,13 +1,14 @@
 {
   "name": "Spell",
   "base": "PersistedModel",
-  "idInjection": true,
+  "idInjection": false,
   "options": {
     "validateUpsert": true
   },
   "properties": {
-    "id": {
+    "spellId": {
       "type": "number",
+      "id": true,
       "required": true
     },
     "version": {
