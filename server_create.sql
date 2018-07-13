@@ -670,7 +670,7 @@ CREATE TABLE IF NOT EXISTS `participant_timeline_delta` (
   `participantId` int(11) NOT NULL,
   `deltaTypeId` int(11) NOT NULL,
   `increment` varchar(7) NOT NULL COMMENT 'Generally has 2 values, "0-10" and "10-20". Length of 7 should cover anything that goes into the 100+ min range. God help anyone who plays more than 16.5 hours in one game.',
-  `value` int(11) NOT NULL,
+  `value` decimal(10,3) NOT NULL,
   PRIMARY KEY (`participantId`,`gameId`),
   UNIQUE KEY `deltaTypeId_increment` (`deltaTypeId`,`increment`),
   KEY `deltaTypeId` (`deltaTypeId`),
