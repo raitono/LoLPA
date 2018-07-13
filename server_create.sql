@@ -184,13 +184,13 @@ CREATE TABLE IF NOT EXISTS `champion_tag` (
 -- Dumping structure for table riot.delta_type
 CREATE TABLE IF NOT EXISTS `delta_type` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `type` varchar(50) NOT NULL,
+  `name` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.delta_type: ~0 rows (approximately)
+-- Dumping data for table riot.delta_type: ~4 rows (approximately)
 /*!40000 ALTER TABLE `delta_type` DISABLE KEYS */;
-INSERT INTO `delta_type` (`id`, `type`) VALUES
+INSERT INTO `delta_type` (`id`, `name`) VALUES
 	(1, 'goldPerMinDeltas'),
 	(2, 'creepsPerMinDeltas'),
 	(3, 'xpPerMinDeltas'),
@@ -514,8 +514,14 @@ CREATE TABLE IF NOT EXISTS `match` (
   CONSTRAINT `FK_match_seasonId` FOREIGN KEY (`seasonId`) REFERENCES `season` (`seasonId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.match: ~0 rows (approximately)
+-- Dumping data for table riot.match: ~5 rows (approximately)
 /*!40000 ALTER TABLE `match` DISABLE KEYS */;
+INSERT INTO `match` (`gameId`, `seasonId`, `queueId`, `mapId`, `platformId`, `gameVersion`, `gameMode`, `gameType`, `gameDuration`, `gameCreation`) VALUES
+	(2823593910, 11, 400, 11, 'NA1', '8.13.235.9749', 'CLASSIC', 'MATCHED_GAME', 941, '2018-07-10 21:30:55'),
+	(2824401710, 11, 400, 11, 'NA1', '8.13.235.9749', 'CLASSIC', 'MATCHED_GAME', 2008, '2018-07-12 03:16:57'),
+	(2824424317, 11, 400, 11, 'NA1', '8.13.235.9749', 'CLASSIC', 'MATCHED_GAME', 1898, '2018-07-12 04:04:27'),
+	(2824874744, 11, 400, 11, 'NA1', '8.13.235.9749', 'CLASSIC', 'MATCHED_GAME', 2142, '2018-07-12 21:56:37'),
+	(2825003006, 11, 400, 11, 'NA1', '8.13.235.9749', 'CLASSIC', 'MATCHED_GAME', 1200, '2018-07-12 23:57:58');
 /*!40000 ALTER TABLE `match` ENABLE KEYS */;
 
 -- Dumping structure for table riot.match_list
@@ -808,8 +814,10 @@ CREATE TABLE IF NOT EXISTS `summoner` (
   PRIMARY KEY (`summonerId`,`accountId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.summoner: ~0 rows (approximately)
+-- Dumping data for table riot.summoner: ~1 rows (approximately)
 /*!40000 ALTER TABLE `summoner` DISABLE KEYS */;
+INSERT INTO `summoner` (`summonerId`, `accountId`, `profileIconId`, `summonerLevel`, `name`, `revisionDate`, `lastUpdated`) VALUES
+	(38769401, 201586208, 536, 53, 'Yost', '2018-07-13 00:19:52', NULL);
 /*!40000 ALTER TABLE `summoner` ENABLE KEYS */;
 
 -- Dumping structure for table riot.team_ban
