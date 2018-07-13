@@ -106,5 +106,9 @@
   "Xref_Summoner_Game": {
     "dataSource": "mysqlDs",
     "public": true
+  },
+  "Delta_Type": {
+    "dataSource": "mysqlDs",
+    "public": true
   }
 }
