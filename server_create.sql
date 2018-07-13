@@ -181,6 +181,22 @@ CREATE TABLE IF NOT EXISTS `champion_tag` (
 /*!40000 ALTER TABLE `champion_tag` DISABLE KEYS */;
 /*!40000 ALTER TABLE `champion_tag` ENABLE KEYS */;
 
+-- Dumping structure for table riot.delta_type
+CREATE TABLE IF NOT EXISTS `delta_type` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `type` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Dumping data for table riot.delta_type: ~0 rows (approximately)
+/*!40000 ALTER TABLE `delta_type` DISABLE KEYS */;
+INSERT INTO `delta_type` (`id`, `type`) VALUES
+	(1, 'goldPerMinDeltas'),
+	(2, 'creepsPerMinDeltas'),
+	(3, 'xpPerMinDeltas'),
+	(4, 'damageTakenPerMinDeltas');
+/*!40000 ALTER TABLE `delta_type` ENABLE KEYS */;
+
 -- Dumping structure for table riot.item
 CREATE TABLE IF NOT EXISTS `item` (
   `itemId` int(11) NOT NULL COMMENT 'Given by Riot API',
@@ -498,7 +514,7 @@ CREATE TABLE IF NOT EXISTS `match` (
   CONSTRAINT `FK_match_seasonId` FOREIGN KEY (`seasonId`) REFERENCES `season` (`seasonId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.match: ~36 rows (approximately)
+-- Dumping data for table riot.match: ~0 rows (approximately)
 /*!40000 ALTER TABLE `match` DISABLE KEYS */;
 /*!40000 ALTER TABLE `match` ENABLE KEYS */;
 
@@ -519,7 +535,7 @@ CREATE TABLE IF NOT EXISTS `match_list` (
   CONSTRAINT `FK_match_list_summonerId` FOREIGN KEY (`summonerId`) REFERENCES `summoner` (`summonerId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.match_list: ~44 rows (approximately)
+-- Dumping data for table riot.match_list: ~0 rows (approximately)
 /*!40000 ALTER TABLE `match_list` DISABLE KEYS */;
 /*!40000 ALTER TABLE `match_list` ENABLE KEYS */;
 
@@ -629,34 +645,13 @@ CREATE TABLE IF NOT EXISTS `participant_stat` (
 CREATE TABLE IF NOT EXISTS `participant_timeline` (
   `gameId` int(11) unsigned NOT NULL,
   `participantId` int(11) NOT NULL,
-  `goldPerMinDeltasId` int(11) NOT NULL,
-  `creepsPerMinDeltasId` int(11) NOT NULL,
-  `csDiffPerMinDeltasId` int(11) NOT NULL,
-  `xpPerMinDeltasId` int(11) NOT NULL,
-  `xpDiffPerMinDeltasId` int(11) NOT NULL,
-  `damageTakenPerMinDeltasId` int(11) NOT NULL,
-  `damageTakenDiffPerMinDeltasId` int(11) NOT NULL,
   `lane` varchar(6) NOT NULL,
   `role` varchar(11) NOT NULL,
   PRIMARY KEY (`participantId`,`gameId`),
   KEY `FK_participant_timelines_participantId` (`participantId`),
-  KEY `FK_participant_timelines_goldPerMinDeltasId` (`goldPerMinDeltasId`),
-  KEY `FK_participant_timelines_creepsPerMinDeltasId` (`creepsPerMinDeltasId`),
-  KEY `FK_participant_timelines_csDiffPerMinDeltasId` (`csDiffPerMinDeltasId`),
-  KEY `FK_participant_timelines_xpPerMinDeltasId` (`xpPerMinDeltasId`),
-  KEY `FK_participant_timelines_xpDiffPerMinDeltasId` (`xpDiffPerMinDeltasId`),
-  KEY `FK_participant_timelines_damageTakenPerMinDeltasId` (`damageTakenPerMinDeltasId`),
-  KEY `FK_participant_timelines_damageTakenDiffPerMinDeltasId` (`damageTakenDiffPerMinDeltasId`),
   KEY `FK_participant_timelines_gameId` (`gameId`),
-  CONSTRAINT `FK_participant_timelines_creepsPerMinDeltasId` FOREIGN KEY (`creepsPerMinDeltasId`) REFERENCES `participant_timeline_delta` (`id`),
-  CONSTRAINT `FK_participant_timelines_csDiffPerMinDeltasId` FOREIGN KEY (`csDiffPerMinDeltasId`) REFERENCES `participant_timeline_delta` (`id`),
-  CONSTRAINT `FK_participant_timelines_damageTakenDiffPerMinDeltasId` FOREIGN KEY (`damageTakenDiffPerMinDeltasId`) REFERENCES `participant_timeline_delta` (`id`),
-  CONSTRAINT `FK_participant_timelines_damageTakenPerMinDeltasId` FOREIGN KEY (`damageTakenPerMinDeltasId`) REFERENCES `participant_timeline_delta` (`id`),
   CONSTRAINT `FK_participant_timelines_gameId` FOREIGN KEY (`gameId`) REFERENCES `match` (`gameId`),
-  CONSTRAINT `FK_participant_timelines_goldPerMinDeltasId` FOREIGN KEY (`goldPerMinDeltasId`) REFERENCES `participant_timeline_delta` (`id`),
-  CONSTRAINT `FK_participant_timelines_participantId` FOREIGN KEY (`participantId`) REFERENCES `participant` (`participantId`),
-  CONSTRAINT `FK_participant_timelines_xpDiffPerMinDeltasId` FOREIGN KEY (`xpDiffPerMinDeltasId`) REFERENCES `participant_timeline_delta` (`id`),
-  CONSTRAINT `FK_participant_timelines_xpPerMinDeltasId` FOREIGN KEY (`xpPerMinDeltasId`) REFERENCES `participant_timeline_delta` (`id`)
+  CONSTRAINT `FK_participant_timelines_participantId` FOREIGN KEY (`participantId`) REFERENCES `participant` (`participantId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Dumping data for table riot.participant_timeline: ~0 rows (approximately)
@@ -665,10 +660,18 @@ CREATE TABLE IF NOT EXISTS `participant_timeline` (
 
 -- Dumping structure for table riot.participant_timeline_delta
 CREATE TABLE IF NOT EXISTS `participant_timeline_delta` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `gameId` int(11) unsigned NOT NULL,
+  `participantId` int(11) NOT NULL,
+  `deltaTypeId` int(11) NOT NULL,
   `increment` varchar(7) NOT NULL COMMENT 'Generally has 2 values, "0-10" and "10-20". Length of 7 should cover anything that goes into the 100+ min range. God help anyone who plays more than 16.5 hours in one game.',
   `value` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`participantId`,`gameId`),
+  UNIQUE KEY `deltaTypeId_increment` (`deltaTypeId`,`increment`),
+  KEY `deltaTypeId` (`deltaTypeId`),
+  KEY `FK_participant_timeline_delta_gameId` (`gameId`),
+  CONSTRAINT `FK_participant_timeline_delta_deltaTypeId` FOREIGN KEY (`deltaTypeId`) REFERENCES `delta_type` (`id`),
+  CONSTRAINT `FK_participant_timeline_delta_gameId` FOREIGN KEY (`gameId`) REFERENCES `match` (`gameId`),
+  CONSTRAINT `FK_participant_timeline_delta_participantId` FOREIGN KEY (`participantId`) REFERENCES `participant` (`participantId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Dumping data for table riot.participant_timeline_delta: ~0 rows (approximately)
@@ -805,7 +808,7 @@ CREATE TABLE IF NOT EXISTS `summoner` (
   PRIMARY KEY (`summonerId`,`accountId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.summoner: ~2 rows (approximately)
+-- Dumping data for table riot.summoner: ~0 rows (approximately)
 /*!40000 ALTER TABLE `summoner` DISABLE KEYS */;
 /*!40000 ALTER TABLE `summoner` ENABLE KEYS */;
 
