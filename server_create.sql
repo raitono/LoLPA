@@ -636,6 +636,8 @@ CREATE TABLE IF NOT EXISTS `participant_stat` (
   `magicalDamageTaken` int(11) NOT NULL,
   `trueDamageTaken` int(11) NOT NULL,
   `totalDamageTaken` int(11) NOT NULL,
+  `perkPrimaryStyle` int(11) NOT NULL,
+  `perkSubStyle` int(11) NOT NULL,
   PRIMARY KEY (`participantId`,`gameId`),
   KEY `FK_participant_stats_participantId` (`participantId`),
   KEY `FK_participant_stats_gameId` (`gameId`),

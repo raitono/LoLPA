@@ -267,6 +267,14 @@
     "totalDamageTaken": {
       "type": "number",
       "required": true
+    },
+    "perkPrimaryStyle": {
+      "type": "number",
+      "required": true
+    },
+    "perkSubStyle": {
+      "type": "number",
+      "required": true
     }
   },
   "validations": [],
