@@ -498,8 +498,38 @@ CREATE TABLE IF NOT EXISTS `match` (
   CONSTRAINT `FK_match_seasonId` FOREIGN KEY (`seasonId`) REFERENCES `season` (`seasonId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.match: ~0 rows (approximately)
+-- Dumping data for table riot.match: ~29 rows (approximately)
 /*!40000 ALTER TABLE `match` DISABLE KEYS */;
+INSERT INTO `match` (`gameId`, `seasonId`, `queueId`, `mapId`, `platformId`, `gameVersion`, `gameMode`, `gameType`, `gameDuration`, `gameCreation`) VALUES
+	(2817229494, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 1231, '2018-07-02 00:19:55'),
+	(2818831093, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 934, '2018-07-03 23:50:32'),
+	(2818859495, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 1171, '2018-07-04 01:09:44'),
+	(2818860492, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 1659, '2018-07-04 00:33:59'),
+	(2818887577, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 1112, '2018-07-04 01:42:41'),
+	(2818922598, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 1017, '2018-07-04 02:05:29'),
+	(2818937829, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 1355, '2018-07-04 02:26:56'),
+	(2818955571, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 1147, '2018-07-04 02:54:24'),
+	(2818973858, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 847, '2018-07-04 03:21:13'),
+	(2818987969, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 1401, '2018-07-04 03:39:18'),
+	(2819029603, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 1067, '2018-07-04 04:22:34'),
+	(2820964598, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 1015, '2018-07-07 00:41:40'),
+	(2820989444, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 1438, '2018-07-07 01:10:28'),
+	(2821579249, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 814, '2018-07-08 00:29:37'),
+	(2821603737, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 974, '2018-07-08 00:51:34'),
+	(2821617441, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 1178, '2018-07-08 01:12:23'),
+	(2821633353, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 1591, '2018-07-08 01:37:17'),
+	(2821662804, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 1142, '2018-07-08 02:19:39'),
+	(2821677935, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 996, '2018-07-08 02:43:05'),
+	(2821703328, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 1564, '2018-07-08 03:05:20'),
+	(2821727309, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 1093, '2018-07-08 04:01:34'),
+	(2821730480, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 1327, '2018-07-08 03:35:08'),
+	(2822293940, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 1514, '2018-07-09 01:57:43'),
+	(2822331391, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 786, '2018-07-09 02:28:00'),
+	(2822336253, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 1448, '2018-07-09 02:46:41'),
+	(2823724218, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 1134, '2018-07-11 01:02:44'),
+	(2823731855, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 941, '2018-07-11 01:27:59'),
+	(2823746165, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 946, '2018-07-11 01:47:19'),
+	(2823779910, 11, 900, 11, 'NA1', '8.13.235.9749', 'URF', 'MATCHED_GAME', 1159, '2018-07-11 02:07:26');
 /*!40000 ALTER TABLE `match` ENABLE KEYS */;
 
 -- Dumping structure for table riot.match_list
@@ -519,8 +549,38 @@ CREATE TABLE IF NOT EXISTS `match_list` (
   CONSTRAINT `FK_match_list_summonerId` FOREIGN KEY (`summonerId`) REFERENCES `summoner` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.match_list: ~0 rows (approximately)
+-- Dumping data for table riot.match_list: ~29 rows (approximately)
 /*!40000 ALTER TABLE `match_list` DISABLE KEYS */;
+INSERT INTO `match_list` (`summonerId`, `gameId`, `championId`, `lane`, `role`, `timestamp`) VALUES
+	(26056841, 2817229494, 254, 'TOP', 'DUO_SUPPORT', '2018-07-02 00:19:55'),
+	(26056841, 2818831093, 36, 'NONE', 'DUO_SUPPORT', '2018-07-03 23:50:32'),
+	(26056841, 2818859495, 127, 'NONE', 'DUO_SUPPORT', '2018-07-04 01:09:44'),
+	(26056841, 2818860492, 498, 'BOTTOM', 'DUO_SUPPORT', '2018-07-04 00:33:59'),
+	(26056841, 2818887577, 45, 'NONE', 'DUO_SUPPORT', '2018-07-04 01:42:41'),
+	(26056841, 2818922598, 81, 'NONE', 'DUO_SUPPORT', '2018-07-04 02:05:29'),
+	(26056841, 2818937829, 111, 'BOTTOM', 'DUO_CARRY', '2018-07-04 02:26:56'),
+	(26056841, 2818955571, 497, 'NONE', 'DUO_SUPPORT', '2018-07-04 02:54:24'),
+	(26056841, 2818973858, 222, 'NONE', 'DUO_SUPPORT', '2018-07-04 03:21:13'),
+	(26056841, 2818987969, 12, 'JUNGLE', 'NONE', '2018-07-04 03:39:18'),
+	(26056841, 2819029603, 69, 'NONE', 'DUO_SUPPORT', '2018-07-04 04:22:34'),
+	(26056841, 2820964598, 127, 'NONE', 'DUO_SUPPORT', '2018-07-07 00:41:40'),
+	(26056841, 2820989444, 36, 'BOTTOM', 'DUO', '2018-07-07 01:10:28'),
+	(26056841, 2821579249, 21, 'NONE', 'DUO_SUPPORT', '2018-07-08 00:29:37'),
+	(26056841, 2821603737, 105, 'NONE', 'DUO_SUPPORT', '2018-07-08 00:51:34'),
+	(26056841, 2821617441, 23, 'NONE', 'DUO_SUPPORT', '2018-07-08 01:12:23'),
+	(26056841, 2821633353, 80, 'TOP', 'SOLO', '2018-07-08 01:37:17'),
+	(26056841, 2821662804, 69, 'NONE', 'DUO_SUPPORT', '2018-07-08 02:19:39'),
+	(26056841, 2821677935, 105, 'NONE', 'DUO_SUPPORT', '2018-07-08 02:43:05'),
+	(26056841, 2821703328, 6, 'BOTTOM', 'DUO', '2018-07-08 03:05:20'),
+	(26056841, 2821727309, 122, 'NONE', 'DUO_SUPPORT', '2018-07-08 04:01:34'),
+	(26056841, 2821730480, 42, 'MID', 'DUO', '2018-07-08 03:35:08'),
+	(26056841, 2822293940, 127, 'BOTTOM', 'DUO_CARRY', '2018-07-09 01:57:43'),
+	(26056841, 2822331391, 89, 'NONE', 'DUO_SUPPORT', '2018-07-09 02:28:00'),
+	(26056841, 2822336253, 497, 'BOTTOM', 'DUO_SUPPORT', '2018-07-09 02:46:41'),
+	(26056841, 2823724218, 78, 'NONE', 'DUO_SUPPORT', '2018-07-11 01:02:44'),
+	(26056841, 2823731855, 84, 'NONE', 'DUO_SUPPORT', '2018-07-11 01:27:59'),
+	(26056841, 2823746165, 111, 'NONE', 'DUO_SUPPORT', '2018-07-11 01:47:19'),
+	(26056841, 2823779910, 32, 'NONE', 'DUO_SUPPORT', '2018-07-11 02:07:26');
 /*!40000 ALTER TABLE `match_list` ENABLE KEYS */;
 
 -- Dumping structure for table riot.participant
@@ -809,8 +869,11 @@ CREATE TABLE IF NOT EXISTS `summoner` (
   PRIMARY KEY (`id`,`accountId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.summoner: ~0 rows (approximately)
+-- Dumping data for table riot.summoner: ~2 rows (approximately)
 /*!40000 ALTER TABLE `summoner` DISABLE KEYS */;
+INSERT INTO `summoner` (`id`, `accountId`, `profileIconId`, `summonerLevel`, `name`, `revisionDate`, `lastUpdated`) VALUES
+	(26056841, 40769781, 3379, 79, 'SushiDojo', '2018-07-11 02:28:44', NULL),
+	(68431663, 229105505, 3379, 40, 'CaptainPuddin', '2018-07-08 03:00:52', NULL);
 /*!40000 ALTER TABLE `summoner` ENABLE KEYS */;
 
 -- Dumping structure for table riot.team_ban
@@ -889,14 +952,15 @@ CREATE TABLE IF NOT EXISTS `xref_participant_item` (
 
 -- Dumping structure for table riot.xref_summoner_game
 CREATE TABLE IF NOT EXISTS `xref_summoner_game` (
-  `profileId` int(11) NOT NULL,
+  `summonerId` int(11) NOT NULL,
   `gameId` int(11) unsigned NOT NULL,
   `participantId` int(11) NOT NULL,
-  UNIQUE KEY `UX_profileId_gameId` (`participantId`,`profileId`,`gameId`),
-  KEY `FK_xref_profile_game_profileId` (`profileId`),
-  KEY `FK_xref_profile_game_gameId` (`gameId`),
-  CONSTRAINT `FK_xref_profile_game_gameId` FOREIGN KEY (`gameId`) REFERENCES `match` (`gameId`),
-  CONSTRAINT `FK_xref_profile_game_participantId` FOREIGN KEY (`participantId`) REFERENCES `participant` (`id`)
+  UNIQUE KEY `UX_summonerId_gameId` (`participantId`,`summonerId`,`gameId`),
+  KEY `FK_xref_summoner_game_summonerId` (`summonerId`),
+  KEY `FK_xref_summoner_game_gameId` (`gameId`),
+  CONSTRAINT `FK_xref_summoner_game_gameId` FOREIGN KEY (`gameId`) REFERENCES `match` (`gameId`),
+  CONSTRAINT `FK_xref_summoner_game_participantId` FOREIGN KEY (`participantId`) REFERENCES `participant` (`id`),
+  CONSTRAINT `FK_xref_summoner_game_summonerId` FOREIGN KEY (`summonerId`) REFERENCES `summoner` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Dumping data for table riot.xref_summoner_game: ~0 rows (approximately)
