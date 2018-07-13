@@ -26,7 +26,7 @@ app.listen(port, () => {
 	Summoner.registerWorkers(worker);
 	Match.registerWorkers(worker);
 
-	worker.submitJob('updateSummoner', 'CaptainPuddin').then(function(result) {
+	worker.submitJob('updateSummoner', 'Yost').then(function(result) {
 		let dbSummoner = JSON.parse(result);
 		debug('Updated summoner: ' + dbSummoner.name);
 

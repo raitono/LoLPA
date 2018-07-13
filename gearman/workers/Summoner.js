@@ -16,7 +16,7 @@ let update = function(summonerName) {
 				method: 'POST',
 				uri: webServer.URLs.Summoner.upsertWithWhere('{"name": "'+summonerName+'"}'),
 				body: {
-					id: rawSummoner.id,
+					summonerId: rawSummoner.id,
 					accountId: rawSummoner.accountId,
 					profileIconId: rawSummoner.profileIconId,
 					summonerLevel: rawSummoner.summonerLevel,
