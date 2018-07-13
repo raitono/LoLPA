@@ -38,6 +38,7 @@ let updateMatchList = async function(summoner) {
 	let statBatch = [];
 	let timelineBatch = [];
 	let deltaBatch = [];
+	let participantItemXrefBatch =[];
 	let perkBatch = [];
 	let perkVarBatch = [];
 
@@ -230,6 +231,20 @@ let updateMatchList = async function(summoner) {
 					});
 				});
 			});
+
+			let itemCount = 0;
+			while (!util.isNullOrUndefined(participant.stats['item'+itemCount])) {
+				participantItemXrefBatch.push({
+					method: 'PUT',
+					uri: webServer.URLs.XrefParticipantItem.put(),
+					body: {
+						gameId: match.gameId,
+						participantId: participant.participantId,
+						itemId: participant.stats['item'+itemCount],
+					},
+					json: true,
+				});
+			}
 		});
 	});
 
