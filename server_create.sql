@@ -711,26 +711,6 @@ CREATE TABLE IF NOT EXISTS `perk_style` (
 /*!40000 ALTER TABLE `perk_style` DISABLE KEYS */;
 /*!40000 ALTER TABLE `perk_style` ENABLE KEYS */;
 
--- Dumping structure for table riot.perk_var
-CREATE TABLE IF NOT EXISTS `perk_var` (
-  `gameId` int(11) unsigned NOT NULL,
-  `participantId` int(11) NOT NULL,
-  `perkId` varchar(4) NOT NULL,
-  `varId` int(11) NOT NULL COMMENT 'Every perk gets 3. Pulling these into their own table allows me to expand the amount of vars instead of adding more columns to the stats table if Riot ever decides to use more.',
-  `description` int(11) NOT NULL,
-  `value` int(11) NOT NULL,
-  PRIMARY KEY (`gameId`,`participantId`),
-  UNIQUE KEY `perkId_varId` (`participantId`,`perkId`,`varId`),
-  KEY `FK_perk_vars_perkId` (`perkId`),
-  CONSTRAINT `FK_perk_vars_gameId` FOREIGN KEY (`gameId`) REFERENCES `match` (`gameId`),
-  CONSTRAINT `FK_perk_vars_participantId` FOREIGN KEY (`participantId`) REFERENCES `participant` (`participantId`),
-  CONSTRAINT `FK_perk_vars_perkId` FOREIGN KEY (`perkId`) REFERENCES `perk` (`perkId`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='I assume vars is variables. Since I''m interpreting the API, I can only really guess.';
-
--- Dumping data for table riot.perk_var: ~0 rows (approximately)
-/*!40000 ALTER TABLE `perk_var` DISABLE KEYS */;
-/*!40000 ALTER TABLE `perk_var` ENABLE KEYS */;
-
 -- Dumping structure for procedure riot.p_GetMatchesBySummonerId
 DELIMITER //
 CREATE DEFINER=`root`@`localhost` PROCEDURE `p_GetMatchesBySummonerId`(
@@ -816,7 +796,7 @@ CREATE TABLE IF NOT EXISTS `summoner` (
   PRIMARY KEY (`summonerId`,`accountId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.summoner: ~1 rows (approximately)
+-- Dumping data for table riot.summoner: ~0 rows (approximately)
 /*!40000 ALTER TABLE `summoner` DISABLE KEYS */;
 INSERT INTO `summoner` (`summonerId`, `accountId`, `profileIconId`, `summonerLevel`, `name`, `revisionDate`, `lastUpdated`) VALUES
 	(38769401, 201586208, 536, 53, 'Yost', '2018-07-13 00:19:52', NULL);
@@ -895,6 +875,26 @@ CREATE TABLE IF NOT EXISTS `xref_participant_item` (
 -- Dumping data for table riot.xref_participant_item: ~0 rows (approximately)
 /*!40000 ALTER TABLE `xref_participant_item` DISABLE KEYS */;
 /*!40000 ALTER TABLE `xref_participant_item` ENABLE KEYS */;
+
+-- Dumping structure for table riot.xref_participant_perk
+CREATE TABLE IF NOT EXISTS `xref_participant_perk` (
+  `gameId` int(11) unsigned NOT NULL,
+  `participantId` int(11) NOT NULL,
+  `perkId` varchar(4) NOT NULL,
+  `varId` int(11) NOT NULL COMMENT 'Every perk gets 3. Pulling these into their own table allows me to expand the amount of vars instead of adding more columns to the stats table if Riot ever decides to use more.',
+  `description` int(11) NOT NULL,
+  `value` int(11) NOT NULL,
+  PRIMARY KEY (`gameId`,`participantId`),
+  UNIQUE KEY `perkId_varId` (`participantId`,`perkId`,`varId`),
+  KEY `FK_perkId` (`perkId`),
+  CONSTRAINT `FK_gameId` FOREIGN KEY (`gameId`) REFERENCES `match` (`gameId`),
+  CONSTRAINT `FK_participantId` FOREIGN KEY (`participantId`) REFERENCES `participant` (`participantId`),
+  CONSTRAINT `FK_perkId` FOREIGN KEY (`perkId`) REFERENCES `perk` (`perkId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Dumping data for table riot.xref_participant_perk: ~0 rows (approximately)
+/*!40000 ALTER TABLE `xref_participant_perk` DISABLE KEYS */;
+/*!40000 ALTER TABLE `xref_participant_perk` ENABLE KEYS */;
 
 -- Dumping structure for table riot.xref_summoner_game
 CREATE TABLE IF NOT EXISTS `xref_summoner_game` (
