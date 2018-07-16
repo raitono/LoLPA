@@ -514,14 +514,8 @@ CREATE TABLE IF NOT EXISTS `match` (
   CONSTRAINT `FK_match_seasonId` FOREIGN KEY (`seasonId`) REFERENCES `season` (`seasonId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.match: ~5 rows (approximately)
+-- Dumping data for table riot.match: ~14 rows (approximately)
 /*!40000 ALTER TABLE `match` DISABLE KEYS */;
-INSERT INTO `match` (`gameId`, `seasonId`, `queueId`, `mapId`, `platformId`, `gameVersion`, `gameMode`, `gameType`, `gameDuration`, `gameCreation`) VALUES
-	(2823593910, 11, 400, 11, 'NA1', '8.13.235.9749', 'CLASSIC', 'MATCHED_GAME', 941, '2018-07-10 21:30:55'),
-	(2824401710, 11, 400, 11, 'NA1', '8.13.235.9749', 'CLASSIC', 'MATCHED_GAME', 2008, '2018-07-12 03:16:57'),
-	(2824424317, 11, 400, 11, 'NA1', '8.13.235.9749', 'CLASSIC', 'MATCHED_GAME', 1898, '2018-07-12 04:04:27'),
-	(2824874744, 11, 400, 11, 'NA1', '8.13.235.9749', 'CLASSIC', 'MATCHED_GAME', 2142, '2018-07-12 21:56:37'),
-	(2825003006, 11, 400, 11, 'NA1', '8.13.235.9749', 'CLASSIC', 'MATCHED_GAME', 1200, '2018-07-12 23:57:58');
 /*!40000 ALTER TABLE `match` ENABLE KEYS */;
 
 -- Dumping structure for table riot.match_list
@@ -748,7 +742,7 @@ CREATE TABLE IF NOT EXISTS `season` (
 /*!40000 ALTER TABLE `season` DISABLE KEYS */;
 INSERT INTO `season` (`seasonId`, `number`, `startDate`, `endDate`) VALUES
 	(10, 7, '2018-01-16 00:00:00', '2018-01-17 00:00:00'),
-	(11, 8, '2018-07-10 00:00:00', NULL);
+	(11, 8, '2018-07-15 00:00:00', NULL);
 /*!40000 ALTER TABLE `season` ENABLE KEYS */;
 
 -- Dumping structure for table riot.spell
@@ -796,10 +790,8 @@ CREATE TABLE IF NOT EXISTS `summoner` (
   PRIMARY KEY (`summonerId`,`accountId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.summoner: ~0 rows (approximately)
+-- Dumping data for table riot.summoner: ~1 rows (approximately)
 /*!40000 ALTER TABLE `summoner` DISABLE KEYS */;
-INSERT INTO `summoner` (`summonerId`, `accountId`, `profileIconId`, `summonerLevel`, `name`, `revisionDate`, `lastUpdated`) VALUES
-	(38769401, 201586208, 536, 53, 'Yost', '2018-07-13 00:19:52', NULL);
 /*!40000 ALTER TABLE `summoner` ENABLE KEYS */;
 
 -- Dumping structure for table riot.team_ban
@@ -882,7 +874,7 @@ CREATE TABLE IF NOT EXISTS `xref_participant_perk` (
   `participantId` int(11) NOT NULL,
   `perkId` varchar(4) NOT NULL,
   `varId` int(11) NOT NULL COMMENT 'Every perk gets 3. Pulling these into their own table allows me to expand the amount of vars instead of adding more columns to the stats table if Riot ever decides to use more.',
-  `description` int(11) NOT NULL,
+  `description` varchar(50) DEFAULT NULL,
   `value` int(11) NOT NULL,
   PRIMARY KEY (`gameId`,`participantId`),
   UNIQUE KEY `perkId_varId` (`participantId`,`perkId`,`varId`),

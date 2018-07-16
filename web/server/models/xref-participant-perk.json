@@ -1,5 +1,5 @@
 {
-  "name": "Perk_Var",
+  "name": "Xref_Participant_Perk",
   "base": "PersistedModel",
   "idInjection": false,
   "options": {
@@ -17,7 +17,7 @@
       "required": true
     },
     "perkId": {
-      "type": "number",
+      "type": "string",
       "required": true
     },
     "varId": {
@@ -25,8 +25,8 @@
       "required": true
     },
     "description": {
-      "type": "number",
-      "required": true
+      "type": "string",
+      "required": false
     },
     "value": {
       "type": "number",

@@ -87,10 +87,6 @@
     "dataSource": "mysqlDs",
     "public": true
   },
-  "Perk_Var": {
-    "dataSource": "mysqlDs",
-    "public": true
-  },
   "Team_Ban": {
     "dataSource": "mysqlDs",
     "public": true
@@ -108,6 +104,10 @@
     "public": true
   },
   "Delta_Type": {
+    "dataSource": "mysqlDs",
+    "public": true
+  },
+  "Xref_Participant_Perk": {
     "dataSource": "mysqlDs",
     "public": true
   }
