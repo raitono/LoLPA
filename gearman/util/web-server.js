@@ -19,12 +19,22 @@ module.exports.URLs = {
 	},
 	Participant: {
 		put: function() {
-			return process.env.WEB_SERVER + '/Participant';
+			return process.env.WEB_SERVER + '/Participants';
 		},
 	},
 	ParticipantStat: {
 		put: function() {
-			return process.env.WEB_SERVER + '/Participant_Stat';
+			return process.env.WEB_SERVER + '/Participant_Stats';
+		},
+	},
+	ParticipantTimeline: {
+		put: function() {
+			return process.env.WEB_SERVER + '/Participant_Timelines';
+		},
+	},
+	ParticipantTimelineDelta: {
+		put: function() {
+			return process.env.WEB_SERVER + '/Participant_Timeline_Deltas';
 		},
 	},
 	Summoner: {
@@ -42,17 +52,27 @@ module.exports.URLs = {
 	},
 	TeamStat: {
 		put: function() {
-			return process.env.WEB_SERVER + '/Team_Stat';
+			return process.env.WEB_SERVER + '/Team_Stats';
 		},
 	},
 	TeamBan: {
 		put: function() {
-			return process.env.WEB_SERVER + '/Team_Ban';
+			return process.env.WEB_SERVER + '/Team_Bans';
 		},
 	},
 	XrefSummonerGame: {
 		put: function() {
-			return process.env.WEB_SERVER + '/Xref_Summoner_Game';
+			return process.env.WEB_SERVER + '/Xref_Summoner_Games';
+		},
+	},
+	XrefParticipantItem: {
+		put: function() {
+			return process.env.WEB_SERVER + '/Xref_Participant_Items';
+		},
+	},
+	XrefParticipantPerk: {
+		put: function() {
+			return process.env.WEB_SERVER + '/Xref_Participant_Perks';
 		},
 	},
 };

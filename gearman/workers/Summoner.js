@@ -1,7 +1,7 @@
 const debug = require('debug')('lolpa-gearman:Summoner');
 const request = require('request-promise-native');
-
 const Kayn	= require('../kayn');
+
 const webServer = require('../util/web-server');
 
 /**
@@ -9,42 +9,31 @@ const webServer = require('../util/web-server');
  *	@param {string} summonerName - Summoner name to update
  *	@return {Promise} - Returns the Riot API Summoner object in JSON
  */
-let update = function(summonerName) {
-	return new Promise(function(resolve, reject) {
-		Kayn.Summoner.by.name(summonerName).then(function(rawSummoner) {
-			let options = {
-				method: 'POST',
-				uri: webServer.URLs.Summoner.upsertWithWhere('{"name": "'+summonerName+'"}'),
-				body: {
-					summonerId: rawSummoner.id,
-					accountId: rawSummoner.accountId,
-					profileIconId: rawSummoner.profileIconId,
-					summonerLevel: rawSummoner.summonerLevel,
-					name: rawSummoner.name,
-					revisionDate: rawSummoner.revisionDate,
-				},
-				json: true,
-			};
+let updateByName = async (summonerName) => {
+	let rawSummoner = await Kayn.Summoner.by.name(summonerName);
 
-			request(options).then(function(dbResult) {
-				resolve(JSON.stringify(dbResult));
-			}).catch(function(reason) {
-				reject(reason);
-			});
-		}).catch(function(reason) {
-			reject(reason);
-		});
-	});
+	let options = {
+		method: 'POST',
+		uri: webServer.URLs.Summoner.upsertWithWhere('{"name": "'+summonerName+'"}'),
+		body: {
+			summonerId: rawSummoner.id,
+			accountId: rawSummoner.accountId,
+			profileIconId: rawSummoner.profileIconId,
+			summonerLevel: rawSummoner.summonerLevel,
+			name: rawSummoner.name,
+			revisionDate: rawSummoner.revisionDate,
+		},
+		json: true,
+	};
+
+	return JSON.stringify(await request(options));
 };
 
-module.exports.registerWorkers = function(worker) {
-	worker.registerWorker('toUpper', function(task) {
-		debug('toUpper ' + task.payload);
-		return task.payload.toUpperCase();
-	});
-	worker.registerWorker('updateSummoner', function(task) {
+
+module.exports.registerWorkers = (worker) => {
+	worker.registerWorker('updateSummonerByName', async (task) => {
 		debug('update summoner: ' + task.payload);
-		update(task.payload).then(function(s) {
+		updateByName(task.payload).then(function(s) {
 			task.end(s);
 		}).catch(function(reason) {
 			debug(reason);
