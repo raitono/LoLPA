@@ -2,9 +2,11 @@ const util = require('util');
 
 const debug = require('debug')('lolpa-gearman:Match');
 const request = require('request-promise-native');
-
 const Kayn	= require('../kayn');
+
 const webServer = require('../util/web-server');
+
+let matchWorker = null;
 
 /**
  * Pull new matches and add them to the database
@@ -38,9 +40,8 @@ let updateMatchList = async function(summoner) {
 	let statBatch = [];
 	let timelineBatch = [];
 	let deltaBatch = [];
-	let participantItemXrefBatch =[];
+	let itemBatch =[];
 	let perkBatch = [];
-	let perkVarBatch = [];
 
 	// Batch up the insert options
 	matches.forEach((match) => {
@@ -75,7 +76,7 @@ let updateMatchList = async function(summoner) {
 			});
 		});
 
-		match.teams.forEach((team) => {
+		/* match.teams.forEach((team) => {
 			teamBatch.push({
 				method: 'PUT',
 				uri: webServer.URLs.TeamStat.put(),
@@ -234,7 +235,7 @@ let updateMatchList = async function(summoner) {
 
 			let itemCount = 0;
 			while (!util.isNullOrUndefined(participant.stats['item'+itemCount])) {
-				participantItemXrefBatch.push({
+				itemBatch.push({
 					method: 'PUT',
 					uri: webServer.URLs.XrefParticipantItem.put(),
 					body: {
@@ -244,8 +245,33 @@ let updateMatchList = async function(summoner) {
 					},
 					json: true,
 				});
+
+				itemCount = itemCount + 1;
 			}
-		});
+
+			let perkCount = 0;
+			while (!util.isNullOrUndefined(participant.stats['perk'+perkCount])) {
+				let perkVarCount = 1;
+
+				while (!util.isNullOrUndefined(participant.stats['perk'+perkCount+'Var'+perkVarCount])) {
+					perkBatch.push({
+						method: 'PUT',
+						uri: webServer.URLs.XrefParticipantPerk.put(),
+						body: {
+							gameId: match.gameId,
+							participantId: participant.participantId,
+							perkId: participant.stats['item'+perkCount],
+							varId: perkVarCount,
+							value: participant.stats['perk'+perkCount+'Var'+perkVarCount],
+						},
+						json: true,
+					});
+					perkVarCount = perkVarCount + 1;
+				}
+				perkCount = perkCount + 1;
+				perkVarCount = 1;
+			}
+		}); */
 	});
 
 	summoner.matchList.forEach((matchList) => {
@@ -253,7 +279,7 @@ let updateMatchList = async function(summoner) {
 			method: 'PUT',
 			uri: webServer.URLs.MatchList.put(),
 			body: {
-				summonerId: summoner.id,
+				summonerId: summoner.summonerId,
 				gameId: matchList.gameId,
 				championId: matchList.champion,
 				lane: matchList.lane,
@@ -269,7 +295,22 @@ let updateMatchList = async function(summoner) {
 
 	// Insert the rest of the data
 	// This has to be done separate because of the foreign keys to match.
-	await Promise.all(matchListBatch.map(request));
+	try {
+		await Promise.all([
+			matchListBatch.map(request),
+			summonerParticipantXrefBatch.map(request),
+			// teamBatch.map(request),
+			// teamBanBatch.map(request),
+			// participantBatch.map(request),
+			// statBatch.map(request),
+			// timelineBatch.map(request),
+			// deltaBatch.map(request),
+			// itemBatch.map(request),
+			// perkBatch.map(request),
+		]);
+	} catch (err) {
+		debug(err);
+	}
 };
 
 let getMatchList = async (summoner, options) => {
@@ -352,6 +393,7 @@ let getMatchDates = async (beginTime, endTime) => {
 };
 
 module.exports.registerWorkers = (worker) => {
+	matchWorker = worker;
 	worker.registerWorker('updateMatchList', async (task) => {
 		debug('Update Match List:', JSON.parse(task.payload).name);
 		let result = await updateMatchList(task.payload);
