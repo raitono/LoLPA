@@ -166,7 +166,8 @@ INSERT INTO `champion` (`championId`, `name`, `title`) VALUES
 	(432, 'Bard', 'the Wandering Caretaker'),
 	(497, 'Rakan', 'The Charmer'),
 	(498, 'Xayah', 'the Rebel'),
-	(516, 'Ornn', 'The Fire below the Mountain');
+	(516, 'Ornn', 'The Fire below the Mountain'),
+	(555, 'Pyke', 'the Bloodharbor Ripper');
 /*!40000 ALTER TABLE `champion` ENABLE KEYS */;
 
 -- Dumping structure for table riot.champion_tag
@@ -514,7 +515,7 @@ CREATE TABLE IF NOT EXISTS `match` (
   CONSTRAINT `FK_match_seasonId` FOREIGN KEY (`seasonId`) REFERENCES `season` (`seasonId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.match: ~14 rows (approximately)
+-- Dumping data for table riot.match: ~0 rows (approximately)
 /*!40000 ALTER TABLE `match` DISABLE KEYS */;
 /*!40000 ALTER TABLE `match` ENABLE KEYS */;
 
@@ -790,7 +791,7 @@ CREATE TABLE IF NOT EXISTS `summoner` (
   PRIMARY KEY (`summonerId`,`accountId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.summoner: ~1 rows (approximately)
+-- Dumping data for table riot.summoner: ~0 rows (approximately)
 /*!40000 ALTER TABLE `summoner` DISABLE KEYS */;
 /*!40000 ALTER TABLE `summoner` ENABLE KEYS */;
 
