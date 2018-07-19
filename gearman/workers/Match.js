@@ -6,8 +6,6 @@ const Kayn	= require('../kayn');
 
 const webServer = require('../util/web-server');
 
-let matchWorker = null;
-
 /**
  * Pull new matches and add them to the database
  * @param {Object} summoner Summoner whose matches we are updating
@@ -290,12 +288,12 @@ let updateMatchList = async function(summoner) {
 		});
 	});
 
-	// Insert the Matches
-	await Promise.all(matchInsertBatch.map(request));
-
-	// Insert the rest of the data
-	// This has to be done separate because of the foreign keys to match.
 	try {
+		// Insert the Matches
+		await Promise.all(matchInsertBatch.map(request));
+
+		// Insert the rest of the data
+		// This has to be done separate because of the foreign keys to match.
 		await Promise.all([
 			matchListBatch.map(request),
 			summonerParticipantXrefBatch.map(request),
@@ -393,7 +391,6 @@ let getMatchDates = async (beginTime, endTime) => {
 };
 
 module.exports.registerWorkers = (worker) => {
-	matchWorker = worker;
 	worker.registerWorker('updateMatchList', async (task) => {
 		debug('Update Match List:', JSON.parse(task.payload).name);
 		let result = await updateMatchList(task.payload);
@@ -402,3 +399,4 @@ module.exports.registerWorkers = (worker) => {
 
 	debug('Workers registered');
 };
+
