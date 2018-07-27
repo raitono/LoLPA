@@ -515,7 +515,7 @@ CREATE TABLE IF NOT EXISTS `match` (
   CONSTRAINT `FK_match_seasonId` FOREIGN KEY (`seasonId`) REFERENCES `season` (`seasonId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.match: ~0 rows (approximately)
+-- Dumping data for table riot.match: ~7 rows (approximately)
 /*!40000 ALTER TABLE `match` DISABLE KEYS */;
 /*!40000 ALTER TABLE `match` ENABLE KEYS */;
 
@@ -536,7 +536,7 @@ CREATE TABLE IF NOT EXISTS `match_list` (
   CONSTRAINT `FK_match_list_summonerId` FOREIGN KEY (`summonerId`) REFERENCES `summoner` (`summonerId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.match_list: ~0 rows (approximately)
+-- Dumping data for table riot.match_list: ~7 rows (approximately)
 /*!40000 ALTER TABLE `match_list` DISABLE KEYS */;
 /*!40000 ALTER TABLE `match_list` ENABLE KEYS */;
 
@@ -560,7 +560,7 @@ CREATE TABLE IF NOT EXISTS `participant` (
   CONSTRAINT `FK_participants_spell2Id` FOREIGN KEY (`spell2Id`) REFERENCES `spell` (`spellId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.participant: ~0 rows (approximately)
+-- Dumping data for table riot.participant: ~70 rows (approximately)
 /*!40000 ALTER TABLE `participant` DISABLE KEYS */;
 /*!40000 ALTER TABLE `participant` ENABLE KEYS */;
 
@@ -743,7 +743,7 @@ CREATE TABLE IF NOT EXISTS `season` (
 /*!40000 ALTER TABLE `season` DISABLE KEYS */;
 INSERT INTO `season` (`seasonId`, `number`, `startDate`, `endDate`) VALUES
 	(10, 7, '2018-01-16 00:00:00', '2018-01-17 00:00:00'),
-	(11, 8, '2018-07-15 00:00:00', NULL);
+	(11, 8, '2018-07-25 00:00:00', NULL);
 /*!40000 ALTER TABLE `season` ENABLE KEYS */;
 
 -- Dumping structure for table riot.spell
@@ -755,7 +755,7 @@ CREATE TABLE IF NOT EXISTS `spell` (
   PRIMARY KEY (`spellId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='summoner spells';
 
--- Dumping data for table riot.spell: ~0 rows (approximately)
+-- Dumping data for table riot.spell: ~19 rows (approximately)
 /*!40000 ALTER TABLE `spell` DISABLE KEYS */;
 INSERT INTO `spell` (`spellId`, `version`, `name`, `key`) VALUES
 	(-1, '8.2.1', 'Ultra (Really Fast) Dash', 'SummonerSnowURFSnowball_Mark_FollowupCast'),
@@ -827,12 +827,11 @@ CREATE TABLE IF NOT EXISTS `team_stat` (
   `firstRiftHerald` bit(1) NOT NULL,
   `firstBlood` bit(1) NOT NULL,
   `firstTower` bit(1) NOT NULL,
-  PRIMARY KEY (`gameId`),
-  UNIQUE KEY `UX_team_stats_gameId_teamId` (`gameId`,`teamId`),
+  PRIMARY KEY (`gameId`,`teamId`),
   CONSTRAINT `FK_team_stats_gameId` FOREIGN KEY (`gameId`) REFERENCES `match` (`gameId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.team_stat: ~0 rows (approximately)
+-- Dumping data for table riot.team_stat: ~7 rows (approximately)
 /*!40000 ALTER TABLE `team_stat` DISABLE KEYS */;
 /*!40000 ALTER TABLE `team_stat` ENABLE KEYS */;
 
@@ -901,7 +900,7 @@ CREATE TABLE IF NOT EXISTS `xref_summoner_game` (
   CONSTRAINT `FK_xref_summoner_game_participantId` FOREIGN KEY (`participantId`) REFERENCES `participant` (`participantId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.xref_summoner_game: ~0 rows (approximately)
+-- Dumping data for table riot.xref_summoner_game: ~70 rows (approximately)
 /*!40000 ALTER TABLE `xref_summoner_game` DISABLE KEYS */;
 /*!40000 ALTER TABLE `xref_summoner_game` ENABLE KEYS */;
 
