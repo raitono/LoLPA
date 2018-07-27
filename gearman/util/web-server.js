@@ -64,6 +64,15 @@ module.exports.URLs = {
 		put: function() {
 			return process.env.WEB_SERVER + '/Xref_Summoner_Games';
 		},
+		post: function() {
+			return process.env.WEB_SERVER + '/Xref_Summoner_Games';
+		},
+		replaceOrCreate: function() {
+			return process.env.WEB_SERVER + '/Xref_Summoner_Games/replaceOrCreate';
+		},
+		findOne: function(whereClause) {
+			return process.env.WEB_SERVER + '/Xref_Summoner_Games/findOne?filter={"where":'+whereClause+'}';
+		},
 	},
 	XrefParticipantItem: {
 		put: function() {

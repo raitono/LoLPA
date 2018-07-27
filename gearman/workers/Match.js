@@ -61,20 +61,28 @@ let updateMatchList = async function(summoner) {
 			json: true,
 		});
 
-		match.participantIdentities.forEach((identity) => {
-			summonerParticipantXrefBatch.push({
-				method: 'PUT',
-				uri: webServer.URLs.XrefSummonerGame.put(),
-				body: {
-					summonerId: identity.player.summonerId,
-					gameId: match.gameId,
-					participantId: identity.participantId,
-				},
-				json: true,
-			});
+		match.participantIdentities.forEach(async (identity) => {
+			let exists = await request(webServer.URLs.XrefSummonerGame.findOne(
+				'{"summonerId": "' + identity.player.summonerId + '",' +
+				'"gameId": "' + match.gameId + '",' +
+				'"participantId": "' + identity.participantId + '"' +
+				'}'));
+
+			if (!JSON.parse(exists)) {
+				summonerParticipantXrefBatch.push({
+					method: 'POST',
+					uri: webServer.URLs.XrefSummonerGame.post(),
+					body: {
+						summonerId: identity.player.summonerId,
+						gameId: match.gameId,
+						participantId: identity.participantId,
+					},
+					json: true,
+				});
+			}
 		});
 
-		/* match.teams.forEach((team) => {
+		match.teams.forEach((team) => {
 			teamBatch.push({
 				method: 'PUT',
 				uri: webServer.URLs.TeamStat.put(),
@@ -98,7 +106,7 @@ let updateMatchList = async function(summoner) {
 				json: true,
 			});
 
-			team.bans.forEach((ban) => {
+			/* team.bans.forEach((ban) => {
 				teamBanBatch.push({
 					method: 'PUT',
 					uri: webServer.URLs.TeamBan.put(),
@@ -110,7 +118,7 @@ let updateMatchList = async function(summoner) {
 					},
 					json: true,
 				});
-			});
+			}); */
 		});
 
 		match.participants.forEach((participant) => {
@@ -129,7 +137,7 @@ let updateMatchList = async function(summoner) {
 				json: true,
 			});
 
-			statBatch.push({
+			/* statBatch.push({
 				method: 'PUT',
 				uri: webServer.URLs.ParticipantStat.put(),
 				body: {
@@ -268,8 +276,8 @@ let updateMatchList = async function(summoner) {
 				}
 				perkCount = perkCount + 1;
 				perkVarCount = 1;
-			}
-		}); */
+			} */
+		});
 	});
 
 	summoner.matchList.forEach((matchList) => {
@@ -288,24 +296,28 @@ let updateMatchList = async function(summoner) {
 		});
 	});
 
-	try {
-		// Insert the Matches
-		await Promise.all(matchInsertBatch.map(request));
+	let dataInserts = [];
+	dataInserts.push(matchListBatch.map(request));
 
-		// Insert the rest of the data
-		// This has to be done separate because of the foreign keys to match.
-		await Promise.all([
-			matchListBatch.map(request),
-			summonerParticipantXrefBatch.map(request),
-			// teamBatch.map(request),
-			// teamBanBatch.map(request),
-			// participantBatch.map(request),
-			// statBatch.map(request),
-			// timelineBatch.map(request),
-			// deltaBatch.map(request),
-			// itemBatch.map(request),
-			// perkBatch.map(request),
-		]);
+	if (summonerParticipantXrefBatch.length > 0) {
+		dataInserts.push(summonerParticipantXrefBatch.map(request).catch((reason) => {
+			debug(reason);
+		}));
+	}
+
+	// teamBatch.map(request),
+	// teamBanBatch.map(request),
+	// statBatch.map(request),
+	// timelineBatch.map(request),
+	// deltaBatch.map(request),
+	// itemBatch.map(request),
+	// perkBatch.map(request),
+
+	try {
+		// This has to be done separate because of the foreign keys.
+		await Promise.all(matchInsertBatch.map(request));
+		await Promise.all(participantBatch.map(request));
+		await Promise.all(dataInserts);
 	} catch (err) {
 		debug(err);
 	}
