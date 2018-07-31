@@ -29,9 +29,10 @@ let updateMatchList = async function(summoner) {
 	// Send get the matches from RIOT
 	let matches = await Promise.all(matchBatch.map(Kayn.Match.get));
 	let deltaTypes = JSON.parse(await request(webServer.URLs.DeltaType.getAll()));
+	let matchCount = 0;
 	let matchInsertBatch = [];
 	let matchListBatch = [];
-	let summonerParticipantXrefBatch = [];
+	let summonerGameXrefBatch = [];
 	let teamBatch = [];
 	let teamBanBatch = [];
 	let participantBatch = [];
@@ -42,7 +43,7 @@ let updateMatchList = async function(summoner) {
 	let perkBatch = [];
 
 	// Batch up the insert options
-	matches.forEach((match) => {
+	matches.forEach( async (match) => {
 		matchInsertBatch.push({
 			method: 'PUT',
 			uri: webServer.URLs.Matches.put(),
@@ -61,28 +62,7 @@ let updateMatchList = async function(summoner) {
 			json: true,
 		});
 
-		match.participantIdentities.forEach(async (identity) => {
-			let exists = await request(webServer.URLs.XrefSummonerGame.findOne(
-				'{"summonerId": "' + identity.player.summonerId + '",' +
-				'"gameId": "' + match.gameId + '",' +
-				'"participantId": "' + identity.participantId + '"' +
-				'}'));
-
-			if (!JSON.parse(exists)) {
-				summonerParticipantXrefBatch.push({
-					method: 'POST',
-					uri: webServer.URLs.XrefSummonerGame.post(),
-					body: {
-						summonerId: identity.player.summonerId,
-						gameId: match.gameId,
-						participantId: identity.participantId,
-					},
-					json: true,
-				});
-			}
-		});
-
-		match.teams.forEach((team) => {
+		/* match.teams.forEach((team) => {
 			teamBatch.push({
 				method: 'PUT',
 				uri: webServer.URLs.TeamStat.put(),
@@ -106,7 +86,7 @@ let updateMatchList = async function(summoner) {
 				json: true,
 			});
 
-			/* team.bans.forEach((ban) => {
+			team.bans.forEach((ban) => {
 				teamBanBatch.push({
 					method: 'PUT',
 					uri: webServer.URLs.TeamBan.put(),
@@ -118,8 +98,8 @@ let updateMatchList = async function(summoner) {
 					},
 					json: true,
 				});
-			}); */
-		});
+			});
+		}); */
 
 		match.participants.forEach((participant) => {
 			participantBatch.push({
@@ -280,6 +260,12 @@ let updateMatchList = async function(summoner) {
 		});
 	});
 
+	// This is necessary because of the db call in parseMatchParticipantIdentity. Array.ForEach doesn't handle async calls
+	while (matchCount < matches.length) {
+		await parseMatchParticipantIdentities(matches[matchCount], summonerGameXrefBatch);
+		matchCount = matchCount + 1;
+	}
+
 	summoner.matchList.forEach((matchList) => {
 		matchListBatch.push({
 			method: 'PUT',
@@ -299,19 +285,19 @@ let updateMatchList = async function(summoner) {
 	let dataInserts = [];
 	dataInserts.push(matchListBatch.map(request));
 
-	if (summonerParticipantXrefBatch.length > 0) {
-		dataInserts.push(summonerParticipantXrefBatch.map(request).catch((reason) => {
-			debug(reason);
-		}));
+	if (summonerGameXrefBatch.length > 0) {
+		dataInserts.push(summonerGameXrefBatch.map(request));
 	}
 
-	// teamBatch.map(request),
-	// teamBanBatch.map(request),
-	// statBatch.map(request),
-	// timelineBatch.map(request),
-	// deltaBatch.map(request),
-	// itemBatch.map(request),
-	// perkBatch.map(request),
+	/* dataInserts.push(
+		teamBatch.map(request),
+		teamBanBatch.map(request),
+		statBatch.map(request),
+		timelineBatch.map(request),
+		deltaBatch.map(request),
+		itemBatch.map(request),
+		perkBatch.map(request),
+	); */
 
 	try {
 		// This has to be done separate because of the foreign keys.
@@ -323,6 +309,13 @@ let updateMatchList = async function(summoner) {
 	}
 };
 
+/**
+ * Gets a matchlist from RIOT based on the options passed. Uses the summoner's lastUpdated and
+ * revisionDate if no options are passed.
+ * @param {Object} summoner Summoner to get matches for
+ * @param {Object} options Object with beginTime and endTime to specify the dates to find matches
+ * @return {Object} MatchList object from RIOT API
+ */
 let getMatchList = async (summoner, options) => {
 	if (!util.isObject(summoner)) {
 		try {
@@ -399,6 +392,68 @@ let getMatchDates = async (beginTime, endTime) => {
 			beginTime: new Date(beginTime).getTime(),
 			endTime: new Date(endTime).getTime(),
 		};
+	}
+};
+
+/**
+ * Loops through the match's participants and addes them to the summonerGameXrefBatch
+ * @param {Object} match The match to parse
+ * @param {Array} summonerGameXrefBatch Array of Requests to add the participant to
+ */
+let parseMatchParticipantIdentities = async (match, summonerGameXrefBatch) => {
+	let participantCounter = 0;
+	
+	while (participantCounter < match.participantIdentities.length) {
+		await parseMatchParticipantIdentity(match.gameId,
+			match.participantIdentities[participantCounter],
+			summonerGameXrefBatch
+		);
+
+		participantCounter = participantCounter + 1;
+	}
+};
+
+/**
+ * Check if the summoner game xref already exists. If not, insert it into the Requests array.
+ * This is required because Loopback appends 'ON DUPLICATE UPDATE' to the end of the SQL if we do
+ * a simple POST. Notice there is nothing after the UPDATE keyword, this breaks the SQL syntax and
+ * causes an error. I think this is because every field in the table is a part of the key.
+ * @param {String} gameId The game's ID given by RIOT
+ * @param {Object} identity The identity to add
+ * @param {Array} summonerGameXrefBatch Array of Requests to add the participant to
+ */
+let parseMatchParticipantIdentity = async (gameId, identity, summonerGameXrefBatch) => {
+	let exists = null;
+	try {
+		exists = await request(webServer.URLs.XrefSummonerGame.findOne(
+			'{"summonerId": "' + identity.player.summonerId + '",' +
+			'"gameId": "' + gameId + '",' +
+			'"participantId": "' + identity.participantId + '"' +
+			'}'));
+		if (JSON.parse(exists)) {
+			exists = true;
+		}
+	} catch (error) {
+		// It does this when there are no records in the database,
+		// so will only happen the first time.
+		if (error.toString().indexOf('MODEL_NOT_FOUND')) {
+			exists = false;
+		} else {
+			throw error;
+		}
+	}
+
+	if (!exists) {
+		summonerGameXrefBatch.push({
+			method: 'POST',
+			uri: webServer.URLs.XrefSummonerGame.post(),
+			body: {
+				summonerId: identity.player.summonerId,
+				gameId: gameId,
+				participantId: identity.participantId,
+			},
+			json: true,
+		});
 	}
 };
 
