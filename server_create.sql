@@ -2,7 +2,7 @@
 -- Host:                         127.0.0.1
 -- Server version:               5.7.20-log - MySQL Community Server (GPL)
 -- Server OS:                    Win64
--- HeidiSQL Version:             9.5.0.5280
+-- HeidiSQL Version:             9.5.0.5282
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS `champion` (
   PRIMARY KEY (`championId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='VERY incomplete until I do more with champions. Right now I only need basic info to identify them by their IDs.';
 
--- Dumping data for table riot.champion: ~140 rows (approximately)
+-- Dumping data for table riot.champion: ~141 rows (approximately)
 /*!40000 ALTER TABLE `champion` DISABLE KEYS */;
 INSERT INTO `champion` (`championId`, `name`, `title`) VALUES
 	(1, 'Annie', 'the Dark Child'),
@@ -516,7 +516,7 @@ CREATE TABLE IF NOT EXISTS `match` (
   CONSTRAINT `FK_match_seasonId` FOREIGN KEY (`seasonId`) REFERENCES `season` (`seasonId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.match: ~9 rows (approximately)
+-- Dumping data for table riot.match: ~0 rows (approximately)
 /*!40000 ALTER TABLE `match` DISABLE KEYS */;
 /*!40000 ALTER TABLE `match` ENABLE KEYS */;
 
@@ -561,7 +561,7 @@ CREATE TABLE IF NOT EXISTS `participant` (
   CONSTRAINT `FK_participants_spell2Id` FOREIGN KEY (`spell2Id`) REFERENCES `spell` (`spellId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.participant: ~89 rows (approximately)
+-- Dumping data for table riot.participant: ~0 rows (approximately)
 /*!40000 ALTER TABLE `participant` DISABLE KEYS */;
 /*!40000 ALTER TABLE `participant` ENABLE KEYS */;
 
@@ -792,7 +792,7 @@ CREATE TABLE IF NOT EXISTS `summoner` (
   PRIMARY KEY (`summonerId`,`accountId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.summoner: ~1 rows (approximately)
+-- Dumping data for table riot.summoner: ~0 rows (approximately)
 /*!40000 ALTER TABLE `summoner` DISABLE KEYS */;
 /*!40000 ALTER TABLE `summoner` ENABLE KEYS */;
 
@@ -802,8 +802,7 @@ CREATE TABLE IF NOT EXISTS `team_ban` (
   `teamId` int(11) NOT NULL,
   `championId` int(11) NOT NULL,
   `pickTurn` int(11) NOT NULL,
-  PRIMARY KEY (`gameId`),
-  UNIQUE KEY `UX_team_bans_gameId_teamId` (`gameId`,`teamId`),
+  PRIMARY KEY (`gameId`,`teamId`,`pickTurn`),
   CONSTRAINT `FK_team_ban_gameId` FOREIGN KEY (`gameId`) REFERENCES `match` (`gameId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Probably don''t need this, but Riot probably thought the same.';
 
@@ -832,7 +831,7 @@ CREATE TABLE IF NOT EXISTS `team_stat` (
   CONSTRAINT `FK_team_stats_gameId` FOREIGN KEY (`gameId`) REFERENCES `match` (`gameId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.team_stat: ~1 rows (approximately)
+-- Dumping data for table riot.team_stat: ~0 rows (approximately)
 /*!40000 ALTER TABLE `team_stat` DISABLE KEYS */;
 /*!40000 ALTER TABLE `team_stat` ENABLE KEYS */;
 
