@@ -33,7 +33,7 @@ let updateMatchList = async function(summoner) {
 	let matchInsertBatch = [];
 	let matchListBatch = [];
 	let summonerGameXrefBatch = [];
-	let teamBatch = [];
+	let teamStatBatch = [];
 	let teamBanBatch = [];
 	let participantBatch = [];
 	let statBatch = [];
@@ -62,8 +62,8 @@ let updateMatchList = async function(summoner) {
 			json: true,
 		});
 
-		/* match.teams.forEach((team) => {
-			teamBatch.push({
+		match.teams.forEach((team) => {
+			teamStatBatch.push({
 				method: 'PUT',
 				uri: webServer.URLs.TeamStat.put(),
 				body: {
@@ -99,7 +99,7 @@ let updateMatchList = async function(summoner) {
 					json: true,
 				});
 			});
-		}); */
+		});
 
 		match.participants.forEach((participant) => {
 			participantBatch.push({
@@ -117,7 +117,7 @@ let updateMatchList = async function(summoner) {
 				json: true,
 			});
 
-			/* statBatch.push({
+			statBatch.push({
 				method: 'PUT',
 				uri: webServer.URLs.ParticipantStat.put(),
 				body: {
@@ -256,7 +256,7 @@ let updateMatchList = async function(summoner) {
 				}
 				perkCount = perkCount + 1;
 				perkVarCount = 1;
-			} */
+			}
 		});
 	});
 
@@ -282,28 +282,28 @@ let updateMatchList = async function(summoner) {
 		});
 	});
 
-	let dataInserts = [];
-	dataInserts.push(matchListBatch.map(request));
-
-	if (summonerGameXrefBatch.length > 0) {
-		dataInserts.push(summonerGameXrefBatch.map(request));
-	}
-
-	/* dataInserts.push(
-		teamBatch.map(request),
-		teamBanBatch.map(request),
-		statBatch.map(request),
-		timelineBatch.map(request),
-		deltaBatch.map(request),
-		itemBatch.map(request),
-		perkBatch.map(request),
-	); */
+	/* statBatch.map(request),
+	timelineBatch.map(request),
+	deltaBatch.map(request),
+	itemBatch.map(request),
+	perkBatch.map(request), */
 
 	try {
 		// This has to be done separate because of the foreign keys.
 		await Promise.all(matchInsertBatch.map(request));
+		debug('Match Insert Done');
 		await Promise.all(participantBatch.map(request));
-		await Promise.all(dataInserts);
+		debug('Participant Insert Done');
+		await Promise.all(matchListBatch.map(request));
+		debug('Match List Insert Done');
+		if (summonerGameXrefBatch.length > 0) {
+			await Promise.all(summonerGameXrefBatch.map(request));
+			debug('SummonerGameXref Insert Done');
+		}
+		await Promise.all(
+			teamStatBatch.map(request),
+			teamBanBatch.map(request),
+		);
 	} catch (err) {
 		debug(err);
 	}
@@ -402,7 +402,7 @@ let getMatchDates = async (beginTime, endTime) => {
  */
 let parseMatchParticipantIdentities = async (match, summonerGameXrefBatch) => {
 	let participantCounter = 0;
-	
+
 	while (participantCounter < match.participantIdentities.length) {
 		await parseMatchParticipantIdentity(match.gameId,
 			match.participantIdentities[participantCounter],
