@@ -16,34 +16,6 @@
       "id": 2,
       "required": true
     },
-    "goldPerMinDeltasId": {
-      "type": "number",
-      "required": true
-    },
-    "creepsPerMinDeltasId": {
-      "type": "number",
-      "required": true
-    },
-    "csDiffPerMinDeltasId": {
-      "type": "number",
-      "required": true
-    },
-    "xpPerMinDeltasId": {
-      "type": "number",
-      "required": true
-    },
-    "xpDiffPerMinDeltasId": {
-      "type": "number",
-      "required": true
-    },
-    "damageTakenPerMinDeltasId": {
-      "type": "number",
-      "required": true
-    },
-    "damageTakenDiffPerMinDeltasId": {
-      "type": "number",
-      "required": true
-    },
     "lane": {
       "type": "string",
       "required": true
