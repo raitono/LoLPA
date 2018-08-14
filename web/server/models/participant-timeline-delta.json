@@ -1,12 +1,22 @@
 {
   "name": "Participant_Timeline_Delta",
   "base": "PersistedModel",
-  "idInjection": true,
+  "idInjection": false,
   "options": {
     "validateUpsert": true
   },
   "properties": {
     "id": {
+      "type": "number",
+      "Id": 1,
+      "required": true
+    },
+    "participantId": {
+      "type": "number",
+      "Id": 2,
+      "required": true
+    },
+    "deltaTypeId": {
       "type": "number",
       "required": true
     },
