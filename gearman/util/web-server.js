@@ -34,7 +34,7 @@ module.exports.URLs = {
 	},
 	ParticipantTimelineDelta: {
 		put: function() {
-			return process.env.WEB_SERVER + '/Participant_Timeline_Deltas';
+			return process.env.WEB_SERVER + '/Participant_Timeline_Delta';
 		},
 	},
 	Summoner: {
