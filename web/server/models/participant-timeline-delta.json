@@ -18,10 +18,12 @@
     },
     "deltaTypeId": {
       "type": "number",
+      "Id": 3,
       "required": true
     },
     "increment": {
       "type": "string",
+      "Id": 4,
       "required": true
     },
     "value": {
