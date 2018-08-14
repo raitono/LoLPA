@@ -6,7 +6,7 @@
     "validateUpsert": true
   },
   "properties": {
-    "id": {
+    "gameId": {
       "type": "number",
       "Id": 1,
       "required": true
