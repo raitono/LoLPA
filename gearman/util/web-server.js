@@ -36,6 +36,9 @@ module.exports.URLs = {
 		put: function() {
 			return process.env.WEB_SERVER + '/Participant_Timeline_Delta';
 		},
+		findOne: function(whereClause) {
+			return process.env.WEB_SERVER + '/Participant_Timeline_Delta/findOne?filter={"where":'+whereClause+'}';
+		},
 	},
 	Summoner: {
 		get: function(whereClause) {

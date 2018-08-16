@@ -28,7 +28,6 @@ let updateMatchList = async function(summoner) {
 
 	// Send get the matches from RIOT
 	let matches = await Promise.all(matchBatch.map(Kayn.Match.get));
-	let deltaTypes = JSON.parse(await request(webServer.URLs.DeltaType.getAll()));
 	let matchCount = 0;
 	let matchInsertBatch = [];
 	let matchListBatch = [];
@@ -202,23 +201,6 @@ let updateMatchList = async function(summoner) {
 				json: true,
 			});
 
-			deltaTypes.forEach((type) => {
-				Object.keys(participant.timeline[type.name]).forEach((increment, value) => {
-					timelineDeltaBatch.push({
-						method: 'PUT',
-						uri: webServer.URLs.ParticipantTimelineDelta.put(),
-						body: {
-							gameId: match.gameId,
-							participantId: participant.participantId,
-							deltaTypeId: type.id,
-							increment: increment,
-							value: value,
-						},
-						json: true,
-					});
-				});
-			});
-
 			let itemCount = 0;
 			while (!util.isNullOrUndefined(participant.stats['item'+itemCount])) {
 				itemBatch.push({
@@ -260,10 +242,14 @@ let updateMatchList = async function(summoner) {
 		});
 	});
 
-	// This is necessary because of the db call in parseMatchParticipantIdentity. Array.ForEach doesn't handle async calls
+	// This is necessary because of the db call in parseMatchParticipantIdentity.
+	// Array.ForEach doesn't handle async calls well. It will return before the DB operation completes
 	while (matchCount < matches.length) {
-		await parseMatchParticipantIdentities(matches[matchCount], summonerGameXrefBatch);
-		await parseMatchParticipantTimelineDeltas(matches[matchCount], timelineDeltaBatch);
+		await parseMatchParticipantWithDuplicateCheck(
+			matches[matchCount],
+			summonerGameXrefBatch,
+			timelineDeltaBatch
+		);
 		matchCount = matchCount + 1;
 	}
 
@@ -400,18 +386,31 @@ let getMatchDates = async (beginTime, endTime) => {
 };
 
 /**
- * Loops through the match's participants and adds them to the summonerGameXrefBatch
+ * Loops through the match's participants and parse them into the relevant batches
  * @param {Object} match The match to parse
  * @param {Array} summonerGameXrefBatch Array of Requests to add the participant to
+ * @param {Array} timelineDeltaBatch Array of Requests to add the delta to
  */
-let parseMatchParticipantIdentities = async (match, summonerGameXrefBatch) => {
+let parseMatchParticipantWithDuplicateCheck = async (match,
+	summonerGameXrefBatch, timelineDeltaBatch) => {
 	let participantCounter = 0;
+	let deltaTypeCounter = 0;
+	let deltaTypes = JSON.parse(await request(webServer.URLs.DeltaType.getAll()));
 
 	while (participantCounter < match.participantIdentities.length) {
+		deltaTypeCounter = 0;
 		await parseMatchParticipantIdentity(match.gameId,
 			match.participantIdentities[participantCounter],
 			summonerGameXrefBatch
 		);
+		while (deltaTypeCounter < deltaTypes.length) {
+			await parseMatchParticipantTimelineDelta(match.gameId, deltaTypes[deltaTypeCounter],
+				match.participants[participantCounter].timeline,
+				timelineDeltaBatch
+			);
+
+			deltaTypeCounter = deltaTypeCounter + 1;
+		}
 
 		participantCounter = participantCounter + 1;
 	}
@@ -462,65 +461,58 @@ let parseMatchParticipantIdentity = async (gameId, identity, summonerGameXrefBat
 };
 
 /**
- * Loops through the match's timeline deltas and adds them to the timelineDeltaBatch
- * @param {Object} match The match to parse
- * @param {Array} timelineDeltaBatch Array of Requests to add the delta to
- */
-let parseMatchParticipantTimelineDeltas = async (match, timelineDeltaBatch) => {
-	/* let participantCounter = 0;
-
-	while (participantCounter < match.participantIdentities.length) {
-		await parseMatchParticipantTimelineDelta(match.gameId,
-			match.participantIdentities[participantCounter],
-			timelineDeltaBatch
-		);
-
-		participantCounter = participantCounter + 1;
-	}*/
-};
-
-/**
- * Check if the summoner game xref already exists. If not, insert it into the Requests array.
+ * Check if the timeline delta already exists. If not, insert it into the Requests array.
  * This is required because Loopback appends 'ON DUPLICATE UPDATE' to the end of the SQL if we do
  * a simple POST. Notice there is nothing after the UPDATE keyword, this breaks the SQL syntax and
  * causes an error. I think this is because every field in the table is a part of the key.
  * @param {String} gameId The game's ID given by RIOT
- * @param {Object} identity The identity to add
+ * @param {Array} deltaType Delta type name used to pull the values from the timeline
+ * @param {Object} timeline The timeline to add
  * @param {Array} timelineDeltaBatch Array of Requests to add the delta to
  */
-let parseMatchParticipantTimelineDelta = async (gameId, identity, timelineDeltaBatch) => {
-	/* let exists = null;
-	try {
-		exists = await request(webServer.URLs.XrefSummonerGame.findOne(
-			'{"summonerId": "' + identity.player.summonerId + '",' +
-			'"gameId": "' + gameId + '",' +
-			'"participantId": "' + identity.participantId + '"' +
-			'}'));
-		if (JSON.parse(exists)) {
-			exists = true;
-		}
-	} catch (error) {
-		// It does this when there are no records in the database,
-		// so will only happen the first time.
-		if (error.toString().indexOf('MODEL_NOT_FOUND')) {
-			exists = false;
-		} else {
-			throw error;
-		}
-	}
+let parseMatchParticipantTimelineDelta = async (gameId, deltaType,
+	timeline, timelineDeltaBatch) => {
+	let exists = null;
+	let timelineKeys = Object.keys(timeline[deltaType.name]);
+	let timelineKeysCounter = 0;
 
-	if (!exists) {
-		timelineDeltaBatch.push({
-			method: 'POST',
-			uri: webServer.URLs.XrefSummonerGame.post(),
-			body: {
-				summonerId: identity.player.summonerId,
-				gameId: gameId,
-				participantId: identity.participantId,
-			},
-			json: true,
-		});
-	} */
+	while (timelineKeysCounter < timelineKeys.length) {
+		let increment = timelineKeys[timelineKeysCounter].increment;
+		let value = timelineKeys[timelineKeysCounter].value;
+
+		try {
+			exists = await request(webServer.URLs.ParticipantTimelineDelta.findOne(
+				'{"gameId": "' + gameId + '",' +
+				'"participantId": "' + timeline.participantId + '"' +
+				'"deltaTypeId": "' + deltaType.id + '"' +
+				'"increment": "' + increment + '"' +
+				'}'));
+			if (JSON.parse(exists)) {
+				timelineDeltaBatch.push({
+					method: 'PUT',
+					uri: webServer.URLs.ParticipantTimelineDelta.put(),
+					body: {
+						gameId: gameId,
+						participantId: timeline.participantId,
+						deltaTypeId: deltaType.id,
+						increment: increment,
+						value: value,
+					},
+					json: true,
+				});
+			}
+		} catch (error) {
+			// It does this when there are no records in the database,
+			// so will only happen the first time.
+			if (error.toString().indexOf('MODEL_NOT_FOUND')) {
+				exists = false;
+			} else {
+				throw error;
+			}
+		}
+
+		timelineKeysCounter + timelineKeysCounter + 1;
+	}
 };
 
 module.exports.registerWorkers = (worker) => {
