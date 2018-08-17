@@ -164,7 +164,7 @@
       "type": "number",
       "required": true
     },
-    "altersCaptured": {
+    "altarsCaptured": {
       "type": "number",
       "required": true
     },
@@ -240,7 +240,7 @@
       "type": "number",
       "required": true
     },
-    "altersNeutralized": {
+    "altarsNeutralized": {
       "type": "number",
       "required": true
     },
