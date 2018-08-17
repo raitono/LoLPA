@@ -519,7 +519,7 @@ CREATE TABLE IF NOT EXISTS `match` (
   CONSTRAINT `FK_match_seasonId` FOREIGN KEY (`seasonId`) REFERENCES `season` (`seasonId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.match: ~5 rows (approximately)
+-- Dumping data for table riot.match: ~0 rows (approximately)
 /*!40000 ALTER TABLE `match` DISABLE KEYS */;
 /*!40000 ALTER TABLE `match` ENABLE KEYS */;
 
@@ -540,7 +540,7 @@ CREATE TABLE IF NOT EXISTS `match_list` (
   CONSTRAINT `FK_match_list_summonerId` FOREIGN KEY (`summonerId`) REFERENCES `summoner` (`summonerId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.match_list: ~4 rows (approximately)
+-- Dumping data for table riot.match_list: ~0 rows (approximately)
 /*!40000 ALTER TABLE `match_list` DISABLE KEYS */;
 /*!40000 ALTER TABLE `match_list` ENABLE KEYS */;
 
@@ -564,7 +564,7 @@ CREATE TABLE IF NOT EXISTS `participant` (
   CONSTRAINT `FK_participants_spell2Id` FOREIGN KEY (`spell2Id`) REFERENCES `spell` (`spellId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.participant: ~40 rows (approximately)
+-- Dumping data for table riot.participant: ~0 rows (approximately)
 /*!40000 ALTER TABLE `participant` DISABLE KEYS */;
 /*!40000 ALTER TABLE `participant` ENABLE KEYS */;
 
@@ -644,7 +644,7 @@ CREATE TABLE IF NOT EXISTS `participant_stat` (
   CONSTRAINT `FK_participant_stats_participantId` FOREIGN KEY (`participantId`) REFERENCES `participant` (`participantId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.participant_stat: ~40 rows (approximately)
+-- Dumping data for table riot.participant_stat: ~0 rows (approximately)
 /*!40000 ALTER TABLE `participant_stat` DISABLE KEYS */;
 /*!40000 ALTER TABLE `participant_stat` ENABLE KEYS */;
 
@@ -661,7 +661,7 @@ CREATE TABLE IF NOT EXISTS `participant_timeline` (
   CONSTRAINT `FK_participant_timelines_participantId` FOREIGN KEY (`participantId`) REFERENCES `participant` (`participantId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.participant_timeline: ~40 rows (approximately)
+-- Dumping data for table riot.participant_timeline: ~0 rows (approximately)
 /*!40000 ALTER TABLE `participant_timeline` DISABLE KEYS */;
 /*!40000 ALTER TABLE `participant_timeline` ENABLE KEYS */;
 
@@ -772,6 +772,8 @@ CREATE TABLE IF NOT EXISTS `summoner` (
 
 -- Dumping data for table riot.summoner: ~1 rows (approximately)
 /*!40000 ALTER TABLE `summoner` DISABLE KEYS */;
+INSERT INTO `summoner` (`summonerId`, `accountId`, `profileIconId`, `summonerLevel`, `name`, `revisionDate`, `lastUpdated`) VALUES
+	(71591841, 230885086, 3551, 105, 'Raitono', '2018-08-16 02:44:24', NULL);
 /*!40000 ALTER TABLE `summoner` ENABLE KEYS */;
 
 -- Dumping structure for table riot.team_ban
@@ -784,7 +786,7 @@ CREATE TABLE IF NOT EXISTS `team_ban` (
   CONSTRAINT `FK_team_ban_gameId` FOREIGN KEY (`gameId`) REFERENCES `match` (`gameId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Probably don''t need this, but Riot probably thought the same.';
 
--- Dumping data for table riot.team_ban: ~30 rows (approximately)
+-- Dumping data for table riot.team_ban: ~0 rows (approximately)
 /*!40000 ALTER TABLE `team_ban` DISABLE KEYS */;
 /*!40000 ALTER TABLE `team_ban` ENABLE KEYS */;
 
@@ -809,7 +811,7 @@ CREATE TABLE IF NOT EXISTS `team_stat` (
   CONSTRAINT `FK_team_stats_gameId` FOREIGN KEY (`gameId`) REFERENCES `match` (`gameId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.team_stat: ~8 rows (approximately)
+-- Dumping data for table riot.team_stat: ~0 rows (approximately)
 /*!40000 ALTER TABLE `team_stat` DISABLE KEYS */;
 /*!40000 ALTER TABLE `team_stat` ENABLE KEYS */;
 
@@ -878,7 +880,7 @@ CREATE TABLE IF NOT EXISTS `xref_summoner_game` (
   CONSTRAINT `FK_xref_summoner_game_participantId` FOREIGN KEY (`participantId`) REFERENCES `participant` (`participantId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.xref_summoner_game: ~40 rows (approximately)
+-- Dumping data for table riot.xref_summoner_game: ~0 rows (approximately)
 /*!40000 ALTER TABLE `xref_summoner_game` DISABLE KEYS */;
 /*!40000 ALTER TABLE `xref_summoner_game` ENABLE KEYS */;
 

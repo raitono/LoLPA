@@ -148,19 +148,19 @@ let updateMatchList = async function(summoner) {
 					largestCriticalStrike: participant.stats.largestCriticalStrike,
 					totalMinionsKilled: participant.stats.totalMinionsKilled,
 					neutralMinionsKilled: participant.stats.neutralMinionsKilled,
-					neutralMinionsKilledTeamJungle: participant.stats.neutralMinionsKilledTeamJungle,
-					neutralMinionsKilledEnemyJungle: participant.stats.neutralMinionsKilledEnemyJungle,
+					neutralMinionsKilledTeamJungle: participant.stats.neutralMinionsKilledTeamJungle || 0, // These could be undefined if neutralMinions is 0
+					neutralMinionsKilledEnemyJungle: participant.stats.neutralMinionsKilledEnemyJungle || 0,
 					sightWardsBoughtInGame: participant.stats.sightWardsBoughtInGame,
 					visionWardsBoughtInGame: participant.stats.visionWardsBoughtInGame,
-					wardsKilled: participant.stats.wardsKilled,
-					wardsPlaced: participant.stats.wardsPlaced,
+					wardsKilled: participant.stats.wardsKilled || 0,
+					wardsPlaced: participant.stats.wardsPlaced || 0,
 					visionScore: participant.stats.visionScore,
 					objectivePlayerScore: participant.stats.objectivePlayerScore,
 					combatPlayerScore: participant.stats.combatPlayerScore,
 					totalPlayerScore: participant.stats.totalPlayerScore,
 					totalScoreRank: participant.stats.totalScoreRank,
-					altersCaptured: participant.stats.altersCaptured,
-					teamObjective: participant.stats.teamObjective,
+					altarsCaptured: participant.stats.altarsCaptured || 0,
+					teamObjective: participant.stats.teamObjective || 0,
 					totalTimeCrowdControlDealt: participant.stats.totalTimeCrowdControlDealt,
 					timeCCingOthers: participant.stats.timeCCingOthers,
 					longestTimeSpentLiving: participant.stats.longestTimeSpentLiving,
@@ -170,21 +170,23 @@ let updateMatchList = async function(summoner) {
 					firstTowerAssist: participant.stats.firstTowerAssist,
 					firstTowerKill: participant.stats.firstTowerKill,
 					firstBloodAssist: participant.stats.firstBloodAssist,
-					firstInhibitorKill: participant.stats.firstInhibitorKill,
-					firstInhibitorAssist: participant.stats.firstInhibitorAssist,
+					firstInhibitorKill: participant.stats.firstInhibitorKill || 0,
+					firstInhibitorAssist: participant.stats.firstInhibitorAssist || 0,
 					firstBloodKill: participant.stats.firstBloodKill,
 					champLevel: participant.stats.champLevel,
-					nodeNeutralize: participant.stats.nodeNeutralize,
-					nodeNeutralizeAssists: participant.stats.nodeNeutralizeAssists,
-					nodeCapture: participant.stats.nodeCapture,
-					nodeCaptureAssist: participant.stats.nodeCaptureAssist,
-					altersNeutralized: participant.stats.altersNeutralized,
+					nodeNeutralize: participant.stats.nodeNeutralize || 0,
+					nodeNeutralizeAssist: participant.stats.nodeNeutralizeAssists || 0,
+					nodeCapture: participant.stats.nodeCapture || 0,
+					nodeCaptureAssist: participant.stats.nodeCaptureAssist || 0,
+					altarsNeutralized: participant.stats.altarsNeutralized || 0,
 					goldEarned: participant.stats.goldEarned,
 					goldSpent: participant.stats.goldSpent,
 					physicalDamageTaken: participant.stats.physicalDamageTaken,
-					magicDamageTaken: participant.stats.magicDamageTaken,
+					magicalDamageTaken: participant.stats.magicalDamageTaken,
 					trueDamageTaken: participant.stats.trueDamageTaken,
 					totalDamageTaken: participant.stats.totalDamageTaken,
+					perkPrimaryStyle: participant.stats.perkPrimaryStyle,
+					perkSubStyle: participant.stats.perkSubStyle,
 				},
 				json: true,
 			});
@@ -268,7 +270,6 @@ let updateMatchList = async function(summoner) {
 			json: true,
 		});
 	});
-
 	/*
 	itemBatch.map(request),
 	perkBatch.map(request), */
@@ -403,6 +404,7 @@ let parseMatchParticipantWithDuplicateCheck = async (match,
 			match.participantIdentities[participantCounter],
 			summonerGameXrefBatch
 		);
+
 		while (deltaTypeCounter < deltaTypes.length) {
 			await parseMatchParticipantTimelineDelta(match.gameId, deltaTypes[deltaTypeCounter],
 				match.participants[participantCounter].timeline,
@@ -473,33 +475,36 @@ let parseMatchParticipantIdentity = async (gameId, identity, summonerGameXrefBat
 let parseMatchParticipantTimelineDelta = async (gameId, deltaType,
 	timeline, timelineDeltaBatch) => {
 	let exists = null;
-	let timelineKeys = Object.keys(timeline[deltaType.name]);
+	let timelineKeys = null;
 	let timelineKeysCounter = 0;
 
+	try {
+		timelineKeys = Object.keys(timeline[deltaType.name]);
+	} catch (error) {
+		// Happens when the DeltaType doesn't exist in the Timeline.
+		// Sometimes we just don't get the info.
+		if (error.toString().indexOf('Cannot convert undefined')) {
+			return;
+		} else {
+			throw error;
+		}
+	}
+
 	while (timelineKeysCounter < timelineKeys.length) {
-		let increment = timelineKeys[timelineKeysCounter].increment;
-		let value = timelineKeys[timelineKeysCounter].value;
+		let increment = timelineKeys[timelineKeysCounter];
+		let value = timeline[deltaType.name][increment];
+		exists = null;
 
 		try {
 			exists = await request(webServer.URLs.ParticipantTimelineDelta.findOne(
 				'{"gameId": "' + gameId + '",' +
-				'"participantId": "' + timeline.participantId + '"' +
-				'"deltaTypeId": "' + deltaType.id + '"' +
+				'"participantId": "' + timeline.participantId + '",' +
+				'"deltaTypeId": "' + deltaType.id + '",' +
 				'"increment": "' + increment + '"' +
 				'}'));
+
 			if (JSON.parse(exists)) {
-				timelineDeltaBatch.push({
-					method: 'PUT',
-					uri: webServer.URLs.ParticipantTimelineDelta.put(),
-					body: {
-						gameId: gameId,
-						participantId: timeline.participantId,
-						deltaTypeId: deltaType.id,
-						increment: increment,
-						value: value,
-					},
-					json: true,
-				});
+				exists = true;
 			}
 		} catch (error) {
 			// It does this when there are no records in the database,
@@ -509,9 +514,24 @@ let parseMatchParticipantTimelineDelta = async (gameId, deltaType,
 			} else {
 				throw error;
 			}
+		} finally {
+			timelineKeysCounter = timelineKeysCounter + 1;
 		}
 
-		timelineKeysCounter + timelineKeysCounter + 1;
+		if (!exists) {
+			timelineDeltaBatch.push({
+				method: 'PUT',
+				uri: webServer.URLs.ParticipantTimelineDelta.put(),
+				body: {
+					gameId: gameId,
+					participantId: timeline.participantId,
+					deltaTypeId: deltaType.id,
+					increment: increment,
+					value: value,
+				},
+				json: true,
+			});
+		}
 	}
 };
 
