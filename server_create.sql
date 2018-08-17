@@ -188,15 +188,18 @@ CREATE TABLE IF NOT EXISTS `delta_type` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.delta_type: ~4 rows (approximately)
+-- Dumping data for table riot.delta_type: ~7 rows (approximately)
 /*!40000 ALTER TABLE `delta_type` DISABLE KEYS */;
 INSERT INTO `delta_type` (`id`, `name`) VALUES
-	(1, 'goldPerMinDeltas'),
-	(2, 'creepsPerMinDeltas'),
-	(3, 'xpPerMinDeltas'),
-	(4, 'damageTakenPerMinDeltas');
+	(1, 'creepsPerMinDeltas'),
+	(2, 'xpPerMinDeltas'),
+	(3, 'goldPerMinDeltas'),
+	(4, 'csDiffPerMinDeltas'),
+	(5, 'xpDiffPerMinDeltas'),
+	(6, 'damageTakenPerMinDeltas'),
+	(7, 'damageTakenDiffPerMinDeltas');
 /*!40000 ALTER TABLE `delta_type` ENABLE KEYS */;
 
 -- Dumping structure for table riot.item
@@ -516,7 +519,7 @@ CREATE TABLE IF NOT EXISTS `match` (
   CONSTRAINT `FK_match_seasonId` FOREIGN KEY (`seasonId`) REFERENCES `season` (`seasonId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.match: ~4 rows (approximately)
+-- Dumping data for table riot.match: ~5 rows (approximately)
 /*!40000 ALTER TABLE `match` DISABLE KEYS */;
 /*!40000 ALTER TABLE `match` ENABLE KEYS */;
 
@@ -641,7 +644,7 @@ CREATE TABLE IF NOT EXISTS `participant_stat` (
   CONSTRAINT `FK_participant_stats_participantId` FOREIGN KEY (`participantId`) REFERENCES `participant` (`participantId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.participant_stat: ~0 rows (approximately)
+-- Dumping data for table riot.participant_stat: ~40 rows (approximately)
 /*!40000 ALTER TABLE `participant_stat` DISABLE KEYS */;
 /*!40000 ALTER TABLE `participant_stat` ENABLE KEYS */;
 
@@ -769,8 +772,6 @@ CREATE TABLE IF NOT EXISTS `summoner` (
 
 -- Dumping data for table riot.summoner: ~1 rows (approximately)
 /*!40000 ALTER TABLE `summoner` DISABLE KEYS */;
-INSERT INTO `summoner` (`summonerId`, `accountId`, `profileIconId`, `summonerLevel`, `name`, `revisionDate`, `lastUpdated`) VALUES
-	(71591841, 230885086, 3551, 105, 'Raitono', '2018-08-16 02:44:24', NULL);
 /*!40000 ALTER TABLE `summoner` ENABLE KEYS */;
 
 -- Dumping structure for table riot.team_ban
