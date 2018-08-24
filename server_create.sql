@@ -2,7 +2,7 @@
 -- Host:                         127.0.0.1
 -- Server version:               5.7.20-log - MySQL Community Server (GPL)
 -- Server OS:                    Win64
--- HeidiSQL Version:             9.5.0.5282
+-- HeidiSQL Version:             9.5.0.5278
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS `champion` (
   PRIMARY KEY (`championId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='VERY incomplete until I do more with champions. Right now I only need basic info to identify them by their IDs.';
 
--- Dumping data for table riot.champion: ~141 rows (approximately)
+-- Dumping data for table riot.champion: ~7 rows (approximately)
 /*!40000 ALTER TABLE `champion` DISABLE KEYS */;
 INSERT INTO `champion` (`championId`, `name`, `title`) VALUES
 	(1, 'Annie', 'the Dark Child'),
@@ -734,7 +734,7 @@ CREATE TABLE IF NOT EXISTS `spell` (
   PRIMARY KEY (`spellId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='summoner spells';
 
--- Dumping data for table riot.spell: ~19 rows (approximately)
+-- Dumping data for table riot.spell: ~0 rows (approximately)
 /*!40000 ALTER TABLE `spell` DISABLE KEYS */;
 INSERT INTO `spell` (`spellId`, `version`, `name`, `key`) VALUES
 	(-1, '8.2.1', 'Ultra (Really Fast) Dash', 'SummonerSnowURFSnowball_Mark_FollowupCast'),
@@ -770,7 +770,7 @@ CREATE TABLE IF NOT EXISTS `summoner` (
   PRIMARY KEY (`summonerId`,`accountId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.summoner: ~1 rows (approximately)
+-- Dumping data for table riot.summoner: ~0 rows (approximately)
 /*!40000 ALTER TABLE `summoner` DISABLE KEYS */;
 INSERT INTO `summoner` (`summonerId`, `accountId`, `profileIconId`, `summonerLevel`, `name`, `revisionDate`, `lastUpdated`) VALUES
 	(71591841, 230885086, 3551, 105, 'Raitono', '2018-08-16 02:44:24', NULL);
@@ -840,7 +840,6 @@ CREATE TABLE IF NOT EXISTS `xref_participant_item` (
   KEY `FK_xref_participant_item_gameId` (`gameId`),
   KEY `FK_xref_participant_item_itemId` (`itemId`),
   CONSTRAINT `FK_xref_participant_item_gameId` FOREIGN KEY (`gameId`) REFERENCES `match` (`gameId`),
-  CONSTRAINT `FK_xref_participant_item_itemId` FOREIGN KEY (`itemId`) REFERENCES `item` (`itemId`),
   CONSTRAINT `FK_xref_participant_item_participantId` FOREIGN KEY (`participantId`) REFERENCES `participant` (`participantId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Might not be strictly needed, just as with bans, but it breaks from the normalized structure if I leave them part of the participants_stats table.\r\n\r\nThinking about it deeper, it really is a many-many relationship, so deserves its own table.';
 
