@@ -7,6 +7,7 @@ const app = express();
 const Gearman = require('abraxas');
 const Summoner = require('./workers/Summoner');
 const Match = require('./workers/Match');
+const StaticData = require('./workers/StaticData');
 
 app.use(express.static('public'));
 
@@ -25,8 +26,16 @@ app.listen(port, () => {
 
 	Summoner.registerWorkers(worker);
 	Match.registerWorkers(worker);
+	StaticData.registerWorkers(worker);
 
-	worker.submitJob('updateSummonerByName', 'Raitono').then(function(result) {
+	worker.submitJob('updateStaticData', 'ThisIsNecessaryButNotUsed')
+		.then(function() {
+			debug('updateStaticData done');
+		}).catch(function(reason) {
+			debug(reason);
+		});
+
+	/* worker.submitJob('updateSummonerByName', 'Raitono').then(function(result) {
 		let dbSummoner = JSON.parse(result);
 		debug('Updated summoner: ' + dbSummoner.name);
 
@@ -37,7 +46,7 @@ app.listen(port, () => {
 		});
 	}).catch(function(reason) {
 		debug(reason);
-	});
+	}); */
 });
 
 module.exports = app;
