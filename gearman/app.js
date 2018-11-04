@@ -3,15 +3,17 @@ require('dotenv-safe').config();
 const debug = require('debug')('lolpa-gearman:app');
 const express = require('express');
 const app = express();
+const fs = require('fs');
 
 const Gearman = require('abraxas');
 const Summoner = require('./workers/Summoner');
 const Match = require('./workers/Match');
 const StaticData = require('./workers/StaticData');
 
-app.use(express.static('public'));
-
 const port = process.env.PORT || 8080;
+const staticDataTempDir = './temp';
+
+app.use(express.static('public'));
 
 app.listen(port, () => {
 	Gearman.Server.listen({
@@ -23,6 +25,10 @@ app.listen(port, () => {
 		servers: ['127.0.0.1:4730'],
 		defaultEncoding: 'utf8',
 	});
+
+	if (!fs.existsSync(staticDataTempDir)) {
+		fs.mkdirSync(staticDataTempDir);
+	}
 
 	Summoner.registerWorkers(worker);
 	Match.registerWorkers(worker);
