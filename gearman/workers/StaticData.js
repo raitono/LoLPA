@@ -1,4 +1,5 @@
 const debug = require('debug')('lolpa-gearman:StaticData');
+const del = require('del');
 const fs = require('fs');
 const https = require('https');
 const Kayn	= require('../kayn');
@@ -27,12 +28,11 @@ let updateStaticData = async function() {
 
 	let tempTarballPath = './temp/' + latestVersion + '.tgz';
 	let tarballPathRoot = './' + latestVersion + '/data/en_US/';
-	let tempFilePath = './temp/' + latestVersion + '/data/en_US/';
 
 	// For some reason, the Request package gives an Array Buffer error when trying to do this.
 	// Guess we do it the old fashioned way.
 	let file = fs.createWriteStream(tempTarballPath);
-	await https.get(tarballURL, (response) => {
+	https.get(tarballURL, (response) => {
 		response.pipe(file);
 		response.on('end', () => {
 			debug('tarball saved');
@@ -53,12 +53,15 @@ let updateStaticData = async function() {
 					debug(err);
 				} else {
 					debug('tarball extracted');
+					parseAndLoad(latestVersion);
 				}
 			});
 		});
 	});
+};
 
-	// Parse and load data
+let parseAndLoad = async (version) => {
+	let tempFilePath = './temp/' + version + '/data/en_US/';
 	let batches = [];
 	let runeStyleBatch = [];
 	let runeData = await fs.readFileAsync(tempFilePath + 'runesReforged.json');
@@ -176,17 +179,17 @@ let updateStaticData = async function() {
 			debug('Summoner Spells added');
 		}));
 
-	// These are my own attempt at normalizing the data. These are on an auto increment key.
+	// These are my own attempt at normalizing the data.
 	batches.push(new Promise((resolve, reject) => {
 		let deltaTypeBatch = [];
 		let deltaTypes = [
-			'creepsPerMinDeltas',
-			'xpPerMinDeltas',
-			'goldPerMinDeltas',
-			'csDiffPerMinDeltas',
-			'xpDiffPerMinDeltas',
-			'damageTakenPerMinDeltas',
-			'damageTakenDiffPerMinDeltas',
+			{id: 1, name: 'creepsPerMinDeltas'},
+			{id: 2, name: 'xpPerMinDeltas'},
+			{id: 3, name: 'goldPerMinDeltas'},
+			{id: 4, name: 'csDiffPerMinDeltas'},
+			{id: 5, name: 'xpDiffPerMinDeltas'},
+			{id: 6, name: 'damageTakenPerMinDeltas'},
+			{id: 7, name: 'damageTakenDiffPerMinDeltas'},
 		];
 
 		deltaTypes.forEach((deltaType) => {
@@ -194,13 +197,14 @@ let updateStaticData = async function() {
 				method: 'PUT',
 				uri: webServer.URLs.DeltaType.put(),
 				body: {
-					name: deltaType,
+					id: deltaType.id,
+					name: deltaType.name,
 				},
 				json: true,
 			});
 		});
-		deltaTypeBatch.map(request);
 
+		deltaTypeBatch.map(request);
 		debug('Delta Types added');
 		resolve();
 	}));
@@ -209,19 +213,18 @@ let updateStaticData = async function() {
 		debug('batches done');
 
 		// Clean up
-		/* try {
-			fs.rmdir('./temp/' + latestVersion, () => {
-				debug('Temp Dir removed');
+		// The glob pattern ** matches all children and the parent
+		del(['./temp/' + version + '.tgz', './temp/' + version + '/**'])
+			.then(() => {
+				debug('Clean up done');
+			}).catch((err) => {
+				debug(err);
 			});
-			fs.unlink('./temp/' + latestVersion + '.tgz', () => {
-				debug('Temp tarball removed');
-			});
-		} catch (error) {
-			debug(error);
-		} */
+	}).catch((err) => {
+		debug('Promise.all error');
+		debug(err);
 	});
 };
-
 
 module.exports.registerWorkers = (worker) => {
 	worker.registerWorker('updateStaticData', async (task) => {

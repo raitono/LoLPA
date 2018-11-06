@@ -36,7 +36,7 @@ app.listen(port, () => {
 
 	worker.submitJob('updateStaticData', 'ThisIsNecessaryButNotUsed')
 		.then(function() {
-			debug('updateStaticData done');
+			debug('updateStaticData queued');
 		}).catch(function(reason) {
 			debug(reason);
 		});
