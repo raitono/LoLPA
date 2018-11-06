@@ -1,10 +1,23 @@
 module.exports.URLs = {
+	Champion: {
+		put: function() {
+			return process.env.WEB_SERVER + '/Champions';
+		},
+	},
 	DeltaType: {
 		getAll: function() {
 			return process.env.WEB_SERVER + '/Delta_Types';
 		},
 		get: function(whereClause) {
 			return process.env.WEB_SERVER + '/Delta_Types?filter={"where":'+whereClause+'}';
+		},
+		put: function() {
+			return process.env.WEB_SERVER + '/Delta_Types';
+		},
+	},
+	Item: {
+		put: function() {
+			return process.env.WEB_SERVER + '/Items';
 		},
 	},
 	MatchList: {
@@ -40,12 +53,25 @@ module.exports.URLs = {
 			return process.env.WEB_SERVER + '/Participant_Timeline_Delta/findOne?filter={"where":'+whereClause+'}';
 		},
 	},
+	Rune: {
+		put: function() {
+			return process.env.WEB_SERVER + '/Perks';
+		},
+		put_style: function() {
+			return process.env.WEB_SERVER + '/Perk_Styles';
+		},
+	},
 	Summoner: {
 		get: function(whereClause) {
 			return process.env.WEB_SERVER + '/Summoners?filter={"where":'+whereClause+'}';
 		},
 		upsertWithWhere: function(whereClause) {
 			return process.env.WEB_SERVER + '/Summoners/upsertWithWhere?where='+whereClause;
+		},
+	},
+	SummonerSpell: {
+		put: function() {
+			return process.env.WEB_SERVER + '/Spells';
 		},
 	},
 	Season: {
