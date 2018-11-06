@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS `champion` (
   PRIMARY KEY (`championId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='VERY incomplete until I do more with champions. Right now I only need basic info to identify them by their IDs.';
 
--- Dumping data for table riot.champion: ~141 rows (approximately)
+-- Dumping data for table riot.champion: ~0 rows (approximately)
 /*!40000 ALTER TABLE `champion` DISABLE KEYS */;
 /*!40000 ALTER TABLE `champion` ENABLE KEYS */;
 
@@ -45,10 +45,11 @@ CREATE TABLE IF NOT EXISTS `champion_tag` (
 CREATE TABLE IF NOT EXISTS `delta_type` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UX_DeltaType_Name` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.delta_type: ~7 rows (approximately)
+-- Dumping data for table riot.delta_type: ~0 rows (approximately)
 /*!40000 ALTER TABLE `delta_type` DISABLE KEYS */;
 /*!40000 ALTER TABLE `delta_type` ENABLE KEYS */;
 
@@ -63,7 +64,7 @@ CREATE TABLE IF NOT EXISTS `item` (
   PRIMARY KEY (`itemId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='VERY incomplete until I do more with items. Right now I only need basic info to identify them by their IDs.';
 
--- Dumping data for table riot.item: ~326 rows (approximately)
+-- Dumping data for table riot.item: ~0 rows (approximately)
 /*!40000 ALTER TABLE `item` DISABLE KEYS */;
 /*!40000 ALTER TABLE `item` ENABLE KEYS */;
 
@@ -259,7 +260,7 @@ CREATE TABLE IF NOT EXISTS `perk` (
   CONSTRAINT `FK_perk_styleId` FOREIGN KEY (`styleId`) REFERENCES `perk_style` (`styleId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Runes are called perks in the API and are a part of the participantDTO. They are not directly available from the API, so I am having to infer and figure them out on my own.';
 
--- Dumping data for table riot.perk: ~63 rows (approximately)
+-- Dumping data for table riot.perk: ~0 rows (approximately)
 /*!40000 ALTER TABLE `perk` DISABLE KEYS */;
 /*!40000 ALTER TABLE `perk` ENABLE KEYS */;
 
@@ -270,7 +271,7 @@ CREATE TABLE IF NOT EXISTS `perk_style` (
   PRIMARY KEY (`styleId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='These are the major paths for the runes.';
 
--- Dumping data for table riot.perk_style: ~5 rows (approximately)
+-- Dumping data for table riot.perk_style: ~0 rows (approximately)
 /*!40000 ALTER TABLE `perk_style` DISABLE KEYS */;
 /*!40000 ALTER TABLE `perk_style` ENABLE KEYS */;
 
