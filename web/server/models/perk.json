@@ -11,7 +11,7 @@
       "id": true,
       "required": true
     },
-    "perkStyleId": {
+    "styleId": {
       "type": "number",
       "required": true
     },
