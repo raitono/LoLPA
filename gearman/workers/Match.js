@@ -230,7 +230,7 @@ let updateMatchList = async function(summoner) {
 						body: {
 							gameId: match.gameId,
 							participantId: participant.participantId,
-							perkId: participant.stats['item'+perkCount],
+							perkId: participant.stats['perk'+perkCount],
 							varId: perkVarCount,
 							value: participant.stats['perk'+perkCount+'Var'+perkVarCount],
 						},
@@ -270,9 +270,7 @@ let updateMatchList = async function(summoner) {
 			json: true,
 		});
 	});
-	/*
-	itemBatch.map(request),
-	perkBatch.map(request), */
+
 	try {
 		// This has to be done separate because of the foreign keys.
 		await Promise.all(matchInsertBatch.map(request));
@@ -294,6 +292,8 @@ let updateMatchList = async function(summoner) {
 			teamBanBatch.map(request),
 			statBatch.map(request),
 			timelineBatch.map(request),
+			itemBatch.map(request),
+			perkBatch.map(request),
 		);
 	} catch (err) {
 		debug(err);
