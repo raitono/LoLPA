@@ -43,11 +43,11 @@ CREATE TABLE IF NOT EXISTS `champion_tag` (
 
 -- Dumping structure for table riot.delta_type
 CREATE TABLE IF NOT EXISTS `delta_type` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL,
   `name` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UX_DeltaType_Name` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Dumping data for table riot.delta_type: ~0 rows (approximately)
 /*!40000 ALTER TABLE `delta_type` DISABLE KEYS */;
@@ -239,8 +239,8 @@ CREATE TABLE IF NOT EXISTS `participant_timeline_delta` (
   `increment` varchar(7) NOT NULL COMMENT 'Values indicate minutes such as "0-10", "10-20". Length of 7 should cover anything that goes into the 100+ min range. God help anyone who plays more than 16.5 hours in one game.',
   `value` decimal(10,3) NOT NULL,
   PRIMARY KEY (`participantId`,`gameId`,`deltaTypeId`,`increment`),
-  KEY `deltaTypeId` (`deltaTypeId`),
   KEY `FK_participant_timeline_delta_gameId` (`gameId`),
+  KEY `FK_participant_timeline_delta_deltaTypeId` (`deltaTypeId`),
   CONSTRAINT `FK_participant_timeline_delta_deltaTypeId` FOREIGN KEY (`deltaTypeId`) REFERENCES `delta_type` (`id`),
   CONSTRAINT `FK_participant_timeline_delta_gameId` FOREIGN KEY (`gameId`) REFERENCES `match` (`gameId`),
   CONSTRAINT `FK_participant_timeline_delta_participantId` FOREIGN KEY (`participantId`) REFERENCES `participant` (`participantId`)

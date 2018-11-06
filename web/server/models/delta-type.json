@@ -1,12 +1,13 @@
 {
   "name": "Delta_Type",
   "base": "PersistedModel",
-  "idInjection": true,
+  "idInjection": false,
   "options": {
     "validateUpsert": true
   },
   "properties": {
     "id": {
+      "id": true,
       "type": "number",
       "required": true
     },
