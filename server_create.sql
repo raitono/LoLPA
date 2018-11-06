@@ -2,7 +2,7 @@
 -- Host:                         127.0.0.1
 -- Server version:               5.7.20-log - MySQL Community Server (GPL)
 -- Server OS:                    Win64
--- HeidiSQL Version:             9.5.0.5278
+-- HeidiSQL Version:             9.5.0.5282
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -400,10 +400,9 @@ CREATE TABLE IF NOT EXISTS `xref_participant_perk` (
   `description` varchar(50) DEFAULT NULL,
   `value` int(11) NOT NULL,
   PRIMARY KEY (`gameId`,`participantId`),
-  UNIQUE KEY `perkId_varId` (`participantId`,`perkId`,`varId`),
+  UNIQUE KEY `perkId_varId` (`gameId`,`participantId`,`perkId`,`varId`),
   KEY `FK_perkId` (`perkId`),
-  CONSTRAINT `FK_gameId` FOREIGN KEY (`gameId`) REFERENCES `match` (`gameId`),
-  CONSTRAINT `FK_participantId` FOREIGN KEY (`participantId`) REFERENCES `participant` (`participantId`),
+  CONSTRAINT `FK_participantId` FOREIGN KEY (`gameId`, `participantId`) REFERENCES `participant` (`gameId`, `participantId`),
   CONSTRAINT `FK_perkId` FOREIGN KEY (`perkId`) REFERENCES `perk` (`perkId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
