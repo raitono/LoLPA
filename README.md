@@ -1,3 +1,6 @@
+# For those visiting this repository, please read this section
+This is a non-functional piece of software that is just a side project for me. I am using GitHub as a way to learn git and sync code between my two PCs. I can't make the repository private because that costs money. Feel free to check out any of the code and offer suggestions and criticism, but keep in mind that I am using pretty much every bit of this project for the first time and it is no where near a polished state.
+
 # LoLPA
 League of Legends Performance Analyzer
 
