@@ -2,7 +2,7 @@
 -- Host:                         127.0.0.1
 -- Server version:               5.7.20-log - MySQL Community Server (GPL)
 -- Server OS:                    Win64
--- HeidiSQL Version:             9.5.0.5282
+-- HeidiSQL Version:             9.5.0.5278
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -327,6 +327,8 @@ CREATE TABLE IF NOT EXISTS `team_ban` (
   `championId` int(11) NOT NULL,
   `pickTurn` int(11) NOT NULL,
   PRIMARY KEY (`gameId`,`teamId`,`pickTurn`),
+  KEY `FK_team_ban_championId` (`championId`),
+  CONSTRAINT `FK_team_ban_championId` FOREIGN KEY (`championId`) REFERENCES `champion` (`championId`),
   CONSTRAINT `FK_team_ban_gameId` FOREIGN KEY (`gameId`) REFERENCES `match` (`gameId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Probably don''t need this, but Riot probably thought the same.';
 
@@ -384,6 +386,7 @@ CREATE TABLE IF NOT EXISTS `xref_participant_item` (
   KEY `FK_xref_participant_item_gameId` (`gameId`),
   KEY `FK_xref_participant_item_itemId` (`itemId`),
   CONSTRAINT `FK_xref_participant_item_gameId` FOREIGN KEY (`gameId`) REFERENCES `match` (`gameId`),
+  CONSTRAINT `FK_xref_participant_item_itemId` FOREIGN KEY (`itemId`) REFERENCES `item` (`itemId`),
   CONSTRAINT `FK_xref_participant_item_participantId` FOREIGN KEY (`participantId`) REFERENCES `participant` (`participantId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Might not be strictly needed, just as with bans, but it breaks from the normalized structure if I leave them part of the participants_stats table.\r\n\r\nThinking about it deeper, it really is a many-many relationship, so deserves its own table.';
 
@@ -399,10 +402,11 @@ CREATE TABLE IF NOT EXISTS `xref_participant_perk` (
   `varId` int(11) NOT NULL COMMENT 'Every perk gets 3. Pulling these into their own table allows me to expand the amount of vars instead of adding more columns to the stats table if Riot ever decides to use more.',
   `description` varchar(50) DEFAULT NULL,
   `value` int(11) NOT NULL,
-  PRIMARY KEY (`gameId`,`participantId`),
-  UNIQUE KEY `perkId_varId` (`gameId`,`participantId`,`perkId`,`varId`),
+  PRIMARY KEY (`gameId`,`participantId`,`perkId`,`varId`),
   KEY `FK_perkId` (`perkId`),
-  CONSTRAINT `FK_participantId` FOREIGN KEY (`gameId`, `participantId`) REFERENCES `participant` (`gameId`, `participantId`),
+  KEY `FK_participantId` (`participantId`),
+  CONSTRAINT `FK_gameId` FOREIGN KEY (`gameId`) REFERENCES `match` (`gameId`),
+  CONSTRAINT `FK_participantId` FOREIGN KEY (`participantId`) REFERENCES `participant` (`participantId`),
   CONSTRAINT `FK_perkId` FOREIGN KEY (`perkId`) REFERENCES `perk` (`perkId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -416,10 +420,10 @@ CREATE TABLE IF NOT EXISTS `xref_summoner_game` (
   `gameId` int(11) unsigned NOT NULL,
   `participantId` int(11) NOT NULL,
   PRIMARY KEY (`summonerId`,`gameId`,`participantId`),
-  UNIQUE KEY `UX_summonerId_gameId` (`participantId`,`summonerId`,`gameId`),
   KEY `FK_xref_summoner_game_gameId` (`gameId`),
-  CONSTRAINT `FK_xref_summoner_game_gameId` FOREIGN KEY (`gameId`) REFERENCES `match` (`gameId`),
-  CONSTRAINT `FK_xref_summoner_game_participantId` FOREIGN KEY (`participantId`) REFERENCES `participant` (`participantId`)
+  KEY `FK_xref_summoner_game_participantId` (`gameId`,`participantId`),
+  CONSTRAINT `FK_xref_summoner_game_participantId` FOREIGN KEY (`gameId`, `participantId`) REFERENCES `participant` (`gameId`, `participantId`),
+  CONSTRAINT `FK_xref_summoner_game_summonerId` FOREIGN KEY (`summonerId`) REFERENCES `summoner` (`summonerId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Dumping data for table riot.xref_summoner_game: ~0 rows (approximately)
