@@ -422,8 +422,7 @@ CREATE TABLE IF NOT EXISTS `xref_summoner_game` (
   PRIMARY KEY (`summonerId`,`gameId`,`participantId`),
   KEY `FK_xref_summoner_game_gameId` (`gameId`),
   KEY `FK_xref_summoner_game_participantId` (`gameId`,`participantId`),
-  CONSTRAINT `FK_xref_summoner_game_participantId` FOREIGN KEY (`gameId`, `participantId`) REFERENCES `participant` (`gameId`, `participantId`),
-  CONSTRAINT `FK_xref_summoner_game_summonerId` FOREIGN KEY (`summonerId`) REFERENCES `summoner` (`summonerId`)
+  CONSTRAINT `FK_xref_summoner_game_participantId` FOREIGN KEY (`gameId`, `participantId`) REFERENCES `participant` (`gameId`, `participantId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Dumping data for table riot.xref_summoner_game: ~0 rows (approximately)
