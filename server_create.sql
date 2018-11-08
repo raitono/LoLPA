@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS `champion` (
 -- Dumping data for table riot.champion: ~141 rows (approximately)
 /*!40000 ALTER TABLE `champion` DISABLE KEYS */;
 INSERT INTO `champion` (`championId`, `name`, `title`) VALUES
+	(-1, 'None', 'None'),
 	(1, 'Annie', 'the Dark Child'),
 	(2, 'Olaf', 'the Berserker'),
 	(3, 'Galio', 'the Colossus'),
@@ -214,9 +215,10 @@ CREATE TABLE IF NOT EXISTS `item` (
   PRIMARY KEY (`itemId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='VERY incomplete until I do more with items. Right now I only need basic info to identify them by their IDs.';
 
--- Dumping data for table riot.item: ~316 rows (approximately)
+-- Dumping data for table riot.item: ~317 rows (approximately)
 /*!40000 ALTER TABLE `item` DISABLE KEYS */;
 INSERT INTO `item` (`itemId`, `name`, `goldSellsFor`, `goldTotal`, `goldBase`, `purchasable`) VALUES
+	(0, 'None', 0, 0, 0, b'0'),
 	(1001, 'Boots of Speed', 210, 300, 300, b'1'),
 	(1004, 'Faerie Charm', 88, 125, 125, b'1'),
 	(1006, 'Rejuvenation Bead', 105, 150, 150, b'1'),

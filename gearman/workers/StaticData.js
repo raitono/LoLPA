@@ -113,6 +113,18 @@ let parseAndLoad = async (version) => {
 			let championBatch = [];
 			data = JSON.parse(data);
 
+			// The spicy NONE ban
+			championBatch.push({
+				method: 'PUT',
+				uri: webServer.URLs.Champion.put(),
+				body: {
+					championId: -1,
+					name: 'None',
+					title: 'None',
+				},
+				json: true,
+			});
+
 			// The JSON stores them as properties on the data object, not as an array.
 			// So .forEach directly on the data.data doesn't work.
 			Object.keys(data.data).forEach((key) => {
@@ -136,6 +148,21 @@ let parseAndLoad = async (version) => {
 		.then((data) => {
 			let itemBatch = [];
 			data = JSON.parse(data);
+
+			// Default item
+			itemBatch.push({
+				method: 'PUT',
+				uri: webServer.URLs.Item.put(),
+				body: {
+					itemId: 0,
+					name: 'None',
+					goldSellsFor: 0,
+					goldTotal: 0,
+					goldBase: 0,
+					purchasable: 0,
+				},
+				json: true,
+			});
 
 			Object.keys(data.data).forEach((key) => {
 				itemBatch.push({
