@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS `champion` (
   PRIMARY KEY (`championId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='VERY incomplete until I do more with champions. Right now I only need basic info to identify them by their IDs.';
 
--- Dumping data for table riot.champion: ~141 rows (approximately)
+-- Dumping data for table riot.champion: ~142 rows (approximately)
 /*!40000 ALTER TABLE `champion` DISABLE KEYS */;
 INSERT INTO `champion` (`championId`, `name`, `title`) VALUES
 	(-1, 'None', 'None'),
@@ -818,6 +818,7 @@ INSERT INTO `perk_style` (`styleId`, `name`) VALUES
 CREATE TABLE IF NOT EXISTS `season` (
   `seasonId` int(11) NOT NULL COMMENT 'Given by Riot API',
   `number` int(11) NOT NULL,
+  `name` varchar(50) NOT NULL,
   `startDate` datetime NOT NULL,
   `endDate` datetime DEFAULT NULL,
   PRIMARY KEY (`seasonId`)
@@ -825,9 +826,9 @@ CREATE TABLE IF NOT EXISTS `season` (
 
 -- Dumping data for table riot.season: ~2 rows (approximately)
 /*!40000 ALTER TABLE `season` DISABLE KEYS */;
-INSERT INTO `season` (`seasonId`, `number`, `startDate`, `endDate`) VALUES
-	(10, 7, '2018-01-16 00:00:00', '2018-01-17 00:00:00'),
-	(11, 8, '2018-11-05 00:00:00', NULL);
+INSERT INTO `season` (`seasonId`, `number`, `name`, `startDate`, `endDate`) VALUES
+	(11, 8, 'Season 2018', '2018-01-16 00:00:00', '2018-11-11 23:59:59'),
+	(12, 9, 'Preseason 2019', '2018-11-12 00:00:00', NULL);
 /*!40000 ALTER TABLE `season` ENABLE KEYS */;
 
 -- Dumping structure for table riot.spell
