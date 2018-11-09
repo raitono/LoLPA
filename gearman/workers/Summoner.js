@@ -22,7 +22,25 @@ let determineUpdates = async (summoner) => {
 	} else if (Date.now() - Date.parse(ret.summoner.lastUpdated) >= 600000) {
 		let rawSummoner = await Kayn.Summoner.by.name(ret.summoner.name);
 		if ((rawSummoner.revisionDate - Date.parse(ret.summoner.revisionDate)) != 0) {
-			ret.shouldUpdateMatches = true;
+			debug('update matches');
+			debug(rawSummoner);
+			let updatedSummoner = await request({
+				method: 'POST',
+				uri: webServer.URLs.Summoner.upsertWithWhere('{"name": "'+ret.summoner.name+'"}'),
+				body: {
+					summonerId: rawSummoner.id,
+					accountId: rawSummoner.accountId,
+					profileIconId: rawSummoner.profileIconId,
+					summonerLevel: rawSummoner.summonerLevel,
+					name: rawSummoner.name,
+					revisionDate: rawSummoner.revisionDate,
+				},
+				json: true,
+			});
+			ret = {
+				summoner: updatedSummoner,
+				shouldUpdateMatches: true,
+			};
 		}
 	}
 
@@ -112,6 +130,7 @@ module.exports.registerWorkers = (client) => {
 	});
 
 	client.registerWorker('updateSummonerLastUpdated', async (task) => {
+		debug('update lastUpdated');
 		let s = await updateLastUpdated(task.payload);
 		task.end(s);
 	});
