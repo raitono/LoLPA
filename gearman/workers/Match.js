@@ -336,6 +336,10 @@ let getMatchList = async (summoner, options) => {
 			// This just means they don't have any matches during the time period
 			// so return the options and a null list
 			riotMatchList = null;
+		} else if (err.statusCode == 400) {
+			debug('Bad dates');
+			debug('BeginTime: ' + options.beginTime);
+			debug('EndTime:   ' + options.endTime);
 		} else {
 			debug('Problem calling Kayn');
 			debug(err);
@@ -370,20 +374,27 @@ let getMatchList = async (summoner, options) => {
  * @return {Object} JSON object containing beginTime and endTime to be used with a match method
  */
 let getMatchDates = async (beginTime, endTime) => {
+	let dates = {};
 	if (util.isNullOrUndefined(beginTime)) {
-		let dbSeason = await request(webServer.URLs.Season.get('{"endDate": null}'));
+		let dbSeason = await request(webServer.URLs.Season.get('{"isCurrent": 1}'));
 		dbSeason = JSON.parse(dbSeason)[0];
 		let seasonStart = new Date(dbSeason.startDate).getTime();
-		return {
+		dates = {
 			beginTime: seasonStart,
 			endTime: seasonStart + 604800000,
 		};
 	} else {
-		return {
+		dates = {
 			beginTime: new Date(beginTime).getTime(),
 			endTime: new Date(endTime).getTime(),
 		};
 	}
+
+	if (dates.beginTime > dates.endTime) {
+		dates.endTime = dates.beginTime;
+	}
+
+	return dates;
 };
 
 /**
