@@ -22,8 +22,6 @@ let determineUpdates = async (summoner) => {
 	} else if (Date.now() - Date.parse(ret.summoner.lastUpdated) >= 600000) {
 		let rawSummoner = await Kayn.Summoner.by.name(ret.summoner.name);
 		if ((rawSummoner.revisionDate - Date.parse(ret.summoner.revisionDate)) != 0) {
-			debug('update matches');
-			debug(rawSummoner);
 			let updatedSummoner = await request({
 				method: 'POST',
 				uri: webServer.URLs.Summoner.upsertWithWhere('{"name": "'+ret.summoner.name+'"}'),
@@ -33,7 +31,7 @@ let determineUpdates = async (summoner) => {
 					profileIconId: rawSummoner.profileIconId,
 					summonerLevel: rawSummoner.summonerLevel,
 					name: rawSummoner.name,
-					revisionDate: rawSummoner.revisionDate,
+					revisionDate: summoner.revisionDate,
 				},
 				json: true,
 			});
