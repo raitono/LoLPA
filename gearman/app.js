@@ -52,7 +52,6 @@ let run = async () => {
 
 	let updateSummonerResult = JSON.parse(await client.submitJob('determineUpdates', JSON.stringify(dbSummoner)));
 	debug('Updated summoner: ' + summonerName);
-	debug(updateSummonerResult);
 
 	if (updateSummonerResult.shouldUpdateMatches) {
 		try {

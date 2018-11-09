@@ -6,8 +6,9 @@ const webServer = require('../util/web-server');
 
 /**
  *	Determine which updates to perform on a Summoner. Currently only detect matches.
- *	@param {string} summoner - JSON representation of the Summoner to update
- *	@return {Object} - If the match list should be updated
+ *	@param {string} summoner JSON representation of the Summoner to update
+ *	@return {Object} Object.summoner - JSON string representation of the summoner
+ * 					 Object.shouldUpdateMatches - Boolean
  */
 let determineUpdates = async (summoner) => {
 	let ret = {
@@ -31,8 +32,8 @@ let determineUpdates = async (summoner) => {
 /**
  * Retrieve a summoner from the database.
  * If the summoner cannot be found, retrieves it from RIOT and inserts it.
- * @param {string} summonerName - Summoner name to update
- * @return {string} - JSON string representing the summoner stored in the database
+ * @param {string} summonerName Summoner name to update
+ * @return {string} JSON string representing the summoner stored in the database
  */
 let getSummonerByName = async (summonerName) => {
 	let summoner = '';
@@ -77,6 +78,10 @@ let getSummonerByName = async (summonerName) => {
 	return JSON.stringify(summoner);
 };
 
+/**
+ * Updates the Summoner's lastUpdated field to now
+ * @param {string} summoner Json representation of a Summoner
+ */
 let updateLastUpdated = async (summoner) => {
 	summoner = JSON.parse(summoner);
 	request({

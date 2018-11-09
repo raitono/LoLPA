@@ -26,7 +26,7 @@ let updateMatchList = async function(summoner) {
 		matchBatch.push(matchList.gameId);
 	});
 
-	// Send get the matches from RIOT
+	// Get the matches from RIOT
 	let matches = await Promise.all(matchBatch.map(Kayn.Match.get));
 	let matchCount = 0;
 	let matchInsertBatch = [];
