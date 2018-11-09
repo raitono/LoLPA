@@ -66,7 +66,7 @@ module.exports.URLs = {
 			return process.env.WEB_SERVER + '/Summoners?filter={"where":'+whereClause+'}';
 		},
 		getByName: function(name) {
-			return process.env.WEB_SERVER + '/Summoners/findOne?filter={"name":"'+name+'"}';
+			return process.env.WEB_SERVER + '/Summoners/findOne?filter={"where":{"name":"'+name+'"}}';
 		},
 		upsertWithWhere: function(whereClause) {
 			return process.env.WEB_SERVER + '/Summoners/upsertWithWhere?where='+whereClause;
