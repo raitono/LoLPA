@@ -5,56 +5,109 @@ const Kayn	= require('../kayn');
 const webServer = require('../util/web-server');
 
 /**
- *	Update a Summoner's information or insert a new Summoner if they don't already exist
- *	@param {string} summonerName - Summoner name to update
- *	@return {Boolean} - If the match list should be updated
+ *	Determine which updates to perform on a Summoner. Currently only detect matches.
+ *	@param {string} summoner - JSON representation of the Summoner to update
+ *	@return {Object} - If the match list should be updated
  */
-let updateByName = async (summonerName) => {
-	let rawSummoner = await Kayn.Summoner.by.name(summonerName);
+let determineUpdates = async (summoner) => {
+	let ret = {
+		summoner: JSON.parse(summoner),
+		shouldUpdateMatches: false,
+	};
 
-	let dbSummoner = JSON.parse(await getSummonerByName(summonerName));
-	debug(dbSummoner);
-	debug('raw revision: ' + rawSummoner.revisionDate);
-	debug('db revision: ' + dbSummoner.revisionDate);
+	if (ret.summoner.lastUpdated == undefined) {
+		ret.shouldUpdateMatches = true;
+		return JSON.stringify(ret);
+	} else if (Date.now() - Date.parse(ret.summoner.lastUpdated) >= 600000) {
+		let rawSummoner = await Kayn.Summoner.by.name(ret.summoner.name);
+		if ((rawSummoner.revisionDate - Date.parse(ret.summoner.revisionDate)) != 0) {
+			ret.shouldUpdateMatches = true;
+		}
+	}
 
-	/* if ((rawSummoner.revisionDate - dbSummoner.revisionDate) > 10) {
-		await request({
-			method: 'POST',
-			uri: webServer.URLs.Summoner.upsertWithWhere('{"name": "'+summonerName+'"}'),
-			body: {
-				summonerId: rawSummoner.id,
-				accountId: rawSummoner.accountId,
-				profileIconId: rawSummoner.profileIconId,
-				summonerLevel: rawSummoner.summonerLevel,
-				name: rawSummoner.name,
-				revisionDate: rawSummoner.revisionDate,
-				lastUpdated: Date.now(),
-			},
-			json: true,
-		});
-		return true;
-	} */
-
-	return false;
+	return JSON.stringify(ret);
 };
 
 /**
- * Retrieve a summoner from the database
+ * Retrieve a summoner from the database.
+ * If the summoner cannot be found, retrieves it from RIOT and inserts it.
  * @param {string} summonerName - Summoner name to update
  * @return {string} - JSON string representing the summoner stored in the database
  */
 let getSummonerByName = async (summonerName) => {
-	return JSON.stringify(await request({
+	let summoner = '';
+	let summonerDBRequestOptions = {
 		method: 'GET',
 		uri: webServer.URLs.Summoner.getByName(summonerName),
 		json: true,
-	}));
+	};
+
+	try {
+		summoner = await request(summonerDBRequestOptions);
+	} catch (error) {
+		if (error.error.error.statusCode == 404) {
+			debug('Summoner not found in db');
+			try {
+				let rawSummoner = await Kayn.Summoner.by.name(summonerName);
+				await request({
+					method: 'POST',
+					uri: webServer.URLs.Summoner.upsertWithWhere('{"name": "'+summonerName+'"}'),
+					body: {
+						summonerId: rawSummoner.id,
+						accountId: rawSummoner.accountId,
+						profileIconId: rawSummoner.profileIconId,
+						summonerLevel: rawSummoner.summonerLevel,
+						name: rawSummoner.name,
+						revisionDate: rawSummoner.revisionDate,
+					},
+					json: true,
+				});
+
+				summoner = await request(summonerDBRequestOptions);
+			} catch (kaynError) {
+				if (kaynError.statusCode == 404) {
+					debug('Summoner does not exist: ' + summonerName);
+					throw kaynError;
+				}
+			}
+		} else {
+			debug(error);
+		}
+	}
+	return JSON.stringify(summoner);
+};
+
+let updateLastUpdated = async (summoner) => {
+	summoner = JSON.parse(summoner);
+	request({
+		method: 'POST',
+		uri: webServer.URLs.Summoner.upsertWithWhere('{"name": "'+summoner.name+'"}'),
+		body: {
+			summonerId: summoner.summonerId,
+			accountId: summoner.accountId,
+			profileIconId: summoner.profileIconId,
+			summonerLevel: summoner.summonerLevel,
+			name: summoner.name,
+			revisionDate: summoner.revisionDate,
+			lastUpdated: Date.now(),
+		},
+		json: true,
+	});
 };
 
 module.exports.registerWorkers = (client) => {
-	client.registerWorker('updateSummonerByName', async (task) => {
-		debug('update summoner: ' + task.payload);
-		let s = await updateByName(task.payload);
+	client.registerWorker('determineUpdates', async (task) => {
+		let s = await determineUpdates(task.payload);
+		task.end(s);
+	});
+
+	client.registerWorker('getSummonerByName', async (task) => {
+		let s = await getSummonerByName(task.payload);
+		task.end(s);
+	});
+
+	client.registerWorker('updateSummonerLastUpdated', async (task) => {
+		let s = await updateLastUpdated(task.payload);
 		task.end(s);
 	});
 

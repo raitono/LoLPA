@@ -43,12 +43,26 @@ let run = async () => {
 	/* await worker.submitJob('updateStaticData', 'ThisIsNecessaryButNotUsed')
 	debug('updateStaticData queued'); */
 
-	let shouldUpdateMatches = await client.submitJob('updateSummonerByName', summonerName);
-	debug('Updated summoner: ' + summonerName);
-	debug(shouldUpdateMatches);
+	let dbSummoner = undefined;
+	try {
+		dbSummoner = JSON.parse(await client.submitJob('getSummonerByName', summonerName));
+	} catch (error) {
+		debug('Unable to update summoner');
+	}
 
-	/* await client.submitJob('updateMatchList', updateSummonerResult);
-	debug('Updated match list for ' + dbSummoner.name); */
+	let updateSummonerResult = JSON.parse(await client.submitJob('determineUpdates', JSON.stringify(dbSummoner)));
+	debug('Updated summoner: ' + summonerName);
+	debug(updateSummonerResult);
+
+	if (updateSummonerResult.shouldUpdateMatches) {
+		try {
+			await client.submitJob('updateMatchList', JSON.stringify(updateSummonerResult.summoner));
+			debug('Updated match list for ' + summonerName);
+			client.submitJob('updateSummonerLastUpdated', JSON.stringify(updateSummonerResult.summoner));
+		} catch (error) {
+			debug(error);
+		}
+	}
 };
 
 module.exports = app;
