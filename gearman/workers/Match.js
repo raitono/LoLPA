@@ -20,6 +20,10 @@ let updateMatchList = async function(summoner) {
 
 	await getMatchList(summoner);
 
+	if (!summoner.matchList) {
+		return;
+	}
+
 	// We have all the matches. Extract the gameIds.
 	let matchBatch = [];
 	summoner.matchList.forEach((matchList) => {
@@ -167,12 +171,12 @@ let updateMatchList = async function(summoner) {
 					turretKills: participant.stats.turretKills,
 					damageDealtToTurrets: participant.stats.damageDealtToTurrets,
 					inhibitorKills: participant.stats.inhibitorKills,
-					firstTowerAssist: participant.stats.firstTowerAssist,
-					firstTowerKill: participant.stats.firstTowerKill,
-					firstBloodAssist: participant.stats.firstBloodAssist,
+					firstTowerAssist: participant.stats.firstTowerAssist || 0,
+					firstTowerKill: participant.stats.firstTowerKill || 0,
+					firstBloodAssist: participant.stats.firstBloodAssist || 0,
 					firstInhibitorKill: participant.stats.firstInhibitorKill || 0,
 					firstInhibitorAssist: participant.stats.firstInhibitorAssist || 0,
-					firstBloodKill: participant.stats.firstBloodKill,
+					firstBloodKill: participant.stats.firstBloodKill || 0,
 					champLevel: participant.stats.champLevel,
 					nodeNeutralize: participant.stats.nodeNeutralize || 0,
 					nodeNeutralizeAssist: participant.stats.nodeNeutralizeAssists || 0,
@@ -180,7 +184,7 @@ let updateMatchList = async function(summoner) {
 					nodeCaptureAssist: participant.stats.nodeCaptureAssist || 0,
 					altarsNeutralized: participant.stats.altarsNeutralized || 0,
 					goldEarned: participant.stats.goldEarned,
-					goldSpent: participant.stats.goldSpent,
+					goldSpent: participant.stats.goldSpent || 0,
 					physicalDamageTaken: participant.stats.physicalDamageTaken,
 					magicalDamageTaken: participant.stats.magicalDamageTaken,
 					trueDamageTaken: participant.stats.trueDamageTaken,
@@ -376,8 +380,8 @@ let getMatchList = async (summoner, options) => {
 let getMatchDates = async (beginTime, endTime) => {
 	let dates = {};
 	if (util.isNullOrUndefined(beginTime)) {
-		let dbSeason = await request(webServer.URLs.Season.get('{"isCurrent": 1}'));
-		dbSeason = JSON.parse(dbSeason)[0];
+		let dbSeason = await request(webServer.URLs.Season.getOne('{"isCurrent":1}'));
+		dbSeason = JSON.parse(dbSeason);
 		let seasonStart = new Date(dbSeason.startDate).getTime();
 		dates = {
 			beginTime: seasonStart,
