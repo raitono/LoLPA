@@ -81,6 +81,9 @@ module.exports.URLs = {
 		get: function(whereClause) {
 			return process.env.WEB_SERVER + '/Seasons?filter={"where":'+whereClause+'}';
 		},
+		getOne: function(whereClause) {
+			return process.env.WEB_SERVER + '/Seasons/findOne?filter={"where":'+whereClause+'}';
+		},
 	},
 	TeamStat: {
 		put: function() {

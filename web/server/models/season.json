@@ -21,6 +21,10 @@
     },
     "endDate": {
       "type": "date"
+    },
+    "isCurrent": {
+      "type": "number",
+      "required": true
     }
   },
   "validations": [],
