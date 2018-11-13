@@ -5,6 +5,7 @@
   "options": {
     "validateUpsert": true
   },
+  "excludeBaseProperties": ["id"],
   "properties": {
     "gameId": {
       "type": "number",

@@ -529,8 +529,6 @@ let parseMatchParticipantTimelineDelta = async (gameId, deltaType,
 			} else {
 				throw error;
 			}
-		} finally {
-			timelineKeysCounter = timelineKeysCounter + 1;
 		}
 
 		if (!exists) {
@@ -547,6 +545,8 @@ let parseMatchParticipantTimelineDelta = async (gameId, deltaType,
 				json: true,
 			});
 		}
+
+		timelineKeysCounter = timelineKeysCounter + 1;
 	}
 };
 
