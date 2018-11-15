@@ -2,7 +2,7 @@
 -- Host:                         127.0.0.1
 -- Server version:               5.7.20-log - MySQL Community Server (GPL)
 -- Server OS:                    Win64
--- HeidiSQL Version:             9.5.0.5282
+-- HeidiSQL Version:             9.5.0.5278
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -821,14 +821,16 @@ CREATE TABLE IF NOT EXISTS `season` (
   `name` varchar(50) NOT NULL,
   `startDate` datetime NOT NULL,
   `endDate` datetime DEFAULT NULL,
+  `isCurrent` int(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`seasonId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.season: ~2 rows (approximately)
+-- Dumping data for table riot.season: ~3 rows (approximately)
 /*!40000 ALTER TABLE `season` DISABLE KEYS */;
-INSERT INTO `season` (`seasonId`, `number`, `name`, `startDate`, `endDate`) VALUES
-	(11, 8, 'Season 2018', '2018-01-16 00:00:00', '2018-11-11 23:59:59'),
-	(12, 9, 'Preseason 2019', '2018-11-12 00:00:00', NULL);
+INSERT INTO `season` (`seasonId`, `number`, `name`, `startDate`, `endDate`, `isCurrent`) VALUES
+	(11, 8, 'Season 2018', '2018-01-16 00:00:00', '2018-11-12 23:59:59', 0),
+	(12, 9, 'Preseason 2019', '2018-11-13 00:00:00', '2019-01-22 23:59:59', 1),
+	(13, 9, 'Season 2019', '2019-01-23 00:00:00', NULL, 0);
 /*!40000 ALTER TABLE `season` ENABLE KEYS */;
 
 -- Dumping structure for table riot.spell
