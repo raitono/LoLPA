@@ -10,6 +10,7 @@ export class ParticipantTimeline extends Entity {
 
   @property({
     type: 'number',
+    id: true,
   })
   participantId?: number;
 

@@ -10,6 +10,7 @@ export class TeamBan extends Entity {
 
   @property({
     type: 'number',
+    id: true,
   })
   teamId?: number;
 
@@ -21,6 +22,7 @@ export class TeamBan extends Entity {
 
   @property({
     type: 'number',
+    id: true,
   })
   pickTurn?: number;
 

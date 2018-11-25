@@ -4,6 +4,7 @@ import {Entity, model, property} from '@loopback/repository';
 export class XrefParticipantItem extends Entity {
   @property({
     type: 'number',
+    id: true,
   })
   gameId?: number;
 

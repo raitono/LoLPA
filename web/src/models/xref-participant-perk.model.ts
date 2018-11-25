@@ -10,16 +10,19 @@ export class XrefParticipantPerk extends Entity {
 
   @property({
     type: 'number',
+    id: true,
   })
   participantId?: number;
 
   @property({
     type: 'string',
+    id: true,
   })
   perkId?: string;
 
   @property({
     type: 'number',
+    id: true,
   })
   verId?: number;
 

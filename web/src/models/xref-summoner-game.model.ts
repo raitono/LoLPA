@@ -10,11 +10,13 @@ export class XrefSummonerGame extends Entity {
 
   @property({
     type: 'number',
+    id: true,
   })
   gameId?: number;
 
   @property({
     type: 'number',
+    id: true,
   })
   participantId?: number;
 

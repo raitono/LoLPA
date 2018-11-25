@@ -10,6 +10,7 @@ export class TeamStat extends Entity {
 
   @property({
     type: 'number',
+    id: true,
   })
   teamId?: number;
 
