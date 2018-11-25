@@ -16,6 +16,16 @@ export class LoLPAApplication extends BootMixin(
   constructor(options: ApplicationConfig = {}) {
     super(options);
 
+    this.bind('datasources.config.riot').to({
+      name: 'db',
+      connector: 'mysql',
+      hostname: process.env.DB_HOST,
+      port: process.env.DB_PORT || 3306,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASS,
+      database: process.env.DB_DATABASE || 'riot'
+    });
+
     // Set up the custom sequence
     this.sequence(MySequence);
 
