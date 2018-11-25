@@ -38,7 +38,7 @@
     "url": "https://github.com/raitono/LoLPA/issues"
   },
   "author": "Ben Painter <bpaintx2@gmail.com>",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "files": [
     "README.md",
     "index.js",
