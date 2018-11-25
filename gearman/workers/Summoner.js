@@ -59,38 +59,36 @@ let getSummonerByName = async (summonerName) => {
 		json: true,
 	};
 
-	try {
-		summoner = await request(summonerDBRequestOptions);
-	} catch (error) {
-		if (error.error.error.statusCode == 404) {
-			debug('Summoner not found in db');
-			try {
-				let rawSummoner = await Kayn.Summoner.by.name(summonerName);
-				await request({
-					method: 'POST',
-					uri: webServer.URLs.Summoner.upsertWithWhere('{"name": "'+summonerName+'"}'),
-					body: {
-						summonerId: rawSummoner.id,
-						accountId: rawSummoner.accountId,
-						profileIconId: rawSummoner.profileIconId,
-						summonerLevel: rawSummoner.summonerLevel,
-						name: rawSummoner.name,
-						revisionDate: rawSummoner.revisionDate,
-					},
-					json: true,
-				});
+	summoner = await request(summonerDBRequestOptions);
 
-				summoner = await request(summonerDBRequestOptions);
-			} catch (kaynError) {
-				if (kaynError.statusCode == 404) {
-					debug('Summoner does not exist: ' + summonerName);
-					throw kaynError;
-				}
+	if (!summoner.id) {
+		debug('Summoner not found in db');
+		try {
+			let rawSummoner = await Kayn.Summoner.by.name(summonerName);
+			await request({
+				method: 'POST',
+				uri: webServer.URLs.Summoner.post(),
+				body: {
+					summonerId: rawSummoner.id,
+					accountId: rawSummoner.accountId,
+					profileIconId: rawSummoner.profileIconId,
+					summonerLevel: rawSummoner.summonerLevel,
+					name: rawSummoner.name,
+					revisionDate: rawSummoner.revisionDate,
+				},
+				json: true,
+			});
+
+			summoner = await request(summonerDBRequestOptions);
+			debug(summoner);
+		} catch (kaynError) {
+			if (kaynError.statusCode == 404) {
+				debug('Summoner does not exist: ' + summonerName);
 			}
-		} else {
-			debug(error);
+			debug(kaynError);
 		}
 	}
+
 	return JSON.stringify(summoner);
 };
 
@@ -123,6 +121,7 @@ module.exports.registerWorkers = (client) => {
 	});
 
 	client.registerWorker('getSummonerByName', async (task) => {
+		debug('getSummonerByName: ' + task.payload);
 		let s = await getSummonerByName(task.payload);
 		task.end(s);
 	});

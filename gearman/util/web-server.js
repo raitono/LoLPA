@@ -63,13 +63,13 @@ module.exports.URLs = {
 	},
 	Summoner: {
 		get: function(whereClause) {
-			return process.env.WEB_SERVER + '/Summoners?filter={"where":'+whereClause+'}';
+			return process.env.WEB_SERVER + '/summoners?filter={"where":'+whereClause+'}';
 		},
 		getByName: function(name) {
-			return process.env.WEB_SERVER + '/Summoners/findOne?filter={"where":{"name":"'+name+'"}}';
+			return process.env.WEB_SERVER + '/summoners?filter={"where":{"name":"'+name+'"}}';
 		},
-		upsertWithWhere: function(whereClause) {
-			return process.env.WEB_SERVER + '/Summoners/upsertWithWhere?where='+whereClause;
+		post: function() {
+			return process.env.WEB_SERVER + '/summoners';
 		},
 	},
 	SummonerSpell: {

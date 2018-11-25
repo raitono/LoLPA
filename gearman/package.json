@@ -4,7 +4,7 @@
   "description": "Gearman server for LoLPA",
   "homepage": "https://github.com/raitono/LoLPA#readme",
   "author": "Ben Painter <bpaintx2@gmail.com>",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "main": "app.js",
   "engines": {
     "node": ">=8.9"

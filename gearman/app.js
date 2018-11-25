@@ -48,9 +48,10 @@ let run = async () => {
 		dbSummoner = JSON.parse(await client.submitJob('getSummonerByName', summonerName));
 	} catch (error) {
 		debug('Unable to update summoner');
+		debug(error);
 	}
-
-	let updateSummonerResult = JSON.parse(await client.submitJob('determineUpdates', JSON.stringify(dbSummoner)));
+debug(dbSummoner);
+	/* let updateSummonerResult = JSON.parse(await client.submitJob('determineUpdates', JSON.stringify(dbSummoner)));
 	debug('Updated summoner: ' + summonerName);
 
 	if (updateSummonerResult.shouldUpdateMatches) {
@@ -61,7 +62,7 @@ let run = async () => {
 		} catch (error) {
 			debug(error);
 		}
-	}
+	} */
 };
 
 module.exports = app;
