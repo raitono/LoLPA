@@ -109,7 +109,7 @@ let updateLastUpdated = async (summoner) => {
 			summonerLevel: summoner.summonerLevel,
 			name: summoner.name,
 			revisionDate: new Date(summoner.revisionDate),
-			lastUpdated: Date.now(),
+			lastUpdated: new Date(Date.now()),
 		},
 		json: true,
 	});
