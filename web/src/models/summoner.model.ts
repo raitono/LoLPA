@@ -36,7 +36,7 @@ export class Summoner extends Entity {
     type: 'date',
     required: true,
   })
-  revisionDate: number;
+  revisionDate: string;
 
   @property({
     type: 'date',

@@ -60,8 +60,9 @@ let getSummonerByName = async (summonerName) => {
 	};
 
 	summoner = await request(summonerDBRequestOptions);
+	summoner = summoner[0];
 
-	if (!summoner.id) {
+	if (!summoner.summonerId) {
 		debug('Summoner not found in db');
 		try {
 			let rawSummoner = await Kayn.Summoner.by.name(summonerName);
@@ -74,7 +75,7 @@ let getSummonerByName = async (summonerName) => {
 					profileIconId: rawSummoner.profileIconId,
 					summonerLevel: rawSummoner.summonerLevel,
 					name: rawSummoner.name,
-					revisionDate: rawSummoner.revisionDate,
+					revisionDate: new Date(rawSummoner.revisionDate),
 				},
 				json: true,
 			});
@@ -107,7 +108,7 @@ let updateLastUpdated = async (summoner) => {
 			profileIconId: summoner.profileIconId,
 			summonerLevel: summoner.summonerLevel,
 			name: summoner.name,
-			revisionDate: summoner.revisionDate,
+			revisionDate: new Date(summoner.revisionDate),
 			lastUpdated: Date.now(),
 		},
 		json: true,
