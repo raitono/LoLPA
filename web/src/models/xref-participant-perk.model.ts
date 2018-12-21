@@ -6,25 +6,31 @@ export class XrefParticipantPerk extends Entity {
     type: 'number',
     id: true,
   })
+  id?: number;
+
+  @property({
+    type: 'number',
+    required: true,
+  })
   gameId?: number;
 
   @property({
     type: 'number',
-    id: true,
+    required: true,
   })
   participantId?: number;
 
   @property({
     type: 'string',
-    id: true,
+    required: true,
   })
   perkId?: string;
 
   @property({
     type: 'number',
-    id: true,
+    required: true,
   })
-  verId?: number;
+  varId?: number;
 
   @property({
     type: 'string',

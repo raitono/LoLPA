@@ -6,11 +6,11 @@ export class ParticipantTimelineDelta extends Entity {
     type: 'number',
     id: true,
   })
-  gameId?: number;
+  id?: number;
 
   @property({
     type: 'number',
-    id: true,
+    required: true,
   })
   participantId?: number;
 

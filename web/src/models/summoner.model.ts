@@ -10,7 +10,7 @@ export class Summoner extends Entity {
 
   @property({
     type: 'number',
-    id: true,
+    required: true,
   })
   accountId?: number;
 

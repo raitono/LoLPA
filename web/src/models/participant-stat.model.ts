@@ -6,11 +6,17 @@ export class ParticipantStat extends Entity {
     type: 'number',
     id: true,
   })
+  id?: number;
+
+  @property({
+    type: 'number',
+    required: true,
+  })
   gameId?: number;
 
   @property({
     type: 'number',
-    id: true,
+    required: true,
   })
   participantId?: number;
 

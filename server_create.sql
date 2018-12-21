@@ -2,7 +2,7 @@
 -- Host:                         127.0.0.1
 -- Server version:               5.7.20-log - MySQL Community Server (GPL)
 -- Server OS:                    Win64
--- HeidiSQL Version:             9.5.0.5278
+-- HeidiSQL Version:             9.5.0.5282
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -560,13 +560,15 @@ CREATE TABLE IF NOT EXISTS `match` (
 
 -- Dumping structure for table riot.match_list
 CREATE TABLE IF NOT EXISTS `match_list` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `summonerId` int(11) NOT NULL,
   `gameId` int(11) unsigned NOT NULL,
   `championId` int(11) NOT NULL,
   `lane` varchar(6) NOT NULL,
   `role` varchar(11) NOT NULL,
   `timestamp` datetime NOT NULL,
-  PRIMARY KEY (`summonerId`,`gameId`),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `summonerId_gameId` (`summonerId`,`gameId`),
   KEY `FK_matches_profileId` (`summonerId`),
   KEY `FK_matches_gameId` (`gameId`),
   KEY `FK_matches_championId` (`championId`),
@@ -581,6 +583,7 @@ CREATE TABLE IF NOT EXISTS `match_list` (
 
 -- Dumping structure for table riot.participant
 CREATE TABLE IF NOT EXISTS `participant` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `gameId` int(11) unsigned NOT NULL,
   `participantId` int(11) NOT NULL COMMENT 'Given by Riot API',
   `championId` int(11) NOT NULL,
@@ -588,7 +591,8 @@ CREATE TABLE IF NOT EXISTS `participant` (
   `spell2Id` int(11) NOT NULL,
   `teamId` int(11) NOT NULL COMMENT 'Given by Riot API',
   `highestAchievedSeasonTier` varchar(50) NOT NULL,
-  PRIMARY KEY (`gameId`,`participantId`),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `gameId_participantId` (`gameId`,`participantId`),
   KEY `IX_participants_participantId` (`participantId`),
   KEY `FK_participants_championId` (`championId`),
   KEY `FK_participants_spell1Id` (`spell1Id`),
@@ -605,7 +609,7 @@ CREATE TABLE IF NOT EXISTS `participant` (
 
 -- Dumping structure for table riot.participant_stat
 CREATE TABLE IF NOT EXISTS `participant_stat` (
-  `gameId` int(11) unsigned NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `participantId` int(11) NOT NULL,
   `win` bit(1) NOT NULL COMMENT 'For some reason, it''s a bit here.',
   `kills` int(11) NOT NULL,
@@ -672,11 +676,9 @@ CREATE TABLE IF NOT EXISTS `participant_stat` (
   `totalDamageTaken` int(11) NOT NULL,
   `perkPrimaryStyle` int(11) NOT NULL,
   `perkSubStyle` int(11) NOT NULL,
-  PRIMARY KEY (`participantId`,`gameId`),
+  PRIMARY KEY (`id`),
   KEY `FK_participant_stats_participantId` (`participantId`),
-  KEY `FK_participant_stats_gameId` (`gameId`),
-  CONSTRAINT `FK_participant_stats_gameId` FOREIGN KEY (`gameId`) REFERENCES `match` (`gameId`),
-  CONSTRAINT `FK_participant_stats_participantId` FOREIGN KEY (`participantId`) REFERENCES `participant` (`participantId`)
+  CONSTRAINT `FK_participant_stats_participantId` FOREIGN KEY (`participantId`) REFERENCES `participant` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Dumping data for table riot.participant_stat: ~0 rows (approximately)
@@ -685,15 +687,13 @@ CREATE TABLE IF NOT EXISTS `participant_stat` (
 
 -- Dumping structure for table riot.participant_timeline
 CREATE TABLE IF NOT EXISTS `participant_timeline` (
-  `gameId` int(11) unsigned NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `participantId` int(11) NOT NULL,
   `lane` varchar(6) NOT NULL,
   `role` varchar(11) NOT NULL,
-  PRIMARY KEY (`participantId`,`gameId`),
+  PRIMARY KEY (`id`),
   KEY `FK_participant_timelines_participantId` (`participantId`),
-  KEY `FK_participant_timelines_gameId` (`gameId`),
-  CONSTRAINT `FK_participant_timelines_gameId` FOREIGN KEY (`gameId`) REFERENCES `match` (`gameId`),
-  CONSTRAINT `FK_participant_timelines_participantId` FOREIGN KEY (`participantId`) REFERENCES `participant` (`participantId`)
+  CONSTRAINT `FK_participant_timelines_participantId` FOREIGN KEY (`participantId`) REFERENCES `participant` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Dumping data for table riot.participant_timeline: ~0 rows (approximately)
@@ -702,17 +702,13 @@ CREATE TABLE IF NOT EXISTS `participant_timeline` (
 
 -- Dumping structure for table riot.participant_timeline_delta
 CREATE TABLE IF NOT EXISTS `participant_timeline_delta` (
-  `gameId` int(11) unsigned NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `participantId` int(11) NOT NULL,
   `deltaTypeId` int(11) NOT NULL,
   `increment` varchar(7) NOT NULL COMMENT 'Values indicate minutes such as "0-10", "10-20". Length of 7 should cover anything that goes into the 100+ min range. God help anyone who plays more than 16.5 hours in one game.',
   `value` decimal(10,3) NOT NULL,
-  PRIMARY KEY (`participantId`,`gameId`,`deltaTypeId`,`increment`),
-  KEY `FK_participant_timeline_delta_gameId` (`gameId`),
-  KEY `FK_participant_timeline_delta_deltaTypeId` (`deltaTypeId`),
-  CONSTRAINT `FK_participant_timeline_delta_deltaTypeId` FOREIGN KEY (`deltaTypeId`) REFERENCES `delta_type` (`id`),
-  CONSTRAINT `FK_participant_timeline_delta_gameId` FOREIGN KEY (`gameId`) REFERENCES `match` (`gameId`),
-  CONSTRAINT `FK_participant_timeline_delta_participantId` FOREIGN KEY (`participantId`) REFERENCES `participant` (`participantId`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `participantId_deltaTypeId_increment` (`participantId`,`deltaTypeId`,`increment`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Dumping data for table riot.participant_timeline_delta: ~0 rows (approximately)
@@ -825,12 +821,11 @@ CREATE TABLE IF NOT EXISTS `season` (
   PRIMARY KEY (`seasonId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.season: ~3 rows (approximately)
+-- Dumping data for table riot.season: ~2 rows (approximately)
 /*!40000 ALTER TABLE `season` DISABLE KEYS */;
 INSERT INTO `season` (`seasonId`, `number`, `name`, `startDate`, `endDate`, `isCurrent`) VALUES
-	(11, 8, 'Season 2018', '2018-01-16 00:00:00', '2018-11-12 23:59:59', 0),
-	(12, 9, 'Preseason 2019', '2018-11-13 00:00:00', '2019-01-22 23:59:59', 1),
-	(13, 9, 'Season 2019', '2019-01-23 00:00:00', NULL, 0);
+	(11, 8, 'Season 2018', '2018-01-16 00:00:00', '2018-11-12 23:59:59', 1),
+	(12, 9, 'Preseason 2019', '2018-11-13 00:00:00', NULL, 0);
 /*!40000 ALTER TABLE `season` ENABLE KEYS */;
 
 -- Dumping structure for table riot.spell
@@ -877,7 +872,7 @@ CREATE TABLE IF NOT EXISTS `summoner` (
   `name` varchar(50) NOT NULL,
   `revisionDate` datetime NOT NULL,
   `lastUpdated` datetime DEFAULT NULL,
-  PRIMARY KEY (`summonerId`,`accountId`)
+  PRIMARY KEY (`summonerId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Dumping data for table riot.summoner: ~0 rows (approximately)
@@ -886,11 +881,13 @@ CREATE TABLE IF NOT EXISTS `summoner` (
 
 -- Dumping structure for table riot.team_ban
 CREATE TABLE IF NOT EXISTS `team_ban` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `gameId` int(11) unsigned NOT NULL,
   `teamId` int(11) NOT NULL,
   `championId` int(11) NOT NULL,
   `pickTurn` int(11) NOT NULL,
-  PRIMARY KEY (`gameId`,`teamId`,`pickTurn`),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `gameId_teamId_pickTurn` (`gameId`,`teamId`,`pickTurn`),
   KEY `FK_team_ban_championId` (`championId`),
   CONSTRAINT `FK_team_ban_championId` FOREIGN KEY (`championId`) REFERENCES `champion` (`championId`),
   CONSTRAINT `FK_team_ban_gameId` FOREIGN KEY (`gameId`) REFERENCES `match` (`gameId`)
@@ -902,6 +899,7 @@ CREATE TABLE IF NOT EXISTS `team_ban` (
 
 -- Dumping structure for table riot.team_stat
 CREATE TABLE IF NOT EXISTS `team_stat` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `gameId` int(11) unsigned NOT NULL,
   `teamId` int(11) NOT NULL COMMENT '100 = Blue and 200 = Red',
   `win` varchar(4) NOT NULL COMMENT 'Either "Win" or "Fail"',
@@ -917,7 +915,8 @@ CREATE TABLE IF NOT EXISTS `team_stat` (
   `firstRiftHerald` bit(1) NOT NULL,
   `firstBlood` bit(1) NOT NULL,
   `firstTower` bit(1) NOT NULL,
-  PRIMARY KEY (`gameId`,`teamId`),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `gameId_teamId` (`gameId`,`teamId`),
   CONSTRAINT `FK_team_stats_gameId` FOREIGN KEY (`gameId`) REFERENCES `match` (`gameId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -927,9 +926,10 @@ CREATE TABLE IF NOT EXISTS `team_stat` (
 
 -- Dumping structure for table riot.xref_champion_tag
 CREATE TABLE IF NOT EXISTS `xref_champion_tag` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `championId` int(11) NOT NULL,
   `tagId` int(11) NOT NULL,
-  PRIMARY KEY (`championId`),
+  PRIMARY KEY (`id`),
   UNIQUE KEY `UX_champion_tags_championId_tagId` (`championId`,`tagId`),
   KEY `FK_xref_champion_tags_tagId` (`tagId`),
   CONSTRAINT `FK_xref_champion_tags_championId` FOREIGN KEY (`championId`) REFERENCES `champion` (`championId`),
@@ -942,10 +942,11 @@ CREATE TABLE IF NOT EXISTS `xref_champion_tag` (
 
 -- Dumping structure for table riot.xref_participant_item
 CREATE TABLE IF NOT EXISTS `xref_participant_item` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `gameId` int(11) unsigned NOT NULL,
   `participantId` int(11) NOT NULL,
   `itemId` int(11) NOT NULL,
-  PRIMARY KEY (`participantId`,`gameId`),
+  PRIMARY KEY (`id`),
   KEY `FK_participant_items_participantId` (`participantId`),
   KEY `FK_xref_participant_item_gameId` (`gameId`),
   KEY `FK_xref_participant_item_itemId` (`itemId`),
@@ -960,13 +961,15 @@ CREATE TABLE IF NOT EXISTS `xref_participant_item` (
 
 -- Dumping structure for table riot.xref_participant_perk
 CREATE TABLE IF NOT EXISTS `xref_participant_perk` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `gameId` int(11) unsigned NOT NULL,
   `participantId` int(11) NOT NULL,
   `perkId` varchar(4) NOT NULL,
   `varId` int(11) NOT NULL COMMENT 'Every perk gets 3. Pulling these into their own table allows me to expand the amount of vars instead of adding more columns to the stats table if Riot ever decides to use more.',
   `description` varchar(50) DEFAULT NULL,
   `value` int(11) NOT NULL,
-  PRIMARY KEY (`gameId`,`participantId`,`perkId`,`varId`),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `gameId_participantId_perkId_varId` (`gameId`,`participantId`,`perkId`,`varId`),
   KEY `FK_perkId` (`perkId`),
   KEY `FK_participantId` (`participantId`),
   CONSTRAINT `FK_gameId` FOREIGN KEY (`gameId`) REFERENCES `match` (`gameId`),
@@ -980,10 +983,12 @@ CREATE TABLE IF NOT EXISTS `xref_participant_perk` (
 
 -- Dumping structure for table riot.xref_summoner_game
 CREATE TABLE IF NOT EXISTS `xref_summoner_game` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `summonerId` int(11) NOT NULL,
   `gameId` int(11) unsigned NOT NULL,
   `participantId` int(11) NOT NULL,
-  PRIMARY KEY (`summonerId`,`gameId`,`participantId`),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `summonerId_gameId_participantId` (`summonerId`,`gameId`,`participantId`),
   KEY `FK_xref_summoner_game_gameId` (`gameId`),
   KEY `FK_xref_summoner_game_participantId` (`gameId`,`participantId`),
   CONSTRAINT `FK_xref_summoner_game_participantId` FOREIGN KEY (`gameId`, `participantId`) REFERENCES `participant` (`gameId`, `participantId`)

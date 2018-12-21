@@ -6,11 +6,17 @@ export class MatchList extends Entity {
     type: 'number',
     id: true,
   })
+  id?: number;
+
+  @property({
+    type: 'number',
+    required: true,
+  })
   summonerId?: number;
 
   @property({
     type: 'number',
-    id: true,
+    required: true,
   })
   gameId?: number;
 
