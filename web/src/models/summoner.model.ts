@@ -4,20 +4,22 @@ import {Entity, model, property} from '@loopback/repository';
 export class Summoner extends Entity {
   @property({
     type: 'string',
+    required: true,
     id: true,
   })
   puuid?: string;
 
   @property({
-    type: 'number',
-  })
-  summonerId?: number;
-
-  @property({
-    type: 'number',
+    type: 'string',
     required: true,
   })
-  accountId?: number;
+  summonerId?: string;
+
+  @property({
+    type: 'string',
+    required: true,
+  })
+  accountId?: string;
 
   @property({
     type: 'number',

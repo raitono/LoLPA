@@ -561,14 +561,13 @@ CREATE TABLE IF NOT EXISTS `match` (
 -- Dumping structure for table riot.match_list
 CREATE TABLE IF NOT EXISTS `match_list` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `summonerId` int(11) NOT NULL,
+  `summonerId` varchar(50) NOT NULL,
   `gameId` int(11) unsigned NOT NULL,
   `championId` int(11) NOT NULL,
   `lane` varchar(6) NOT NULL,
   `role` varchar(11) NOT NULL,
   `timestamp` datetime NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `summonerId_gameId` (`summonerId`,`gameId`),
   KEY `FK_matches_profileId` (`summonerId`),
   KEY `FK_matches_gameId` (`gameId`),
   KEY `FK_matches_championId` (`championId`),
@@ -865,9 +864,9 @@ INSERT INTO `spell` (`spellId`, `version`, `name`, `key`) VALUES
 
 -- Dumping structure for table riot.summoner
 CREATE TABLE IF NOT EXISTS `summoner` (
-  `puuid` varchar(50) NOT NULL COMMENT 'Given by Riot API',
-  `summonerId` int(11) NOT NULL COMMENT 'Given by Riot API',
-  `accountId` int(11) NOT NULL COMMENT 'Given by Riot API',
+  `puuid` varchar(100) NOT NULL COMMENT 'Given by Riot API',
+  `summonerId` varchar(50) NOT NULL COMMENT 'Given by Riot API',
+  `accountId` varchar(50) NOT NULL COMMENT 'Given by Riot API',
   `profileIconId` int(11) NOT NULL,
   `summonerLevel` int(11) NOT NULL,
   `name` varchar(50) NOT NULL,
@@ -879,6 +878,8 @@ CREATE TABLE IF NOT EXISTS `summoner` (
 
 -- Dumping data for table riot.summoner: ~1 rows (approximately)
 /*!40000 ALTER TABLE `summoner` DISABLE KEYS */;
+INSERT INTO `summoner` (`puuid`, `summonerId`, `accountId`, `profileIconId`, `summonerLevel`, `name`, `revisionDate`, `lastUpdated`) VALUES
+	('tIIKBBTZc3D6MxkYRVBpqcSCKB0DyjnnUpTK7MYOD4D4Iihn-yUm10a31i2ODO85oVVqoooaH-scdg', 'hn6fijTA1IzLeOS2f2FGqpqLewXIXWuFpSEJCIcI0tj6d8g', 'DYnXK8GUEx62B3PE7gvyyr9CuijhaEPKrLPffXjsyfmAMYc', 3887, 135, 'Raitono', '2019-01-02 07:27:55', NULL);
 /*!40000 ALTER TABLE `summoner` ENABLE KEYS */;
 
 -- Dumping structure for table riot.team_ban
@@ -986,14 +987,15 @@ CREATE TABLE IF NOT EXISTS `xref_participant_perk` (
 -- Dumping structure for table riot.xref_summoner_game
 CREATE TABLE IF NOT EXISTS `xref_summoner_game` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `summonerId` int(11) NOT NULL,
+  `summonerId` varchar(50) NOT NULL,
   `gameId` int(11) unsigned NOT NULL,
   `participantId` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `summonerId_gameId_participantId` (`summonerId`,`gameId`,`participantId`),
   KEY `FK_xref_summoner_game_gameId` (`gameId`),
   KEY `FK_xref_summoner_game_participantId` (`gameId`,`participantId`),
-  CONSTRAINT `FK_xref_summoner_game_participantId` FOREIGN KEY (`gameId`, `participantId`) REFERENCES `participant` (`gameId`, `participantId`)
+  CONSTRAINT `FK_xref_summoner_game_participantId` FOREIGN KEY (`gameId`, `participantId`) REFERENCES `participant` (`gameId`, `participantId`),
+  CONSTRAINT `FK_xref_summoner_game_summonerId` FOREIGN KEY (`summonerId`) REFERENCES `summoner` (`summonerId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Dumping data for table riot.xref_summoner_game: ~0 rows (approximately)

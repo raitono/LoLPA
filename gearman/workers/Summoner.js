@@ -20,12 +20,13 @@ let determineUpdates = async (summoner) => {
 		ret.shouldUpdateMatches = true;
 		return JSON.stringify(ret);
 	} else if (Date.now() - Date.parse(ret.summoner.lastUpdated) >= 600000) {
-		let rawSummoner = await Kayn.Summoner.by.name(ret.summoner.name);
+		let rawSummoner = await Kayn.SummonerV4.by.name(ret.summoner.name);
 		if ((rawSummoner.revisionDate - Date.parse(ret.summoner.revisionDate)) != 0) {
 			let updatedSummoner = await request({
 				method: 'POST',
 				uri: webServer.URLs.Summoner.upsertWithWhere('{"name": "'+ret.summoner.name+'"}'),
 				body: {
+					puuid: rawSummoner.puuid,
 					summonerId: rawSummoner.id,
 					accountId: rawSummoner.accountId,
 					profileIconId: rawSummoner.profileIconId,
@@ -65,11 +66,12 @@ let getSummonerByName = async (summonerName) => {
 	if (!summoner) {
 		debug('Summoner not found in db');
 		try {
-			let rawSummoner = await Kayn.Summoner.by.name(summonerName);
+			let rawSummoner = await Kayn.SummonerV4.by.name(summonerName);
 			await request({
 				method: 'POST',
 				uri: webServer.URLs.Summoner.post(),
 				body: {
+					puuid: rawSummoner.puuid,
 					summonerId: rawSummoner.id,
 					accountId: rawSummoner.accountId,
 					profileIconId: rawSummoner.profileIconId,
@@ -102,6 +104,7 @@ let updateLastUpdated = async (summoner) => {
 		method: 'POST',
 		uri: webServer.URLs.Summoner.upsertWithWhere('{"name": "'+summoner.name+'"}'),
 		body: {
+			puuid: summoner.puuid,
 			summonerId: summoner.summonerId,
 			accountId: summoner.accountId,
 			profileIconId: summoner.profileIconId,
