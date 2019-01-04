@@ -23,8 +23,8 @@ let determineUpdates = async (summoner) => {
 		let rawSummoner = await Kayn.SummonerV4.by.name(ret.summoner.name);
 		if ((rawSummoner.revisionDate - Date.parse(ret.summoner.revisionDate)) != 0) {
 			let updatedSummoner = await request({
-				method: 'POST',
-				uri: webServer.URLs.Summoner.upsertWithWhere('{"name": "'+ret.summoner.name+'"}'),
+				method: 'PATCH',
+				uri: webServer.URLs.Summoner.patch(),
 				body: {
 					puuid: rawSummoner.puuid,
 					summonerId: rawSummoner.id,
@@ -36,8 +36,9 @@ let determineUpdates = async (summoner) => {
 				},
 				json: true,
 			});
+			debug(updatedSummoner);
 			ret = {
-				summoner: updatedSummoner,
+				summoner: updatedSummoner[0],
 				shouldUpdateMatches: true,
 			};
 		}
@@ -83,6 +84,7 @@ let getSummonerByName = async (summonerName) => {
 			});
 
 			summoner = await request(summonerDBRequestOptions);
+			summoner = summoner[0];
 		} catch (kaynError) {
 			if (kaynError.statusCode == 404) {
 				debug('Summoner does not exist: ' + summonerName);
@@ -101,8 +103,8 @@ let getSummonerByName = async (summonerName) => {
 let updateLastUpdated = async (summoner) => {
 	summoner = JSON.parse(summoner);
 	request({
-		method: 'POST',
-		uri: webServer.URLs.Summoner.upsertWithWhere('{"name": "'+summoner.name+'"}'),
+		method: 'PATCH',
+		uri: webServer.URLs.Summoner.patch(),
 		body: {
 			puuid: summoner.puuid,
 			summonerId: summoner.summonerId,
