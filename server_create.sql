@@ -865,6 +865,7 @@ INSERT INTO `spell` (`spellId`, `version`, `name`, `key`) VALUES
 
 -- Dumping structure for table riot.summoner
 CREATE TABLE IF NOT EXISTS `summoner` (
+  `puuid` varchar(50) NOT NULL COMMENT 'Given by Riot API',
   `summonerId` int(11) NOT NULL COMMENT 'Given by Riot API',
   `accountId` int(11) NOT NULL COMMENT 'Given by Riot API',
   `profileIconId` int(11) NOT NULL,
@@ -872,10 +873,11 @@ CREATE TABLE IF NOT EXISTS `summoner` (
   `name` varchar(50) NOT NULL,
   `revisionDate` datetime NOT NULL,
   `lastUpdated` datetime DEFAULT NULL,
-  PRIMARY KEY (`summonerId`)
+  PRIMARY KEY (`puuid`),
+  KEY `IX_summonerId_name_puuid` (`summonerId`,`name`,`puuid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.summoner: ~0 rows (approximately)
+-- Dumping data for table riot.summoner: ~1 rows (approximately)
 /*!40000 ALTER TABLE `summoner` DISABLE KEYS */;
 /*!40000 ALTER TABLE `summoner` ENABLE KEYS */;
 

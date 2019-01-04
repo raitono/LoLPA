@@ -3,8 +3,13 @@ import {Entity, model, property} from '@loopback/repository';
 @model()
 export class Summoner extends Entity {
   @property({
-    type: 'number',
+    type: 'string',
     id: true,
+  })
+  puuid?: string;
+
+  @property({
+    type: 'number',
   })
   summonerId?: number;
 
