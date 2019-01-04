@@ -31,7 +31,7 @@ let updateMatchList = async function(summoner) {
 	});
 
 	// Get the matches from RIOT
-	let matches = await Promise.all(matchBatch.map(Kayn.Match.get));
+	let matches = await Promise.all(matchBatch.map(Kayn.MatchV4.get));
 	let matchCount = 0;
 	let matchInsertBatch = [];
 	let matchListBatch = [];
@@ -276,29 +276,29 @@ let updateMatchList = async function(summoner) {
 	});
 
 	try {
-		// This has to be done separate because of the foreign keys.
-		await Promise.all(matchInsertBatch.map(request));
-		debug('Match Insert Done');
-		await Promise.all(participantBatch.map(request));
-		debug('Participant Insert Done');
-		await Promise.all(matchListBatch.map(request));
-		debug('Match List Insert Done');
-		if (summonerGameXrefBatch.length > 0) {
-			await Promise.all(summonerGameXrefBatch.map(request));
-			debug('SummonerGameXref Insert Done');
-		}
-		if (timelineDeltaBatch.length > 0) {
-			await Promise.all(timelineDeltaBatch.map(request));
-			debug('timelineDeltaBatch Insert Done');
-		}
-		await Promise.all(
-			teamStatBatch.map(request),
-			teamBanBatch.map(request),
-			statBatch.map(request),
-			timelineBatch.map(request),
-			itemBatch.map(request),
-			perkBatch.map(request),
-		);
+		// // This has to be done separate because of the foreign keys.
+		// await Promise.all(matchInsertBatch.map(request));
+		// debug('Match Insert Done');
+		// await Promise.all(participantBatch.map(request));
+		// debug('Participant Insert Done');
+		// await Promise.all(matchListBatch.map(request));
+		// debug('Match List Insert Done');
+		// if (summonerGameXrefBatch.length > 0) {
+		// 	await Promise.all(summonerGameXrefBatch.map(request));
+		// 	debug('SummonerGameXref Insert Done');
+		// }
+		// if (timelineDeltaBatch.length > 0) {
+		// 	await Promise.all(timelineDeltaBatch.map(request));
+		// 	debug('timelineDeltaBatch Insert Done');
+		// }
+		// await Promise.all(
+		// 	teamStatBatch.map(request),
+		// 	teamBanBatch.map(request),
+		// 	statBatch.map(request),
+		// 	timelineBatch.map(request),
+		// 	itemBatch.map(request),
+		// 	perkBatch.map(request),
+		// );
 	} catch (err) {
 		debug(err);
 	}
@@ -334,7 +334,7 @@ let getMatchList = async (summoner, options) => {
 	let riotMatchList = null;
 	try {
 		// Send request to RIOT API
-		riotMatchList = await Kayn.Matchlist.by.accountID(summoner.accountId).query(options);
+		riotMatchList = await Kayn.MatchlistV4.by.accountID(summoner.accountId).query(options);
 	} catch (err) {
 		if (err.statusCode == 404) {
 			// This just means they don't have any matches during the time period
@@ -380,8 +380,9 @@ let getMatchList = async (summoner, options) => {
 let getMatchDates = async (beginTime, endTime) => {
 	let dates = {};
 	if (util.isNullOrUndefined(beginTime)) {
-		let dbSeason = await request(webServer.URLs.Season.getOne('{"isCurrent":1}'));
+		let dbSeason = await request(webServer.URLs.Season.get('{"isCurrent":1}'));
 		dbSeason = JSON.parse(dbSeason);
+		dbSeason = dbSeason[0];
 		let seasonStart = new Date(dbSeason.startDate).getTime();
 		dates = {
 			beginTime: seasonStart,
