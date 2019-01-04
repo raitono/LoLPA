@@ -1,64 +1,64 @@
 module.exports.URLs = {
 	Champion: {
 		put: function() {
-			return process.env.WEB_SERVER + '/Champions';
+			return process.env.WEB_SERVER + '/champions';
 		},
 	},
 	DeltaType: {
 		getAll: function() {
-			return process.env.WEB_SERVER + '/Delta_Types';
+			return process.env.WEB_SERVER + '/delta-types';
 		},
 		get: function(whereClause) {
-			return process.env.WEB_SERVER + '/Delta_Types?filter={"where":'+whereClause+'}';
+			return process.env.WEB_SERVER + '/delta-types?filter={"where":'+whereClause+'}';
 		},
 		put: function() {
-			return process.env.WEB_SERVER + '/Delta_Types';
+			return process.env.WEB_SERVER + '/delta-types';
 		},
 	},
 	Item: {
 		put: function() {
-			return process.env.WEB_SERVER + '/Items';
+			return process.env.WEB_SERVER + '/items';
 		},
 	},
 	MatchList: {
 		put: function() {
-			return process.env.WEB_SERVER + '/Match_Lists';
+			return process.env.WEB_SERVER + '/match-lists';
 		},
 	},
 	Matches: {
 		put: function() {
-			return process.env.WEB_SERVER + '/Matches';
+			return process.env.WEB_SERVER + '/matches';
 		},
 	},
 	Participant: {
 		put: function() {
-			return process.env.WEB_SERVER + '/Participants';
+			return process.env.WEB_SERVER + '/participants';
 		},
 	},
 	ParticipantStat: {
 		put: function() {
-			return process.env.WEB_SERVER + '/Participant_Stats';
+			return process.env.WEB_SERVER + '/participant-stats';
 		},
 	},
 	ParticipantTimeline: {
 		put: function() {
-			return process.env.WEB_SERVER + '/Participant_Timelines';
+			return process.env.WEB_SERVER + '/participant-timelines';
 		},
 	},
 	ParticipantTimelineDelta: {
 		put: function() {
-			return process.env.WEB_SERVER + '/Participant_Timeline_Delta';
+			return process.env.WEB_SERVER + '/participant-timeline-delta';
 		},
-		findOne: function(whereClause) {
-			return process.env.WEB_SERVER + '/Participant_Timeline_Delta/findOne?filter={"where":'+whereClause+'}';
+		get: function(whereClause) {
+			return process.env.WEB_SERVER + '/participant-timeline-delta?filter={"where":'+whereClause+'}';
 		},
 	},
 	Rune: {
 		put: function() {
-			return process.env.WEB_SERVER + '/Perks';
+			return process.env.WEB_SERVER + '/perks';
 		},
 		put_style: function() {
-			return process.env.WEB_SERVER + '/Perk_Styles';
+			return process.env.WEB_SERVER + '/perk-styles';
 		},
 	},
 	Summoner: {
@@ -71,52 +71,52 @@ module.exports.URLs = {
 		post: function() {
 			return process.env.WEB_SERVER + '/summoners';
 		},
+		patch: function() {
+			return process.env.WEB_SERVER + '/summoners';
+		},
 	},
 	SummonerSpell: {
 		put: function() {
-			return process.env.WEB_SERVER + '/Spells';
+			return process.env.WEB_SERVER + '/spells';
 		},
 	},
 	Season: {
 		get: function(whereClause) {
-			return process.env.WEB_SERVER + '/Seasons?filter={"where":'+whereClause+'}';
-		},
-		getOne: function(whereClause) {
-			return process.env.WEB_SERVER + '/Seasons/findOne?filter={"where":'+whereClause+'}';
+			return process.env.WEB_SERVER + '/seasons?filter={"where":'+whereClause+'}';
 		},
 	},
 	TeamStat: {
 		put: function() {
-			return process.env.WEB_SERVER + '/Team_Stats';
+			return process.env.WEB_SERVER + '/team-stats';
 		},
 	},
 	TeamBan: {
 		put: function() {
-			return process.env.WEB_SERVER + '/Team_Bans';
+			return process.env.WEB_SERVER + '/team-bans';
 		},
 	},
 	XrefSummonerGame: {
 		put: function() {
-			return process.env.WEB_SERVER + '/Xref_Summoner_Games';
+			return process.env.WEB_SERVER + '/xref-summoner-games';
 		},
 		post: function() {
-			return process.env.WEB_SERVER + '/Xref_Summoner_Games';
+			return process.env.WEB_SERVER + '/xref-summoner-games';
 		},
 		replaceOrCreate: function() {
-			return process.env.WEB_SERVER + '/Xref_Summoner_Games/replaceOrCreate';
+			return process.env.WEB_SERVER + '/xref-summoner-games/replaceOrCreate';
 		},
-		findOne: function(whereClause) {
-			return process.env.WEB_SERVER + '/Xref_Summoner_Games/findOne?filter={"where":'+whereClause+'}';
+		get: function(whereClause) {
+			return process.env.WEB_SERVER + '/xref-summoner-games?filter={"where":'+whereClause+'}';
 		},
 	},
 	XrefParticipantItem: {
 		put: function() {
-			return process.env.WEB_SERVER + '/Xref_Participant_Items';
+			return process.env.WEB_SERVER + '/xref-participant-items';
 		},
 	},
 	XrefParticipantPerk: {
 		put: function() {
-			return process.env.WEB_SERVER + '/Xref_Participant_Perks';
+			return process.env.WEB_SERVER + '/xref-participant-perks';
 		},
 	},
 };

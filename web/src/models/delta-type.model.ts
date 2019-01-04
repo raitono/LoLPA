@@ -1,6 +1,6 @@
 import {Entity, model, property} from '@loopback/repository';
 
-@model()
+@model({name: 'Delta_Type'})
 export class DeltaType extends Entity {
   @property({
     type: 'number',
