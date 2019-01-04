@@ -62,7 +62,7 @@ let getSummonerByName = async (summonerName) => {
 	summoner = await request(summonerDBRequestOptions);
 	summoner = summoner[0];
 
-	if (!summoner.summonerId) {
+	if (!summoner) {
 		debug('Summoner not found in db');
 		try {
 			let rawSummoner = await Kayn.Summoner.by.name(summonerName);
@@ -81,12 +81,11 @@ let getSummonerByName = async (summonerName) => {
 			});
 
 			summoner = await request(summonerDBRequestOptions);
-			debug(summoner);
 		} catch (kaynError) {
 			if (kaynError.statusCode == 404) {
 				debug('Summoner does not exist: ' + summonerName);
 			}
-			debug(kaynError);
+			debug('Kayn Error:' + kaynError);
 		}
 	}
 
