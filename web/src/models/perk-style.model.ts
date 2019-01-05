@@ -1,6 +1,6 @@
 import {Entity, model, property} from '@loopback/repository';
 
-@model()
+@model({name: 'Perk_Style'})
 export class PerkStyle extends Entity {
   @property({
     type: 'string',
