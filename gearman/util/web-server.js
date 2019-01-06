@@ -1,7 +1,7 @@
 module.exports.URLs = {
 	Champion: {
-		put: function() {
-			return process.env.WEB_SERVER + '/champions';
+		put: function(championId) {
+			return process.env.WEB_SERVER + '/champions/' + championId;
 		},
 	},
 	DeltaType: {
@@ -11,54 +11,54 @@ module.exports.URLs = {
 		get: function(whereClause) {
 			return process.env.WEB_SERVER + '/delta-types?filter={"where":'+whereClause+'}';
 		},
-		put: function() {
-			return process.env.WEB_SERVER + '/delta-types';
+		put: function(deltaTypeId) {
+			return process.env.WEB_SERVER + '/delta-types/' + deltaTypeId;
 		},
 	},
 	Item: {
-		put: function() {
-			return process.env.WEB_SERVER + '/items';
+		put: function(itemId) {
+			return process.env.WEB_SERVER + '/items/' + itemId;
 		},
 	},
 	MatchList: {
-		put: function() {
-			return process.env.WEB_SERVER + '/match-lists';
+		put: function(matchListId) {
+			return process.env.WEB_SERVER + '/match-lists/' + matchListId;
 		},
 	},
 	Matches: {
-		put: function() {
-			return process.env.WEB_SERVER + '/matches';
+		put: function(matchId) {
+			return process.env.WEB_SERVER + '/matches/' + matchId;
 		},
 	},
 	Participant: {
-		put: function() {
-			return process.env.WEB_SERVER + '/participants';
+		put: function(participantId) {
+			return process.env.WEB_SERVER + '/participants/' + participantId;
 		},
 	},
 	ParticipantStat: {
-		put: function() {
-			return process.env.WEB_SERVER + '/participant-stats';
+		put: function(statId) {
+			return process.env.WEB_SERVER + '/participant-stats/' + statId;
 		},
 	},
 	ParticipantTimeline: {
-		put: function() {
-			return process.env.WEB_SERVER + '/participant-timelines';
+		put: function(timelineId) {
+			return process.env.WEB_SERVER + '/participant-timelines/' + timelineId;
 		},
 	},
 	ParticipantTimelineDelta: {
-		put: function() {
-			return process.env.WEB_SERVER + '/participant-timeline-delta';
+		put: function(deltaId) {
+			return process.env.WEB_SERVER + '/participant-timeline-delta/' + deltaId;
 		},
 		get: function(whereClause) {
 			return process.env.WEB_SERVER + '/participant-timeline-delta?filter={"where":'+whereClause+'}';
 		},
 	},
 	Rune: {
-		put: function() {
-			return process.env.WEB_SERVER + '/perks';
+		put: function(perkId) {
+			return process.env.WEB_SERVER + '/perks/' + perkId;
 		},
-		put_style: function() {
-			return process.env.WEB_SERVER + '/perk-styles';
+		put_style: function(perkStyleId) {
+			return process.env.WEB_SERVER + '/perk-styles/' + perkStyleId;
 		},
 	},
 	Summoner: {
@@ -71,13 +71,13 @@ module.exports.URLs = {
 		post: function() {
 			return process.env.WEB_SERVER + '/summoners';
 		},
-		patch: function() {
-			return process.env.WEB_SERVER + '/summoners';
+		put: function(puuid) {
+			return process.env.WEB_SERVER + '/summoners/' + puuid;
 		},
 	},
 	SummonerSpell: {
-		put: function() {
-			return process.env.WEB_SERVER + '/spells';
+		put: function(spellId) {
+			return process.env.WEB_SERVER + '/spells/' + spellId;
 		},
 	},
 	Season: {
@@ -86,18 +86,18 @@ module.exports.URLs = {
 		},
 	},
 	TeamStat: {
-		put: function() {
-			return process.env.WEB_SERVER + '/team-stats';
+		put: function(statId) {
+			return process.env.WEB_SERVER + '/team-stats/' + statId;
 		},
 	},
 	TeamBan: {
-		put: function() {
-			return process.env.WEB_SERVER + '/team-bans';
+		put: function(banId) {
+			return process.env.WEB_SERVER + '/team-bans/' + banId;
 		},
 	},
 	XrefSummonerGame: {
-		put: function() {
-			return process.env.WEB_SERVER + '/xref-summoner-games';
+		put: function(xrefId) {
+			return process.env.WEB_SERVER + '/xref-summoner-games/' + xrefId;
 		},
 		post: function() {
 			return process.env.WEB_SERVER + '/xref-summoner-games';
@@ -110,13 +110,13 @@ module.exports.URLs = {
 		},
 	},
 	XrefParticipantItem: {
-		put: function() {
-			return process.env.WEB_SERVER + '/xref-participant-items';
+		put: function(xrefId) {
+			return process.env.WEB_SERVER + '/xref-participant-items/' + xrefId;
 		},
 	},
 	XrefParticipantPerk: {
-		put: function() {
-			return process.env.WEB_SERVER + '/xref-participant-perks';
+		put: function(xrefId) {
+			return process.env.WEB_SERVER + '/xref-participant-perks/' + xrefId;
 		},
 	},
 };
