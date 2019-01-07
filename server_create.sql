@@ -820,11 +820,12 @@ CREATE TABLE IF NOT EXISTS `season` (
   PRIMARY KEY (`seasonId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.season: ~2 rows (approximately)
+-- Dumping data for table riot.season: ~3 rows (approximately)
 /*!40000 ALTER TABLE `season` DISABLE KEYS */;
 INSERT INTO `season` (`seasonId`, `number`, `name`, `startDate`, `endDate`, `isCurrent`) VALUES
-	(11, 8, 'Season 2018', '2018-01-16 00:00:00', '2018-11-12 23:59:59', 1),
-	(12, 9, 'Preseason 2019', '2018-11-13 00:00:00', NULL, 0);
+	(11, 8, 'Season 2018', '2018-01-16 00:00:00', '2018-11-12 23:59:59', 0),
+	(12, 9, 'Preseason 2019', '2018-11-13 00:00:00', NULL, 0),
+	(13, 9, 'Season 2019', '2019-01-02 00:00:00', NULL, 1);
 /*!40000 ALTER TABLE `season` ENABLE KEYS */;
 
 -- Dumping structure for table riot.spell
@@ -878,8 +879,6 @@ CREATE TABLE IF NOT EXISTS `summoner` (
 
 -- Dumping data for table riot.summoner: ~1 rows (approximately)
 /*!40000 ALTER TABLE `summoner` DISABLE KEYS */;
-INSERT INTO `summoner` (`puuid`, `summonerId`, `accountId`, `profileIconId`, `summonerLevel`, `name`, `revisionDate`, `lastUpdated`) VALUES
-	('tIIKBBTZc3D6MxkYRVBpqcSCKB0DyjnnUpTK7MYOD4D4Iihn-yUm10a31i2ODO85oVVqoooaH-scdg', 'hn6fijTA1IzLeOS2f2FGqpqLewXIXWuFpSEJCIcI0tj6d8g', 'DYnXK8GUEx62B3PE7gvyyr9CuijhaEPKrLPffXjsyfmAMYc', 3887, 135, 'Raitono', '2019-01-02 07:27:55', NULL);
 /*!40000 ALTER TABLE `summoner` ENABLE KEYS */;
 
 -- Dumping structure for table riot.team_ban
