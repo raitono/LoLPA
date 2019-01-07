@@ -10,7 +10,7 @@ const webServer = require('../util/web-server');
  *	@return {Object} Object.summoner - JSON string representation of the summoner
  * 					 Object.shouldUpdateMatches - Boolean
  */
-let determineUpdates = async (summoner) => {
+const determineUpdates = async (summoner) => {
 	let ret = {
 		summoner: JSON.parse(summoner),
 		shouldUpdateMatches: false,
@@ -20,11 +20,11 @@ let determineUpdates = async (summoner) => {
 		ret.shouldUpdateMatches = true;
 		return JSON.stringify(ret);
 	} else if (Date.now() - Date.parse(ret.summoner.lastUpdated) >= 600000) {
-		let rawSummoner = await Kayn.SummonerV4.by.name(ret.summoner.name);
+		const rawSummoner = await Kayn.SummonerV4.by.name(ret.summoner.name);
 		if ((rawSummoner.revisionDate - Date.parse(ret.summoner.revisionDate)) != 0) {
-			let updatedSummoner = await request({
-				method: 'PATCH',
-				uri: webServer.URLs.Summoner.patch(),
+			const updatedSummoner = await request({
+				method: 'PUT',
+				uri: webServer.URLs.Summoner.put(rawSummoner.puuid),
 				body: {
 					puuid: rawSummoner.puuid,
 					summonerId: rawSummoner.id,
@@ -53,9 +53,9 @@ let determineUpdates = async (summoner) => {
  * @param {string} summonerName Summoner name to update
  * @return {string} JSON string representing the summoner stored in the database
  */
-let getSummonerByName = async (summonerName) => {
+const getSummonerByName = async (summonerName) => {
 	let summoner = '';
-	let summonerDBRequestOptions = {
+	const summonerDBRequestOptions = {
 		method: 'GET',
 		uri: webServer.URLs.Summoner.getByName(summonerName),
 		json: true,
@@ -67,7 +67,7 @@ let getSummonerByName = async (summonerName) => {
 	if (!summoner) {
 		debug('Summoner not found in db');
 		try {
-			let rawSummoner = await Kayn.SummonerV4.by.name(summonerName);
+			const rawSummoner = await Kayn.SummonerV4.by.name(summonerName);
 			await request({
 				method: 'POST',
 				uri: webServer.URLs.Summoner.post(),
@@ -100,11 +100,11 @@ let getSummonerByName = async (summonerName) => {
  * Updates the Summoner's lastUpdated field to now
  * @param {string} summoner Json representation of a Summoner
  */
-let updateLastUpdated = async (summoner) => {
+const updateLastUpdated = async (summoner) => {
 	summoner = JSON.parse(summoner);
 	request({
-		method: 'PATCH',
-		uri: webServer.URLs.Summoner.patch(),
+		method: 'PUT',
+		uri: webServer.URLs.Summoner.put(summoner.puuid),
 		body: {
 			puuid: summoner.puuid,
 			summonerId: summoner.summonerId,
@@ -121,19 +121,19 @@ let updateLastUpdated = async (summoner) => {
 
 module.exports.registerWorkers = (client) => {
 	client.registerWorker('determineUpdates', async (task) => {
-		let s = await determineUpdates(task.payload);
+		const s = await determineUpdates(task.payload);
 		task.end(s);
 	});
 
 	client.registerWorker('getSummonerByName', async (task) => {
 		debug('getSummonerByName: ' + task.payload);
-		let s = await getSummonerByName(task.payload);
+		const s = await getSummonerByName(task.payload);
 		task.end(s);
 	});
 
 	client.registerWorker('updateSummonerLastUpdated', async (task) => {
 		debug('update lastUpdated');
-		let s = await updateLastUpdated(task.payload);
+		const s = await updateLastUpdated(task.payload);
 		task.end(s);
 	});
 
