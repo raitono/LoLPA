@@ -125,7 +125,7 @@ export class ParticipantTimelineDeltaController {
       await this.participantTimelineDeltaRepository.findById(id);
       await this.participantTimelineDeltaRepository.replaceById(id, participantTimelineDelta);
     } catch (error) {
-      if (error.statusCode === 404) {
+      if (error.code === 'ENTITY_NOT_FOUND') {
         await this.participantTimelineDeltaRepository.create(participantTimelineDelta);
       } else {
         throw error;

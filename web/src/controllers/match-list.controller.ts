@@ -125,7 +125,7 @@ export class MatchListController {
       await this.matchListRepository.findById(id);
       await this.matchListRepository.replaceById(id, matchList);
     } catch (error) {
-      if (error.statusCode === 404) {
+      if (error.code === 'ENTITY_NOT_FOUND') {
         await this.matchListRepository.create(matchList);
       } else {
         throw error;

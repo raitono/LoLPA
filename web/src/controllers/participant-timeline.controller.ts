@@ -125,7 +125,7 @@ export class ParticipantTimelineController {
       await this.participantTimelineRepository.findById(id);
       await this.participantTimelineRepository.replaceById(id, participantTimeline);
     } catch (error) {
-      if (error.statusCode === 404) {
+      if (error.code === 'ENTITY_NOT_FOUND') {
         await this.participantTimelineRepository.create(participantTimeline);
       } else {
         throw error;

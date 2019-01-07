@@ -125,7 +125,7 @@ export class XrefParticipantItemController {
       await this.xrefParticipantItemRepository.findById(id);
       await this.xrefParticipantItemRepository.replaceById(id, xrefParticipantItem);
     } catch (error) {
-      if (error.statusCode === 404) {
+      if (error.code === 'ENTITY_NOT_FOUND') {
         await this.xrefParticipantItemRepository.create(xrefParticipantItem);
       } else {
         throw error;

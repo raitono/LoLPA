@@ -125,7 +125,7 @@ export class XrefParticipantPerkController {
       await this.xrefParticipantPerkRepository.findById(id);
       await this.xrefParticipantPerkRepository.replaceById(id, xrefParticipantPerk);
     } catch (error) {
-      if (error.statusCode === 404) {
+      if (error.code === 'ENTITY_NOT_FOUND') {
         await this.xrefParticipantPerkRepository.create(xrefParticipantPerk);
       } else {
         throw error;

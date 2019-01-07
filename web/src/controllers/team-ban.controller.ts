@@ -125,7 +125,7 @@ export class TeamBanController {
       await this.teamBanRepository.findById(id);
       await this.teamBanRepository.replaceById(id, teamBan);
     } catch (error) {
-      if (error.statusCode === 404) {
+      if (error.code === 'ENTITY_NOT_FOUND') {
         await this.teamBanRepository.create(teamBan);
       } else {
         throw error;

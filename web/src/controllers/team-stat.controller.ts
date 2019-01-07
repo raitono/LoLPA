@@ -125,7 +125,7 @@ export class TeamStatController {
       await this.teamStatRepository.findById(id);
       await this.teamStatRepository.replaceById(id, teamStat);
     } catch (error) {
-      if (error.statusCode === 404) {
+      if (error.code === 'ENTITY_NOT_FOUND') {
         await this.teamStatRepository.create(teamStat);
       } else {
         throw error;

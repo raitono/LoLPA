@@ -125,7 +125,7 @@ export class DeltaTypeController {
       await this.deltaTypeRepository.findById(id);
       await this.deltaTypeRepository.replaceById(id, deltaType);
     } catch (error) {
-      if (error.statusCode === 404) {
+      if (error.code === 'ENTITY_NOT_FOUND') {
         await this.deltaTypeRepository.create(deltaType);
       } else {
         throw error;

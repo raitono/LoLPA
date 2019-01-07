@@ -125,7 +125,7 @@ export class SpellController {
       await this.spellRepository.findById(id);
       await this.spellRepository.replaceById(id, spell);
     } catch (error) {
-      if (error.statusCode === 404) {
+      if (error.code === 'ENTITY_NOT_FOUND') {
         await this.spellRepository.create(spell);
       } else {
         throw error;

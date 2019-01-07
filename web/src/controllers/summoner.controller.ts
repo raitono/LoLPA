@@ -125,7 +125,7 @@ export class SummonerController {
       await this.summonerRepository.findById(id);
       await this.summonerRepository.replaceById(id, summoner);
     } catch (error) {
-      if (error.statusCode === 404) {
+      if (error.code === 'ENTITY_NOT_FOUND') {
         await this.summonerRepository.create(summoner);
       } else {
         throw error;

@@ -125,7 +125,7 @@ export class PerkStyleController {
       await this.perkStyleRepository.findById(id);
       await this.perkStyleRepository.replaceById(id, perkStyle);
     } catch (error) {
-      if (error.statusCode === 404) {
+      if (error.code === 'ENTITY_NOT_FOUND') {
         await this.perkStyleRepository.create(perkStyle);
       } else {
         throw error;

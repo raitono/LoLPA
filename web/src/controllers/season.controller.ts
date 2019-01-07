@@ -125,7 +125,7 @@ export class SeasonController {
       await this.seasonRepository.findById(id);
       await this.seasonRepository.replaceById(id, season);
     } catch (error) {
-      if (error.statusCode === 404) {
+      if (error.code === 'ENTITY_NOT_FOUND') {
         await this.seasonRepository.create(season);
       } else {
         throw error;

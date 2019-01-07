@@ -125,7 +125,7 @@ export class XrefSummonerGameController {
       await this.xrefSummonerGameRepository.findById(id);
       await this.xrefSummonerGameRepository.replaceById(id, xrefSummonerGame);
     } catch (error) {
-      if (error.statusCode === 404) {
+      if (error.code === 'ENTITY_NOT_FOUND') {
         await this.xrefSummonerGameRepository.create(xrefSummonerGame);
       } else {
         throw error;

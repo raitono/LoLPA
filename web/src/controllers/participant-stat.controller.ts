@@ -125,7 +125,7 @@ export class ParticipantStatController {
       await this.participantStatRepository.findById(id);
       await this.participantStatRepository.replaceById(id, participantStat);
     } catch (error) {
-      if (error.statusCode === 404) {
+      if (error.code === 'ENTITY_NOT_FOUND') {
         await this.participantStatRepository.create(participantStat);
       } else {
         throw error;

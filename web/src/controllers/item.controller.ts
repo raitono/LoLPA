@@ -125,7 +125,7 @@ export class ItemController {
       await this.itemRepository.findById(id);
       await this.itemRepository.replaceById(id, item);
     } catch (error) {
-      if (error.statusCode === 404) {
+      if (error.code === 'ENTITY_NOT_FOUND') {
         await this.itemRepository.create(item);
       } else {
         throw error;
