@@ -10,28 +10,28 @@ const util = require('util');
 const webServer = require('../util/web-server');
 
 const staticTarballURL = 'https://ddragon.leagueoflegends.com/cdn/dragontail-{version}.tgz';
-
+let latestVersion = '';
 fs.readFileAsync = util.promisify(fs.readFile);
 
 /**
  * Retrieve the latest static data tarball from RIOT and upsert it into the database.
  */
-let updateStaticData = async function() {
+const updateStaticData = async function() {
 	// Find latest version number
-	let versions = await Kayn.DDragon.Version.list();
-	let latestVersion = versions[0];
+	const versions = await Kayn.DDragon.Version.list();
+	latestVersion = versions[0];
 	debug('Latest version: ' + latestVersion);
 
 	// Download and extract tarball to temp directory
-	let tarballURL = staticTarballURL.replace('{version}', latestVersion);
+	const tarballURL = staticTarballURL.replace('{version}', latestVersion);
 	debug('terball link: ' + tarballURL);
 
-	let tempTarballPath = './temp/' + latestVersion + '.tgz';
-	let tarballPathRoot = './' + latestVersion + '/data/en_US/';
+	const tempTarballPath = './temp/' + latestVersion + '.tgz';
+	const tarballPathRoot = './' + latestVersion + '/data/en_US/';
 
 	// For some reason, the Request package gives an Array Buffer error when trying to do this.
 	// Guess we do it the old fashioned way.
-	let file = fs.createWriteStream(tempTarballPath);
+	const file = fs.createWriteStream(tempTarballPath);
 	https.get(tarballURL, (response) => {
 		response.pipe(file);
 		response.on('end', () => {
@@ -60,19 +60,20 @@ let updateStaticData = async function() {
 	});
 };
 
-let parseAndLoad = async (version) => {
-	let tempFilePath = './temp/' + version + '/data/en_US/';
-	let batches = [];
-	let runeStyleBatch = [];
+const parseAndLoad = async (version) => {
+	const tempFilePath = './temp/' + version + '/data/en_US/';
+	const batches = [];
+	const runeStyleBatch = [];
 	let runeData = await fs.readFileAsync(tempFilePath + 'runesReforged.json');
 	runeData = JSON.parse(runeData);
 
 	runeData.forEach((runeTree) => {
+		const runeTreeId = runeTree.id.toString();
 		runeStyleBatch.push({
 			method: 'PUT',
-			uri: webServer.URLs.Rune.put_style(),
+			uri: webServer.URLs.Rune.put_style(runeTreeId),
 			body: {
-				styleId: runeTree.id,
+				styleId: runeTreeId,
 				name: runeTree.name,
 			},
 			json: true,
@@ -83,18 +84,19 @@ let parseAndLoad = async (version) => {
 	debug('Rune Styles added');
 
 	batches.push(new Promise((resolve, reject) => {
-		let runeBatch = [];
+		const runeBatch = [];
 		let runeStyleId = '';
 		runeData.forEach((runeTree) => {
 			runeStyleId = runeTree.id;
 			runeTree.slots.forEach((slot) => {
 				slot.runes.forEach((rune) => {
+					const runeId = rune.id.toString();
 					runeBatch.push({
 						method: 'PUT',
-						uri: webServer.URLs.Rune.put(),
+						uri: webServer.URLs.Rune.put(runeId),
 						body: {
-							perkId: rune.id,
-							styleId: runeStyleId,
+							perkId: runeId,
+							styleId: runeStyleId.toString(),
 							name: rune.name,
 						},
 						json: true,
@@ -110,13 +112,13 @@ let parseAndLoad = async (version) => {
 
 	batches.push(fs.readFileAsync(tempFilePath + 'champion.json')
 		.then((data) => {
-			let championBatch = [];
+			const championBatch = [];
 			data = JSON.parse(data);
 
 			// The spicy NONE ban
 			championBatch.push({
 				method: 'PUT',
-				uri: webServer.URLs.Champion.put(),
+				uri: webServer.URLs.Champion.put(-1),
 				body: {
 					championId: -1,
 					name: 'None',
@@ -128,11 +130,12 @@ let parseAndLoad = async (version) => {
 			// The JSON stores them as properties on the data object, not as an array.
 			// So .forEach directly on the data.data doesn't work.
 			Object.keys(data.data).forEach((key) => {
+				const championId = parseInt(data.data[key].key);
 				championBatch.push({
 					method: 'PUT',
-					uri: webServer.URLs.Champion.put(),
+					uri: webServer.URLs.Champion.put(championId),
 					body: {
-						championId: data.data[key].key,
+						championId: championId,
 						name: data.data[key].name,
 						title: data.data[key].title,
 					},
@@ -146,30 +149,31 @@ let parseAndLoad = async (version) => {
 
 	batches.push(fs.readFileAsync(tempFilePath + 'item.json')
 		.then((data) => {
-			let itemBatch = [];
+			const itemBatch = [];
 			data = JSON.parse(data);
 
 			// Default item
 			itemBatch.push({
 				method: 'PUT',
-				uri: webServer.URLs.Item.put(),
+				uri: webServer.URLs.Item.put(0),
 				body: {
 					itemId: 0,
 					name: 'None',
 					goldSellsFor: 0,
 					goldTotal: 0,
 					goldBase: 0,
-					purchasable: 0,
+					purchasable: false,
 				},
 				json: true,
 			});
 
 			Object.keys(data.data).forEach((key) => {
+				const itemId = parseInt(key);
 				itemBatch.push({
 					method: 'PUT',
-					uri: webServer.URLs.Item.put(),
+					uri: webServer.URLs.Item.put(itemId),
 					body: {
-						itemId: key,
+						itemId: itemId,
 						name: data.data[key].name,
 						goldSellsFor: data.data[key].gold.sell,
 						goldTotal: data.data[key].gold.total,
@@ -186,17 +190,19 @@ let parseAndLoad = async (version) => {
 
 	batches.push(fs.readFileAsync(tempFilePath + 'summoner.json')
 		.then((data) => {
-			let summonerSpellBatch = [];
+			const summonerSpellBatch = [];
 			data = JSON.parse(data);
 
 			Object.keys(data.data).forEach((key) => {
+				const spellId = parseInt(data.data[key].key);
 				summonerSpellBatch.push({
 					method: 'PUT',
-					uri: webServer.URLs.SummonerSpell.put(),
+					uri: webServer.URLs.SummonerSpell.put(spellId),
 					body: {
-						key: key,
+						spellId: spellId,
+						version: latestVersion,
 						name: data.data[key].name,
-						spellId: data.data[key].key,
+						key: key,
 					},
 					json: true,
 				});
@@ -208,8 +214,8 @@ let parseAndLoad = async (version) => {
 
 	// These are my own attempt at normalizing the data.
 	batches.push(new Promise((resolve, reject) => {
-		let deltaTypeBatch = [];
-		let deltaTypes = [
+		const deltaTypeBatch = [];
+		const deltaTypes = [
 			{id: 1, name: 'creepsPerMinDeltas'},
 			{id: 2, name: 'xpPerMinDeltas'},
 			{id: 3, name: 'goldPerMinDeltas'},
@@ -222,7 +228,7 @@ let parseAndLoad = async (version) => {
 		deltaTypes.forEach((deltaType) => {
 			deltaTypeBatch.push({
 				method: 'PUT',
-				uri: webServer.URLs.DeltaType.put(),
+				uri: webServer.URLs.DeltaType.put(deltaType.id),
 				body: {
 					id: deltaType.id,
 					name: deltaType.name,
@@ -256,7 +262,7 @@ let parseAndLoad = async (version) => {
 module.exports.registerWorkers = (worker) => {
 	worker.registerWorker('updateStaticData', async (task) => {
 		debug('Update Static Data');
-		let result = await updateStaticData();
+		const result = await updateStaticData();
 		task.end(result);
 	});
 
