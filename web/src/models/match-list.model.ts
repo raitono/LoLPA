@@ -1,6 +1,6 @@
 import {Entity, model, property} from '@loopback/repository';
 
-@model()
+@model({name: 'Match_List'})
 export class MatchList extends Entity {
   @property({
     type: 'number',
@@ -9,10 +9,10 @@ export class MatchList extends Entity {
   id?: number;
 
   @property({
-    type: 'number',
+    type: 'string',
     required: true,
   })
-  summonerId?: number;
+  summonerPUUID?: string;
 
   @property({
     type: 'number',

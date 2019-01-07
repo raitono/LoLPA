@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS `champion` (
   PRIMARY KEY (`championId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='VERY incomplete until I do more with champions. Right now I only need basic info to identify them by their IDs.';
 
--- Dumping data for table riot.champion: ~142 rows (approximately)
+-- Dumping data for table riot.champion: ~143 rows (approximately)
 /*!40000 ALTER TABLE `champion` DISABLE KEYS */;
 INSERT INTO `champion` (`championId`, `name`, `title`) VALUES
 	(-1, 'None', 'None'),
@@ -562,19 +562,19 @@ CREATE TABLE IF NOT EXISTS `match` (
 -- Dumping structure for table riot.match_list
 CREATE TABLE IF NOT EXISTS `match_list` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `summonerId` varchar(50) NOT NULL,
+  `summonerPUUID` varchar(100) NOT NULL,
   `gameId` int(11) unsigned NOT NULL,
   `championId` int(11) NOT NULL,
   `lane` varchar(6) NOT NULL,
   `role` varchar(11) NOT NULL,
   `timestamp` datetime NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `FK_matches_profileId` (`summonerId`),
   KEY `FK_matches_gameId` (`gameId`),
   KEY `FK_matches_championId` (`championId`),
+  KEY `FK_matches_PUUID` (`summonerPUUID`),
   CONSTRAINT `FK_match_list_championId` FOREIGN KEY (`championId`) REFERENCES `champion` (`championId`),
   CONSTRAINT `FK_match_list_gameId` FOREIGN KEY (`gameId`) REFERENCES `match` (`gameId`),
-  CONSTRAINT `FK_match_list_summonerId` FOREIGN KEY (`summonerId`) REFERENCES `summoner` (`summonerId`)
+  CONSTRAINT `FK_match_list_summonerPUUID` FOREIGN KEY (`summonerPUUID`) REFERENCES `summoner` (`puuid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Dumping data for table riot.match_list: ~0 rows (approximately)
@@ -725,7 +725,7 @@ CREATE TABLE IF NOT EXISTS `perk` (
   CONSTRAINT `FK_perk_styleId` FOREIGN KEY (`styleId`) REFERENCES `perk_style` (`styleId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Runes are called perks in the API and are a part of the participantDTO. They are not directly available from the API, so I am having to infer and figure them out on my own.';
 
--- Dumping data for table riot.perk: ~63 rows (approximately)
+-- Dumping data for table riot.perk: ~64 rows (approximately)
 /*!40000 ALTER TABLE `perk` DISABLE KEYS */;
 INSERT INTO `perk` (`perkId`, `styleId`, `name`) VALUES
 	('8005', '8000', 'Press the Attack'),
@@ -822,12 +822,12 @@ CREATE TABLE IF NOT EXISTS `season` (
   PRIMARY KEY (`seasonId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.season: ~2 rows (approximately)
+-- Dumping data for table riot.season: ~3 rows (approximately)
 /*!40000 ALTER TABLE `season` DISABLE KEYS */;
 INSERT INTO `season` (`seasonId`, `number`, `name`, `startDate`, `endDate`, `isCurrent`) VALUES
 	(11, 8, 'Season 2018', '2018-01-16 00:00:00', '2018-11-12 23:59:59', 0),
 	(12, 9, 'Preseason 2019', '2018-11-13 00:00:00', NULL, 0),
-	(13, 9, 'Season 2019', '2019-01-02 00:00:00', NULL, 1);
+	(13, 9, 'Season 2019', '2019-01-06 00:00:00', NULL, 1);
 /*!40000 ALTER TABLE `season` ENABLE KEYS */;
 
 -- Dumping structure for table riot.spell
@@ -879,7 +879,7 @@ CREATE TABLE IF NOT EXISTS `summoner` (
   KEY `IX_summonerId_name_puuid` (`summonerId`,`name`,`puuid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.summoner: ~1 rows (approximately)
+-- Dumping data for table riot.summoner: ~0 rows (approximately)
 /*!40000 ALTER TABLE `summoner` DISABLE KEYS */;
 /*!40000 ALTER TABLE `summoner` ENABLE KEYS */;
 
