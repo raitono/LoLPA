@@ -11,7 +11,7 @@ const webServer = require('../util/web-server');
  * @param {Object} summoner Summoner whose matches we are updating
  * @param {Object} options JSON options containing beginTime and endTime in UNIX milliseconds
  */
-let updateMatchList = async function(summoner) {
+const updateMatchList = async function(summoner) {
 	try {
 		summoner = JSON.parse(summoner);
 	} catch (e) {
@@ -21,6 +21,7 @@ let updateMatchList = async function(summoner) {
 	await getMatchList(summoner);
 
 	if (!summoner.matchList) {
+		debug('No matchList');
 		return;
 	}
 
@@ -30,28 +31,41 @@ let updateMatchList = async function(summoner) {
 		matchBatch.push(matchList.gameId);
 	});
 
+	const existingMatches = await request({
+		method: 'GET',
+		uri: webServer.URLs.Matches.get('{"gameId": {"inq": ' + JSON.stringify(matchBatch) + '}}'),
+		json: true,
+	});
+	matchBatch = matchBatch.filter((m) => existingMatches.findIndex((e) => e.gameId === m) === -1);
+
+	if (util.isNullOrUndefined(matchBatch[0])) {
+		debug('All matches already exist');
+		return;
+	}
+
 	// Get the matches from RIOT
-	let matches = await Promise.all(matchBatch.map(Kayn.MatchV4.get));
+	const matches = await Promise.all(matchBatch.map(Kayn.MatchV4.get));
 	let matchCount = 0;
-	let matchInsertBatch = [];
-	let matchListBatch = [];
-	let summonerGameXrefBatch = [];
-	let teamStatBatch = [];
-	let teamBanBatch = [];
-	let participantBatch = [];
-	let statBatch = [];
-	let timelineBatch = [];
-	let timelineDeltaBatch = [];
-	let itemBatch =[];
-	let perkBatch = [];
+	const matchInsertBatch = [];
+	const matchListBatch = [];
+	const summonerGameXrefBatch = [];
+	const teamStatBatch = [];
+	const teamBanBatch = [];
+	const participantBatch = [];
+	const statBatch = [];
+	const timelineBatch = [];
+	const timelineDeltaBatch = [];
+	const itemBatch =[];
+	const perkBatch = [];
 
 	// Batch up the insert options
 	matches.forEach( async (match) => {
+		const gameId = parseInt(match.gameId);
 		matchInsertBatch.push({
 			method: 'PUT',
-			uri: webServer.URLs.Matches.put(),
+			uri: webServer.URLs.Matches.put(gameId),
 			body: {
-				gameId: match.gameId,
+				gameId: gameId,
 				seasonId: match.seasonId,
 				queueId: match.queueId,
 				mapId: match.mapId,
@@ -60,56 +74,17 @@ let updateMatchList = async function(summoner) {
 				gameMode: match.gameMode,
 				gameType: match.gameType,
 				gameDuration: match.gameDuration,
-				gameCreation: match.gameCreation,
+				gameCreation: util.parseDate(match.gameCreation),
 			},
 			json: true,
 		});
 
-		match.teams.forEach((team) => {
-			teamStatBatch.push({
-				method: 'PUT',
-				uri: webServer.URLs.TeamStat.put(),
-				body: {
-					gameId: match.gameId,
-					teamId: team.teamId,
-					win: team.win,
-					baronKills: team.baronKills,
-					riftHeraldKills: team.riftHeraldKills,
-					vilemawKills: team.vilemawKills,
-					inhibitorKills: team.inhibitorKills,
-					towerKills: team.towerKills,
-					dragonKills: team.dragonKills,
-					dominionVictoryScore: team.dominionVictoryScore,
-					firstDragon: team.firstDragon,
-					firstInhibitor: team.firstInhibitor,
-					firstRiftHerald: team.firstRiftHerald,
-					firstBlood: team.firstBlood,
-					firstTower: team.firstTower,
-				},
-				json: true,
-			});
-
-			team.bans.forEach((ban) => {
-				teamBanBatch.push({
-					method: 'PUT',
-					uri: webServer.URLs.TeamBan.put(),
-					body: {
-						gameId: match.gameId,
-						teamId: team.teamId,
-						championId: ban.championId,
-						pickTurn: ban.pickTurn,
-					},
-					json: true,
-				});
-			});
-		});
-
 		match.participants.forEach((participant) => {
 			participantBatch.push({
-				method: 'PUT',
-				uri: webServer.URLs.Participant.put(),
+				method: 'POST',
+				uri: webServer.URLs.Participant.post(),
 				body: {
-					gameId: match.gameId,
+					gameId: gameId,
 					participantId: participant.participantId,
 					championId: participant.championId,
 					spell1Id: participant.spell1Id,
@@ -119,132 +94,187 @@ let updateMatchList = async function(summoner) {
 				},
 				json: true,
 			});
+		});
 
-			statBatch.push({
-				method: 'PUT',
-				uri: webServer.URLs.ParticipantStat.put(),
-				body: {
-					gameId: match.gameId,
-					participantId: participant.participantId,
-					win: participant.stats.win,
-					kills: participant.stats.kills,
-					deaths: participant.stats.deaths,
-					assists: participant.stats.assists,
-					largestKillingSpree: participant.stats.largestKillingSpree,
-					killingSprees: participant.stats.killingSprees,
-					largestMultiKill: participant.stats.largestMultiKill,
-					doubleKills: participant.stats.doubleKills,
-					tripleKills: participant.stats.tripleKills,
-					quadraKills: participant.stats.quadraKills,
-					pentaKills: participant.stats.pentaKills,
-					unrealKills: participant.stats.unrealKills,
-					physicalDamageDealt: participant.stats.physicalDamageDealt,
-					physicalDamageDealtToChampions: participant.stats.physicalDamageDealtToChampions,
-					magicDamageDealt: participant.stats.magicDamageDealt,
-					magicDamageDealtToChampions: participant.stats.magicDamageDealtToChampions,
-					trueDamageDealt: participant.stats.trueDamageDealt,
-					trueDamageDealtToChampions: participant.stats.trueDamageDealtToChampions,
-					totalDamageDealtToChampions: participant.stats.totalDamageDealtToChampions,
-					damageDealtToObjectives: participant.stats.damageDealtToObjectives,
-					totalDamageDealt: participant.stats.totalDamageDealt,
-					totalUnitsHealed: participant.stats.totalUnitsHealed,
-					totalHeal: participant.stats.totalHeal,
-					largestCriticalStrike: participant.stats.largestCriticalStrike,
-					totalMinionsKilled: participant.stats.totalMinionsKilled,
-					neutralMinionsKilled: participant.stats.neutralMinionsKilled,
-					neutralMinionsKilledTeamJungle: participant.stats.neutralMinionsKilledTeamJungle || 0, // These could be undefined if neutralMinions is 0
-					neutralMinionsKilledEnemyJungle: participant.stats.neutralMinionsKilledEnemyJungle || 0,
-					sightWardsBoughtInGame: participant.stats.sightWardsBoughtInGame,
-					visionWardsBoughtInGame: participant.stats.visionWardsBoughtInGame,
-					wardsKilled: participant.stats.wardsKilled || 0,
-					wardsPlaced: participant.stats.wardsPlaced || 0,
-					visionScore: participant.stats.visionScore,
-					objectivePlayerScore: participant.stats.objectivePlayerScore,
-					combatPlayerScore: participant.stats.combatPlayerScore,
-					totalPlayerScore: participant.stats.totalPlayerScore,
-					totalScoreRank: participant.stats.totalScoreRank,
-					altarsCaptured: participant.stats.altarsCaptured || 0,
-					teamObjective: participant.stats.teamObjective || 0,
-					totalTimeCrowdControlDealt: participant.stats.totalTimeCrowdControlDealt,
-					timeCCingOthers: participant.stats.timeCCingOthers,
-					longestTimeSpentLiving: participant.stats.longestTimeSpentLiving,
-					turretKills: participant.stats.turretKills,
-					damageDealtToTurrets: participant.stats.damageDealtToTurrets,
-					inhibitorKills: participant.stats.inhibitorKills,
-					firstTowerAssist: participant.stats.firstTowerAssist || 0,
-					firstTowerKill: participant.stats.firstTowerKill || 0,
-					firstBloodAssist: participant.stats.firstBloodAssist || 0,
-					firstInhibitorKill: participant.stats.firstInhibitorKill || 0,
-					firstInhibitorAssist: participant.stats.firstInhibitorAssist || 0,
-					firstBloodKill: participant.stats.firstBloodKill || 0,
-					champLevel: participant.stats.champLevel,
-					nodeNeutralize: participant.stats.nodeNeutralize || 0,
-					nodeNeutralizeAssist: participant.stats.nodeNeutralizeAssists || 0,
-					nodeCapture: participant.stats.nodeCapture || 0,
-					nodeCaptureAssist: participant.stats.nodeCaptureAssist || 0,
-					altarsNeutralized: participant.stats.altarsNeutralized || 0,
-					goldEarned: participant.stats.goldEarned,
-					goldSpent: participant.stats.goldSpent || 0,
-					physicalDamageTaken: participant.stats.physicalDamageTaken,
-					magicalDamageTaken: participant.stats.magicalDamageTaken,
-					trueDamageTaken: participant.stats.trueDamageTaken,
-					totalDamageTaken: participant.stats.totalDamageTaken,
-					perkPrimaryStyle: participant.stats.perkPrimaryStyle,
-					perkSubStyle: participant.stats.perkSubStyle,
-				},
-				json: true,
-			});
+		// match.teams.forEach((team) => {
+		// 	teamStatBatch.push({
+		// 		method: 'POST',
+		// 		uri: webServer.URLs.TeamStat.post(),
+		// 		body: {
+		// 			gameId: gameId,
+		// 			teamId: team.teamId,
+		// 			win: team.win,
+		// 			baronKills: team.baronKills,
+		// 			riftHeraldKills: team.riftHeraldKills,
+		// 			vilemawKills: team.vilemawKills,
+		// 			inhibitorKills: team.inhibitorKills,
+		// 			towerKills: team.towerKills,
+		// 			dragonKills: team.dragonKills,
+		// 			dominionVictoryScore: team.dominionVictoryScore,
+		// 			firstDragon: team.firstDragon,
+		// 			firstInhibitor: team.firstInhibitor,
+		// 			firstRiftHerald: team.firstRiftHerald,
+		// 			firstBlood: team.firstBlood,
+		// 			firstTower: team.firstTower,
+		// 		},
+		// 		json: true,
+		// 	});
 
-			timelineBatch.push({
-				method: 'PUT',
-				uri: webServer.URLs.ParticipantTimeline.put(),
-				body: {
-					gameId: match.gameId,
-					participantId: participant.participantId,
-					lane: participant.timeline.lane,
-					role: participant.timeline.role,
-				},
-				json: true,
-			});
+		// 	team.bans.forEach((ban) => {
+		// 		teamBanBatch.push({
+		// 			method: 'PUT',
+		// 			uri: webServer.URLs.TeamBan.put(),
+		// 			body: {
+		// 				gameId: match.gameId,
+		// 				teamId: team.teamId,
+		// 				championId: ban.championId,
+		// 				pickTurn: ban.pickTurn,
+		// 			},
+		// 			json: true,
+		// 		});
+		// 	});
 
-			let itemCount = 0;
-			while (!util.isNullOrUndefined(participant.stats['item'+itemCount])) {
-				itemBatch.push({
-					method: 'PUT',
-					uri: webServer.URLs.XrefParticipantItem.put(),
-					body: {
-						gameId: match.gameId,
-						participantId: participant.participantId,
-						itemId: participant.stats['item'+itemCount],
-					},
-					json: true,
-				});
+		// 	statBatch.push({
+		// 		method: 'PUT',
+		// 		uri: webServer.URLs.ParticipantStat.put(),
+		// 		body: {
+		// 			gameId: match.gameId,
+		// 			participantId: participant.participantId,
+		// 			win: participant.stats.win,
+		// 			kills: participant.stats.kills,
+		// 			deaths: participant.stats.deaths,
+		// 			assists: participant.stats.assists,
+		// 			largestKillingSpree: participant.stats.largestKillingSpree,
+		// 			killingSprees: participant.stats.killingSprees,
+		// 			largestMultiKill: participant.stats.largestMultiKill,
+		// 			doubleKills: participant.stats.doubleKills,
+		// 			tripleKills: participant.stats.tripleKills,
+		// 			quadraKills: participant.stats.quadraKills,
+		// 			pentaKills: participant.stats.pentaKills,
+		// 			unrealKills: participant.stats.unrealKills,
+		// 			physicalDamageDealt: participant.stats.physicalDamageDealt,
+		// 			physicalDamageDealtToChampions: participant.stats.physicalDamageDealtToChampions,
+		// 			magicDamageDealt: participant.stats.magicDamageDealt,
+		// 			magicDamageDealtToChampions: participant.stats.magicDamageDealtToChampions,
+		// 			trueDamageDealt: participant.stats.trueDamageDealt,
+		// 			trueDamageDealtToChampions: participant.stats.trueDamageDealtToChampions,
+		// 			totalDamageDealtToChampions: participant.stats.totalDamageDealtToChampions,
+		// 			damageDealtToObjectives: participant.stats.damageDealtToObjectives,
+		// 			totalDamageDealt: participant.stats.totalDamageDealt,
+		// 			totalUnitsHealed: participant.stats.totalUnitsHealed,
+		// 			totalHeal: participant.stats.totalHeal,
+		// 			largestCriticalStrike: participant.stats.largestCriticalStrike,
+		// 			totalMinionsKilled: participant.stats.totalMinionsKilled,
+		// 			neutralMinionsKilled: participant.stats.neutralMinionsKilled,
+		// 			neutralMinionsKilledTeamJungle: participant.stats.neutralMinionsKilledTeamJungle || 0, // These could be undefined if neutralMinions is 0
+		// 			neutralMinionsKilledEnemyJungle: participant.stats.neutralMinionsKilledEnemyJungle || 0,
+		// 			sightWardsBoughtInGame: participant.stats.sightWardsBoughtInGame,
+		// 			visionWardsBoughtInGame: participant.stats.visionWardsBoughtInGame,
+		// 			wardsKilled: participant.stats.wardsKilled || 0,
+		// 			wardsPlaced: participant.stats.wardsPlaced || 0,
+		// 			visionScore: participant.stats.visionScore,
+		// 			objectivePlayerScore: participant.stats.objectivePlayerScore,
+		// 			combatPlayerScore: participant.stats.combatPlayerScore,
+		// 			totalPlayerScore: participant.stats.totalPlayerScore,
+		// 			totalScoreRank: participant.stats.totalScoreRank,
+		// 			altarsCaptured: participant.stats.altarsCaptured || 0,
+		// 			teamObjective: participant.stats.teamObjective || 0,
+		// 			totalTimeCrowdControlDealt: participant.stats.totalTimeCrowdControlDealt,
+		// 			timeCCingOthers: participant.stats.timeCCingOthers,
+		// 			longestTimeSpentLiving: participant.stats.longestTimeSpentLiving,
+		// 			turretKills: participant.stats.turretKills,
+		// 			damageDealtToTurrets: participant.stats.damageDealtToTurrets,
+		// 			inhibitorKills: participant.stats.inhibitorKills,
+		// 			firstTowerAssist: participant.stats.firstTowerAssist || 0,
+		// 			firstTowerKill: participant.stats.firstTowerKill || 0,
+		// 			firstBloodAssist: participant.stats.firstBloodAssist || 0,
+		// 			firstInhibitorKill: participant.stats.firstInhibitorKill || 0,
+		// 			firstInhibitorAssist: participant.stats.firstInhibitorAssist || 0,
+		// 			firstBloodKill: participant.stats.firstBloodKill || 0,
+		// 			champLevel: participant.stats.champLevel,
+		// 			nodeNeutralize: participant.stats.nodeNeutralize || 0,
+		// 			nodeNeutralizeAssist: participant.stats.nodeNeutralizeAssists || 0,
+		// 			nodeCapture: participant.stats.nodeCapture || 0,
+		// 			nodeCaptureAssist: participant.stats.nodeCaptureAssist || 0,
+		// 			altarsNeutralized: participant.stats.altarsNeutralized || 0,
+		// 			goldEarned: participant.stats.goldEarned,
+		// 			goldSpent: participant.stats.goldSpent || 0,
+		// 			physicalDamageTaken: participant.stats.physicalDamageTaken,
+		// 			magicalDamageTaken: participant.stats.magicalDamageTaken,
+		// 			trueDamageTaken: participant.stats.trueDamageTaken,
+		// 			totalDamageTaken: participant.stats.totalDamageTaken,
+		// 			perkPrimaryStyle: participant.stats.perkPrimaryStyle,
+		// 			perkSubStyle: participant.stats.perkSubStyle,
+		// 		},
+		// 		json: true,
+		// 	});
 
-				itemCount = itemCount + 1;
-			}
+		// 	timelineBatch.push({
+		// 		method: 'PUT',
+		// 		uri: webServer.URLs.ParticipantTimeline.put(),
+		// 		body: {
+		// 			gameId: match.gameId,
+		// 			participantId: participant.participantId,
+		// 			lane: participant.timeline.lane,
+		// 			role: participant.timeline.role,
+		// 		},
+		// 		json: true,
+		// 	});
 
-			let perkCount = 0;
-			while (!util.isNullOrUndefined(participant.stats['perk'+perkCount])) {
-				let perkVarCount = 1;
+		// 	let itemCount = 0;
+		// 	while (!util.isNullOrUndefined(participant.stats['item'+itemCount])) {
+		// 		itemBatch.push({
+		// 			method: 'PUT',
+		// 			uri: webServer.URLs.XrefParticipantItem.put(),
+		// 			body: {
+		// 				gameId: match.gameId,
+		// 				participantId: participant.participantId,
+		// 				itemId: participant.stats['item'+itemCount],
+		// 			},
+		// 			json: true,
+		// 		});
 
-				while (!util.isNullOrUndefined(participant.stats['perk'+perkCount+'Var'+perkVarCount])) {
-					perkBatch.push({
-						method: 'PUT',
-						uri: webServer.URLs.XrefParticipantPerk.put(),
-						body: {
-							gameId: match.gameId,
-							participantId: participant.participantId,
-							perkId: participant.stats['perk'+perkCount],
-							varId: perkVarCount,
-							value: participant.stats['perk'+perkCount+'Var'+perkVarCount],
-						},
-						json: true,
-					});
-					perkVarCount = perkVarCount + 1;
-				}
-				perkCount = perkCount + 1;
-				perkVarCount = 1;
-			}
+		// 		itemCount = itemCount + 1;
+		// 	}
+
+		// 	let perkCount = 0;
+		// 	while (!util.isNullOrUndefined(participant.stats['perk'+perkCount])) {
+		// 		let perkVarCount = 1;
+
+		// 		while (!util.isNullOrUndefined(participant.stats['perk'+perkCount+'Var'+perkVarCount])) {
+		// 			perkBatch.push({
+		// 				method: 'PUT',
+		// 				uri: webServer.URLs.XrefParticipantPerk.put(),
+		// 				body: {
+		// 					gameId: match.gameId,
+		// 					participantId: participant.participantId,
+		// 					perkId: participant.stats['perk'+perkCount],
+		// 					varId: perkVarCount,
+		// 					value: participant.stats['perk'+perkCount+'Var'+perkVarCount],
+		// 				},
+		// 				json: true,
+		// 			});
+		// 			perkVarCount = perkVarCount + 1;
+		// 		}
+		// 		perkCount = perkCount + 1;
+		// 		perkVarCount = 1;
+		// 	}
+		// });
+	});
+
+	summoner.matchList.forEach((matchList) => {
+		matchListBatch.push({
+			method: 'POST',
+			uri: webServer.URLs.MatchList.post(),
+			body: {
+				summonerPUUID: summoner.puuid,
+				gameId: parseInt(matchList.gameId),
+				championId: matchList.champion,
+				lane: matchList.lane,
+				role: matchList.role,
+				timestamp: util.parseDate(matchList.timestamp),
+			},
+			json: true,
 		});
 	});
 
@@ -259,30 +289,14 @@ let updateMatchList = async function(summoner) {
 		matchCount = matchCount + 1;
 	}
 
-	summoner.matchList.forEach((matchList) => {
-		matchListBatch.push({
-			method: 'PUT',
-			uri: webServer.URLs.MatchList.put(),
-			body: {
-				summonerId: summoner.summonerId,
-				gameId: matchList.gameId,
-				championId: matchList.champion,
-				lane: matchList.lane,
-				role: matchList.role,
-				timestamp: matchList.timestamp,
-			},
-			json: true,
-		});
-	});
-
 	try {
-		// // This has to be done separate because of the foreign keys.
-		// await Promise.all(matchInsertBatch.map(request));
-		// debug('Match Insert Done');
-		// await Promise.all(participantBatch.map(request));
-		// debug('Participant Insert Done');
-		// await Promise.all(matchListBatch.map(request));
-		// debug('Match List Insert Done');
+		// This has to be done separate because of the foreign keys.
+		await Promise.all(matchInsertBatch.map(request));
+		debug('Match Insert Done');
+		await Promise.all(participantBatch.map(request));
+		debug('Participant Insert Done');
+		await Promise.all(matchListBatch.map(request));
+		debug('Match List Insert Done');
 		// if (summonerGameXrefBatch.length > 0) {
 		// 	await Promise.all(summonerGameXrefBatch.map(request));
 		// 	debug('SummonerGameXref Insert Done');
@@ -300,7 +314,13 @@ let updateMatchList = async function(summoner) {
 		// 	perkBatch.map(request),
 		// );
 	} catch (err) {
-		debug(err);
+		if (err.code === 'ER_DUP_ENTRY') {
+			// shh, don't tell them we already have it
+			// Does this stop processing? We probably don't want that.
+			// Might want to compare the match list at the beginning to make sure
+		} else {
+			debug(err);
+		}
 	}
 };
 
@@ -311,7 +331,7 @@ let updateMatchList = async function(summoner) {
  * @param {Object} options Object with beginTime and endTime to specify the dates to find matches
  * @return {Object} MatchList object from RIOT API
  */
-let getMatchList = async (summoner, options) => {
+const getMatchList = async (summoner, options) => {
 	if (!util.isObject(summoner)) {
 		try {
 			summoner = JSON.parse(summoner);
@@ -377,13 +397,13 @@ let getMatchList = async (summoner, options) => {
  * @param {long} endTime UNIX milliseconds representing the last time the Summoner was updated according to RIOT
  * @return {Object} JSON object containing beginTime and endTime to be used with a match method
  */
-let getMatchDates = async (beginTime, endTime) => {
+const getMatchDates = async (beginTime, endTime) => {
 	let dates = {};
 	if (util.isNullOrUndefined(beginTime)) {
 		let dbSeason = await request(webServer.URLs.Season.get('{"isCurrent":1}'));
 		dbSeason = JSON.parse(dbSeason);
 		dbSeason = dbSeason[0];
-		let seasonStart = new Date(dbSeason.startDate).getTime();
+		const seasonStart = new Date(dbSeason.startDate).getTime();
 		dates = {
 			beginTime: seasonStart,
 			endTime: seasonStart + 604800000,
@@ -408,11 +428,11 @@ let getMatchDates = async (beginTime, endTime) => {
  * @param {Array} summonerGameXrefBatch Array of Requests to add the participant to
  * @param {Array} timelineDeltaBatch Array of Requests to add the delta to
  */
-let parseMatchParticipantWithDuplicateCheck = async (match,
+const parseMatchParticipantWithDuplicateCheck = async (match,
 	summonerGameXrefBatch, timelineDeltaBatch) => {
 	let participantCounter = 0;
 	let deltaTypeCounter = 0;
-	let deltaTypes = JSON.parse(await request(webServer.URLs.DeltaType.getAll()));
+	const deltaTypes = JSON.parse(await request(webServer.URLs.DeltaType.getAll()));
 
 	while (participantCounter < match.participantIdentities.length) {
 		deltaTypeCounter = 0;
@@ -443,7 +463,7 @@ let parseMatchParticipantWithDuplicateCheck = async (match,
  * @param {Object} identity The identity to add
  * @param {Array} summonerGameXrefBatch Array of Requests to add the participant to
  */
-let parseMatchParticipantIdentity = async (gameId, identity, summonerGameXrefBatch) => {
+const parseMatchParticipantIdentity = async (gameId, identity, summonerGameXrefBatch) => {
 	let exists = null;
 	try {
 		exists = await request(webServer.URLs.XrefSummonerGame.findOne(
@@ -488,7 +508,7 @@ let parseMatchParticipantIdentity = async (gameId, identity, summonerGameXrefBat
  * @param {Object} timeline The timeline to add
  * @param {Array} timelineDeltaBatch Array of Requests to add the delta to
  */
-let parseMatchParticipantTimelineDelta = async (gameId, deltaType,
+const parseMatchParticipantTimelineDelta = async (gameId, deltaType,
 	timeline, timelineDeltaBatch) => {
 	let exists = null;
 	let timelineKeys = null;
@@ -507,8 +527,8 @@ let parseMatchParticipantTimelineDelta = async (gameId, deltaType,
 	}
 
 	while (timelineKeysCounter < timelineKeys.length) {
-		let increment = timelineKeys[timelineKeysCounter];
-		let value = timeline[deltaType.name][increment];
+		const increment = timelineKeys[timelineKeysCounter];
+		const value = timeline[deltaType.name][increment];
 		exists = null;
 
 		try {
@@ -554,7 +574,7 @@ let parseMatchParticipantTimelineDelta = async (gameId, deltaType,
 module.exports.registerWorkers = (worker) => {
 	worker.registerWorker('updateMatchList', async (task) => {
 		debug('Update Match List:', JSON.parse(task.payload).name);
-		let result = await updateMatchList(task.payload);
+		const result = await updateMatchList(task.payload);
 		task.end(result);
 	});
 
