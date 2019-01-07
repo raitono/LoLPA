@@ -21,16 +21,25 @@ module.exports.URLs = {
 		},
 	},
 	MatchList: {
+		post: function() {
+			return process.env.WEB_SERVER + '/match-lists';
+		},
 		put: function(matchListId) {
 			return process.env.WEB_SERVER + '/match-lists/' + matchListId;
 		},
 	},
 	Matches: {
+		get: function(whereClause) {
+			return process.env.WEB_SERVER + '/matches?filter={"where":'+whereClause+'}';
+		},
 		put: function(matchId) {
 			return process.env.WEB_SERVER + '/matches/' + matchId;
 		},
 	},
 	Participant: {
+		post: function() {
+			return process.env.WEB_SERVER + '/participants';
+		},
 		put: function(participantId) {
 			return process.env.WEB_SERVER + '/participants/' + participantId;
 		},
@@ -86,13 +95,13 @@ module.exports.URLs = {
 		},
 	},
 	TeamStat: {
-		put: function(statId) {
-			return process.env.WEB_SERVER + '/team-stats/' + statId;
+		post: function() {
+			return process.env.WEB_SERVER + '/team-stats';
 		},
 	},
 	TeamBan: {
-		put: function(banId) {
-			return process.env.WEB_SERVER + '/team-bans/' + banId;
+		post: function() {
+			return process.env.WEB_SERVER + '/team-bans';
 		},
 	},
 	XrefSummonerGame: {
