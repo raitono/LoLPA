@@ -169,6 +169,7 @@ INSERT INTO `champion` (`championId`, `name`, `title`) VALUES
 	(497, 'Rakan', 'The Charmer'),
 	(498, 'Xayah', 'the Rebel'),
 	(516, 'Ornn', 'The Fire below the Mountain'),
+	(518, 'Neeko', 'the Curious Chameleon'),
 	(555, 'Pyke', 'the Bloodharbor Ripper');
 /*!40000 ALTER TABLE `champion` ENABLE KEYS */;
 
@@ -375,7 +376,7 @@ INSERT INTO `item` (`itemId`, `name`, `goldSellsFor`, `goldTotal`, `goldBase`, `
 	(3118, 'Space Knight\'s Vow', 1540, 2200, 600, b'1'),
 	(3122, 'Wicked Hatchet', 840, 1200, 450, b'1'),
 	(3123, 'Executioner\'s Calling', 560, 800, 450, b'1'),
-	(3124, 'Guinsoo\'s Rageblade', 2310, 3300, 990, b'1'),
+	(3124, 'Guinsoo\'s Rageblade', 2170, 3100, 790, b'1'),
 	(3128, 'Deathfire Grasp', 2100, 3000, 850, b'1'),
 	(3131, 'Sword of the Divine', 1750, 2500, 800, b'1'),
 	(3133, 'Caulfield\'s Warhammer', 770, 1100, 400, b'1'),
@@ -520,7 +521,7 @@ INSERT INTO `item` (`itemId`, `name`, `goldSellsFor`, `goldTotal`, `goldBase`, `
 	(3916, 'Oblivion Orb', 1050, 1500, 665, b'1'),
 	(4001, 'Ghostwalkers (Melee Only)', 700, 1000, 700, b'1'),
 	(4003, 'Lifeline', 1050, 1500, 550, b'1'),
-	(4004, 'Spectral Cutlass - TESTING', 2100, 3000, 400, b'1'),
+	(4004, 'Spectral Cutlass', 2100, 3000, 400, b'1'),
 	(4101, 'Pridestalker\'s Blade', 315, 450, 450, b'1'),
 	(4102, 'Enchantment: Warrior', 1838, 2625, 1075, b'1'),
 	(4103, 'Enchantment: Cinderhulk', 1838, 2625, 1275, b'1'),
@@ -534,7 +535,7 @@ INSERT INTO `item` (`itemId`, `name`, `goldSellsFor`, `goldTotal`, `goldBase`, `
 	(4302, 'Heart of Targon', 160, 400, 400, b'1'),
 	(4401, 'Force of Nature', 2030, 2900, 1160, b'1'),
 	(4402, 'Innervating Locket', 1960, 2800, 600, b'1'),
-	(4403, 'Stat-Stick of Stoicism', 7000, 10000, 10000, b'1');
+	(4403, 'Stat-Stick of Stoicism', 5444, 7777, 1127, b'1');
 /*!40000 ALTER TABLE `item` ENABLE KEYS */;
 
 -- Dumping structure for table riot.match
@@ -772,6 +773,7 @@ INSERT INTO `perk` (`perkId`, `styleId`, `name`) VALUES
 	('8352', '8300', 'Time Warp Tonic'),
 	('8359', '8300', 'Kleptomancy'),
 	('8360', '8300', 'Unsealed Spellbook'),
+	('8401', '8400', 'Shield Bash'),
 	('8410', '8300', 'Approach Velocity'),
 	('8429', '8400', 'Conditioning'),
 	('8437', '8400', 'Grasp of the Undying'),
@@ -820,7 +822,7 @@ CREATE TABLE IF NOT EXISTS `season` (
   PRIMARY KEY (`seasonId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.season: ~3 rows (approximately)
+-- Dumping data for table riot.season: ~2 rows (approximately)
 /*!40000 ALTER TABLE `season` DISABLE KEYS */;
 INSERT INTO `season` (`seasonId`, `number`, `name`, `startDate`, `endDate`, `isCurrent`) VALUES
 	(11, 8, 'Season 2018', '2018-01-16 00:00:00', '2018-11-12 23:59:59', 0),
@@ -840,27 +842,27 @@ CREATE TABLE IF NOT EXISTS `spell` (
 -- Dumping data for table riot.spell: ~21 rows (approximately)
 /*!40000 ALTER TABLE `spell` DISABLE KEYS */;
 INSERT INTO `spell` (`spellId`, `version`, `name`, `key`) VALUES
-	(1, NULL, 'Cleanse', 'SummonerBoost'),
-	(3, NULL, 'Exhaust', 'SummonerExhaust'),
-	(4, NULL, 'Flash', 'SummonerFlash'),
-	(6, NULL, 'Ghost', 'SummonerHaste'),
-	(7, NULL, 'Heal', 'SummonerHeal'),
-	(11, NULL, 'Smite', 'SummonerSmite'),
-	(12, NULL, 'Teleport', 'SummonerTeleport'),
-	(13, NULL, 'Clarity', 'SummonerMana'),
-	(14, NULL, 'Ignite', 'SummonerDot'),
-	(21, NULL, 'Barrier', 'SummonerBarrier'),
-	(30, NULL, 'To the King!', 'SummonerPoroRecall'),
-	(31, NULL, 'Poro Toss', 'SummonerPoroThrow'),
-	(32, NULL, 'Mark', 'SummonerSnowball'),
-	(33, NULL, 'Nexus Siege: Siege Weapon Slot', 'SummonerSiegeChampSelect1'),
-	(34, NULL, 'Nexus Siege: Siege Weapon Slot', 'SummonerSiegeChampSelect2'),
-	(35, NULL, 'Disabled Summoner Spells', 'SummonerDarkStarChampSelect1'),
-	(36, NULL, 'Disabled Summoner Spells', 'SummonerDarkStarChampSelect2'),
-	(39, NULL, 'Ultra (Rapidly Flung) Mark', 'SummonerSnowURFSnowball_Mark'),
-	(50, NULL, 'Resuscitate', 'SummonerOdysseyRevive'),
-	(51, NULL, 'Ghost', 'SummonerOdysseyGhost'),
-	(52, NULL, 'Warp', 'SummonerOdysseyFlash');
+	(1, '8.24.1', 'Cleanse', 'SummonerBoost'),
+	(3, '8.24.1', 'Exhaust', 'SummonerExhaust'),
+	(4, '8.24.1', 'Flash', 'SummonerFlash'),
+	(6, '8.24.1', 'Ghost', 'SummonerHaste'),
+	(7, '8.24.1', 'Heal', 'SummonerHeal'),
+	(11, '8.24.1', 'Smite', 'SummonerSmite'),
+	(12, '8.24.1', 'Teleport', 'SummonerTeleport'),
+	(13, '8.24.1', 'Clarity', 'SummonerMana'),
+	(14, '8.24.1', 'Ignite', 'SummonerDot'),
+	(21, '8.24.1', 'Barrier', 'SummonerBarrier'),
+	(30, '8.24.1', 'To the King!', 'SummonerPoroRecall'),
+	(31, '8.24.1', 'Poro Toss', 'SummonerPoroThrow'),
+	(32, '8.24.1', 'Mark', 'SummonerSnowball'),
+	(33, '8.24.1', 'Nexus Siege: Siege Weapon Slot', 'SummonerSiegeChampSelect1'),
+	(34, '8.24.1', 'Nexus Siege: Siege Weapon Slot', 'SummonerSiegeChampSelect2'),
+	(35, '8.24.1', 'Disabled Summoner Spells', 'SummonerDarkStarChampSelect1'),
+	(36, '8.24.1', 'Disabled Summoner Spells', 'SummonerDarkStarChampSelect2'),
+	(39, '8.24.1', 'Ultra (Rapidly Flung) Mark', 'SummonerSnowURFSnowball_Mark'),
+	(50, '8.24.1', 'Resuscitate', 'SummonerOdysseyRevive'),
+	(51, '8.24.1', 'Ghost', 'SummonerOdysseyGhost'),
+	(52, '8.24.1', 'Warp', 'SummonerOdysseyFlash');
 /*!40000 ALTER TABLE `spell` ENABLE KEYS */;
 
 -- Dumping structure for table riot.summoner
