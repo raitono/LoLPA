@@ -121,7 +121,16 @@ export class PerkStyleController {
     @param.path.string('id') id: string,
     @requestBody() perkStyle: PerkStyle,
   ): Promise<void> {
-    await this.perkStyleRepository.replaceById(id, perkStyle);
+    try {
+      await this.perkStyleRepository.findById(id);
+      await this.perkStyleRepository.replaceById(id, perkStyle);
+    } catch (error) {
+      if (error.statusCode === 404) {
+        await this.perkStyleRepository.create(perkStyle);
+      } else {
+        throw error;
+      }
+    }
   }
 
   @del('/perk-styles/{id}', {

@@ -121,7 +121,16 @@ export class SpellController {
     @param.path.number('id') id: number,
     @requestBody() spell: Spell,
   ): Promise<void> {
-    await this.spellRepository.replaceById(id, spell);
+    try {
+      await this.spellRepository.findById(id);
+      await this.spellRepository.replaceById(id, spell);
+    } catch (error) {
+      if (error.statusCode === 404) {
+        await this.spellRepository.create(spell);
+      } else {
+        throw error;
+      }
+    }
   }
 
   @del('/spells/{id}', {

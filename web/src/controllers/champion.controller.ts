@@ -121,7 +121,16 @@ export class ChampionController {
     @param.path.number('id') id: number,
     @requestBody() champion: Champion,
   ): Promise<void> {
-    await this.championRepository.replaceById(id, champion);
+    try {
+      await this.championRepository.findById(id);
+      await this.championRepository.replaceById(id, champion);
+    } catch (error) {
+      if (error.statusCode === 404) {
+        await this.championRepository.create(champion);
+      } else {
+        throw error;
+      }
+    }
   }
 
   @del('/champions/{id}', {

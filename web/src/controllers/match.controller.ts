@@ -121,7 +121,16 @@ export class MatchController {
     @param.path.number('id') id: number,
     @requestBody() match: Match,
   ): Promise<void> {
-    await this.matchRepository.replaceById(id, match);
+    try {
+      await this.matchRepository.findById(id);
+      await this.matchRepository.replaceById(id, match);
+    } catch (error) {
+      if (error.statusCode === 404) {
+        await this.matchRepository.create(match);
+      } else {
+        throw error;
+      }
+    }
   }
 
   @del('/matches/{id}', {

@@ -121,7 +121,16 @@ export class ItemController {
     @param.path.number('id') id: number,
     @requestBody() item: Item,
   ): Promise<void> {
-    await this.itemRepository.replaceById(id, item);
+    try {
+      await this.itemRepository.findById(id);
+      await this.itemRepository.replaceById(id, item);
+    } catch (error) {
+      if (error.statusCode === 404) {
+        await this.itemRepository.create(item);
+      } else {
+        throw error;
+      }
+    }
   }
 
   @del('/items/{id}', {

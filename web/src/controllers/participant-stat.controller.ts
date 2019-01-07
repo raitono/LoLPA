@@ -121,7 +121,16 @@ export class ParticipantStatController {
     @param.path.number('id') id: number,
     @requestBody() participantStat: ParticipantStat,
   ): Promise<void> {
-    await this.participantStatRepository.replaceById(id, participantStat);
+    try {
+      await this.participantStatRepository.findById(id);
+      await this.participantStatRepository.replaceById(id, participantStat);
+    } catch (error) {
+      if (error.statusCode === 404) {
+        await this.participantStatRepository.create(participantStat);
+      } else {
+        throw error;
+      }
+    }
   }
 
   @del('/participant-stats/{id}', {

@@ -121,7 +121,16 @@ export class ParticipantController {
     @param.path.number('id') id: number,
     @requestBody() participant: Participant,
   ): Promise<void> {
-    await this.participantRepository.replaceById(id, participant);
+    try {
+      await this.participantRepository.findById(id);
+      await this.participantRepository.replaceById(id, participant);
+    } catch (error) {
+      if (error.statusCode === 404) {
+        await this.participantRepository.create(participant);
+      } else {
+        throw error;
+      }
+    }
   }
 
   @del('/participants/{id}', {

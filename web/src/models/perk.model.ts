@@ -4,9 +4,10 @@ import {Entity, model, property} from '@loopback/repository';
 export class Perk extends Entity {
   @property({
     type: 'string',
+    required: true,
     id: true,
   })
-  perkId?: string;
+  perkId: string;
 
   @property({
     type: 'string',

@@ -121,7 +121,16 @@ export class SeasonController {
     @param.path.number('id') id: number,
     @requestBody() season: Season,
   ): Promise<void> {
-    await this.seasonRepository.replaceById(id, season);
+    try {
+      await this.seasonRepository.findById(id);
+      await this.seasonRepository.replaceById(id, season);
+    } catch (error) {
+      if (error.statusCode === 404) {
+        await this.seasonRepository.create(season);
+      } else {
+        throw error;
+      }
+    }
   }
 
   @del('/seasons/{id}', {

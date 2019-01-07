@@ -121,7 +121,16 @@ export class TeamStatController {
     @param.path.number('id') id: number,
     @requestBody() teamStat: TeamStat,
   ): Promise<void> {
-    await this.teamStatRepository.replaceById(id, teamStat);
+    try {
+      await this.teamStatRepository.findById(id);
+      await this.teamStatRepository.replaceById(id, teamStat);
+    } catch (error) {
+      if (error.statusCode === 404) {
+        await this.teamStatRepository.create(teamStat);
+      } else {
+        throw error;
+      }
+    }
   }
 
   @del('/team-stats/{id}', {

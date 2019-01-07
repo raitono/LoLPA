@@ -121,7 +121,16 @@ export class XrefSummonerGameController {
     @param.path.number('id') id: number,
     @requestBody() xrefSummonerGame: XrefSummonerGame,
   ): Promise<void> {
-    await this.xrefSummonerGameRepository.replaceById(id, xrefSummonerGame);
+    try {
+      await this.xrefSummonerGameRepository.findById(id);
+      await this.xrefSummonerGameRepository.replaceById(id, xrefSummonerGame);
+    } catch (error) {
+      if (error.statusCode === 404) {
+        await this.xrefSummonerGameRepository.create(xrefSummonerGame);
+      } else {
+        throw error;
+      }
+    }
   }
 
   @del('/xref-summoner-games/{id}', {

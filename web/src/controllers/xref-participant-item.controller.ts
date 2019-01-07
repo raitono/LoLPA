@@ -121,7 +121,16 @@ export class XrefParticipantItemController {
     @param.path.number('id') id: number,
     @requestBody() xrefParticipantItem: XrefParticipantItem,
   ): Promise<void> {
-    await this.xrefParticipantItemRepository.replaceById(id, xrefParticipantItem);
+    try {
+      await this.xrefParticipantItemRepository.findById(id);
+      await this.xrefParticipantItemRepository.replaceById(id, xrefParticipantItem);
+    } catch (error) {
+      if (error.statusCode === 404) {
+        await this.xrefParticipantItemRepository.create(xrefParticipantItem);
+      } else {
+        throw error;
+      }
+    }
   }
 
   @del('/xref-participant-items/{id}', {

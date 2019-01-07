@@ -121,7 +121,16 @@ export class ParticipantTimelineController {
     @param.path.number('id') id: number,
     @requestBody() participantTimeline: ParticipantTimeline,
   ): Promise<void> {
-    await this.participantTimelineRepository.replaceById(id, participantTimeline);
+    try {
+      await this.participantTimelineRepository.findById(id);
+      await this.participantTimelineRepository.replaceById(id, participantTimeline);
+    } catch (error) {
+      if (error.statusCode === 404) {
+        await this.participantTimelineRepository.create(participantTimeline);
+      } else {
+        throw error;
+      }
+    }
   }
 
   @del('/participant-timelines/{id}', {

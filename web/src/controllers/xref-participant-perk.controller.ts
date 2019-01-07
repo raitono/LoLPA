@@ -121,7 +121,16 @@ export class XrefParticipantPerkController {
     @param.path.number('id') id: number,
     @requestBody() xrefParticipantPerk: XrefParticipantPerk,
   ): Promise<void> {
-    await this.xrefParticipantPerkRepository.replaceById(id, xrefParticipantPerk);
+    try {
+      await this.xrefParticipantPerkRepository.findById(id);
+      await this.xrefParticipantPerkRepository.replaceById(id, xrefParticipantPerk);
+    } catch (error) {
+      if (error.statusCode === 404) {
+        await this.xrefParticipantPerkRepository.create(xrefParticipantPerk);
+      } else {
+        throw error;
+      }
+    }
   }
 
   @del('/xref-participant-perks/{id}', {

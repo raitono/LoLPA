@@ -121,7 +121,16 @@ export class SummonerController {
     @param.path.string('id') id: string,
     @requestBody() summoner: Summoner,
   ): Promise<void> {
-    await this.summonerRepository.replaceById(id, summoner);
+    try {
+      await this.summonerRepository.findById(id);
+      await this.summonerRepository.replaceById(id, summoner);
+    } catch (error) {
+      if (error.statusCode === 404) {
+        await this.summonerRepository.create(summoner);
+      } else {
+        throw error;
+      }
+    }
   }
 
   @del('/summoners/{id}', {

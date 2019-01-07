@@ -121,7 +121,16 @@ export class PerkController {
     @param.path.string('id') id: string,
     @requestBody() perk: Perk,
   ): Promise<void> {
-    await this.perkRepository.replaceById(id, perk);
+    try {
+      await this.perkRepository.findById(id);
+      await this.perkRepository.replaceById(id, perk);
+    } catch (error) {
+      if (error.statusCode === 404) {
+        await this.perkRepository.create(perk);
+      } else {
+        throw error;
+      }
+    }
   }
 
   @del('/perks/{id}', {

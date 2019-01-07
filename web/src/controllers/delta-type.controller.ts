@@ -121,7 +121,16 @@ export class DeltaTypeController {
     @param.path.number('id') id: number,
     @requestBody() deltaType: DeltaType,
   ): Promise<void> {
-    await this.deltaTypeRepository.replaceById(id, deltaType);
+    try {
+      await this.deltaTypeRepository.findById(id);
+      await this.deltaTypeRepository.replaceById(id, deltaType);
+    } catch (error) {
+      if (error.statusCode === 404) {
+        await this.deltaTypeRepository.create(deltaType);
+      } else {
+        throw error;
+      }
+    }
   }
 
   @del('/delta-types/{id}', {

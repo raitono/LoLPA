@@ -121,7 +121,16 @@ export class ParticipantTimelineDeltaController {
     @param.path.number('id') id: number,
     @requestBody() participantTimelineDelta: ParticipantTimelineDelta,
   ): Promise<void> {
-    await this.participantTimelineDeltaRepository.replaceById(id, participantTimelineDelta);
+    try {
+      await this.participantTimelineDeltaRepository.findById(id);
+      await this.participantTimelineDeltaRepository.replaceById(id, participantTimelineDelta);
+    } catch (error) {
+      if (error.statusCode === 404) {
+        await this.participantTimelineDeltaRepository.create(participantTimelineDelta);
+      } else {
+        throw error;
+      }
+    }
   }
 
   @del('/participant-timeline-deltas/{id}', {

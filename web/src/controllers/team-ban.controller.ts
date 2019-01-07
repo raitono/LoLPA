@@ -121,7 +121,16 @@ export class TeamBanController {
     @param.path.number('id') id: number,
     @requestBody() teamBan: TeamBan,
   ): Promise<void> {
-    await this.teamBanRepository.replaceById(id, teamBan);
+    try {
+      await this.teamBanRepository.findById(id);
+      await this.teamBanRepository.replaceById(id, teamBan);
+    } catch (error) {
+      if (error.statusCode === 404) {
+        await this.teamBanRepository.create(teamBan);
+      } else {
+        throw error;
+      }
+    }
   }
 
   @del('/team-bans/{id}', {
