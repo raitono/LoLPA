@@ -8,7 +8,7 @@ module.exports.URLs = {
 		getAll: function() {
 			return process.env.WEB_SERVER + '/delta-types';
 		},
-		get: function(whereClause) {
+		getWhere: function(whereClause) {
 			return process.env.WEB_SERVER + '/delta-types?filter={"where":'+whereClause+'}';
 		},
 		put: function(deltaTypeId) {
@@ -29,7 +29,7 @@ module.exports.URLs = {
 		},
 	},
 	Matches: {
-		get: function(whereClause) {
+		getWhere: function(whereClause) {
 			return process.env.WEB_SERVER + '/matches?filter={"where":'+whereClause+'}';
 		},
 		put: function(matchId) {
@@ -90,7 +90,7 @@ module.exports.URLs = {
 		},
 	},
 	Season: {
-		get: function(whereClause) {
+		getWhere: function(whereClause) {
 			return process.env.WEB_SERVER + '/seasons?filter={"where":'+whereClause+'}';
 		},
 	},
