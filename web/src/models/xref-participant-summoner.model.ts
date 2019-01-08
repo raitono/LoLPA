@@ -1,25 +1,24 @@
-import {Model, model, property} from '@loopback/repository';
+import {Entity, model, property} from '@loopback/repository';
 
-@model({name: 'Xref_Participant_Summoner'})
-export class XrefParticipantSummoner extends Model {
+@model()
+export class XrefParticipantSummoner extends Entity {
   @property({
     type: 'number',
     id: true,
-    required: true,
   })
-  id: number;
-
-  @property({
-    type: 'number',
-    required: true,
-  })
-  participantId: number;
+  id?: number;
 
   @property({
     type: 'string',
     required: true,
   })
   summonerPUUID: string;
+
+  @property({
+    type: 'number',
+    required: true,
+  })
+  participantId: number;
 
   constructor(data?: Partial<XrefParticipantSummoner>) {
     super(data);
