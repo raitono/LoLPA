@@ -1,4 +1,5 @@
-export * from './ping.controller';export * from './perk.controller';
+export * from './ping.controller';
+export * from './perk.controller';
 export * from './champion.controller';
 export * from './delta-type.controller';
 export * from './item.controller';
@@ -16,4 +17,4 @@ export * from './team-ban.controller';
 export * from './team-stat.controller';
 export * from './xref-participant-item.controller';
 export * from './xref-participant-perk.controller';
-export * from './xref-summoner-game.controller';
+export * from './xref-participant-summoner.controller';

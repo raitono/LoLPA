@@ -16,4 +16,4 @@ export * from './team-ban.repository';
 export * from './team-stat.repository';
 export * from './xref-participant-item.repository';
 export * from './xref-participant-perk.repository';
-export * from './xref-summoner-game.repository';
+export * from './xref-participant-summoner.repository';

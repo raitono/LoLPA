@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS `champion` (
   PRIMARY KEY (`championId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='VERY incomplete until I do more with champions. Right now I only need basic info to identify them by their IDs.';
 
--- Dumping data for table riot.champion: ~143 rows (approximately)
+-- Dumping data for table riot.champion: ~7 rows (approximately)
 /*!40000 ALTER TABLE `champion` DISABLE KEYS */;
 INSERT INTO `champion` (`championId`, `name`, `title`) VALUES
 	(-1, 'None', 'None'),
@@ -822,7 +822,7 @@ CREATE TABLE IF NOT EXISTS `season` (
   PRIMARY KEY (`seasonId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.season: ~3 rows (approximately)
+-- Dumping data for table riot.season: ~0 rows (approximately)
 /*!40000 ALTER TABLE `season` DISABLE KEYS */;
 INSERT INTO `season` (`seasonId`, `number`, `name`, `startDate`, `endDate`, `isCurrent`) VALUES
 	(11, 8, 'Season 2018', '2018-01-16 00:00:00', '2018-11-12 23:59:59', 0),
@@ -839,7 +839,7 @@ CREATE TABLE IF NOT EXISTS `spell` (
   PRIMARY KEY (`spellId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='summoner spells';
 
--- Dumping data for table riot.spell: ~21 rows (approximately)
+-- Dumping data for table riot.spell: ~0 rows (approximately)
 /*!40000 ALTER TABLE `spell` DISABLE KEYS */;
 INSERT INTO `spell` (`spellId`, `version`, `name`, `key`) VALUES
 	(1, '8.24.1', 'Cleanse', 'SummonerBoost'),
@@ -985,23 +985,21 @@ CREATE TABLE IF NOT EXISTS `xref_participant_perk` (
 /*!40000 ALTER TABLE `xref_participant_perk` DISABLE KEYS */;
 /*!40000 ALTER TABLE `xref_participant_perk` ENABLE KEYS */;
 
--- Dumping structure for table riot.xref_summoner_game
-CREATE TABLE IF NOT EXISTS `xref_summoner_game` (
+-- Dumping structure for table riot.xref_participant_summoner
+CREATE TABLE IF NOT EXISTS `xref_participant_summoner` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `summonerId` varchar(50) NOT NULL,
-  `gameId` int(11) unsigned NOT NULL,
+  `summonerPUUID` varchar(100) NOT NULL,
   `participantId` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `summonerId_gameId_participantId` (`summonerId`,`gameId`,`participantId`),
-  KEY `FK_xref_summoner_game_gameId` (`gameId`),
-  KEY `FK_xref_summoner_game_participantId` (`gameId`,`participantId`),
-  CONSTRAINT `FK_xref_summoner_game_participantId` FOREIGN KEY (`gameId`, `participantId`) REFERENCES `participant` (`gameId`, `participantId`),
-  CONSTRAINT `FK_xref_summoner_game_summonerId` FOREIGN KEY (`summonerId`) REFERENCES `summoner` (`summonerId`)
+  UNIQUE KEY `summonerId_gameId_participantId` (`summonerPUUID`,`participantId`),
+  KEY `FK_xref_summoner_game_participantId` (`participantId`),
+  CONSTRAINT `FK_xref_summoner_game_participantId` FOREIGN KEY (`participantId`) REFERENCES `participant` (`id`),
+  CONSTRAINT `FK_xref_summoner_game_summonerPUUID` FOREIGN KEY (`summonerPUUID`) REFERENCES `summoner` (`puuid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.xref_summoner_game: ~0 rows (approximately)
-/*!40000 ALTER TABLE `xref_summoner_game` DISABLE KEYS */;
-/*!40000 ALTER TABLE `xref_summoner_game` ENABLE KEYS */;
+-- Dumping data for table riot.xref_participant_summoner: ~0 rows (approximately)
+/*!40000 ALTER TABLE `xref_participant_summoner` DISABLE KEYS */;
+/*!40000 ALTER TABLE `xref_participant_summoner` ENABLE KEYS */;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
