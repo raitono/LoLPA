@@ -1,6 +1,6 @@
 import {Entity, model, property} from '@loopback/repository';
 
-@model()
+@model({name: 'Xref_Participant_Summoner'})
 export class XrefParticipantSummoner extends Entity {
   @property({
     type: 'number',
