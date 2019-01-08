@@ -12,7 +12,7 @@ export class XrefParticipantSummoner extends Entity {
     type: 'string',
     required: true,
   })
-  summonerPUUID: string;
+  accountId: string;
 
   @property({
     type: 'number',
