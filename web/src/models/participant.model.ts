@@ -21,6 +21,12 @@ export class Participant extends Entity {
   participantId?: number;
 
   @property({
+    type: 'string',
+    required: true,
+  })
+  accountId?: string;
+
+  @property({
     type: 'number',
     required: true,
   })

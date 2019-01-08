@@ -585,11 +585,12 @@ CREATE TABLE IF NOT EXISTS `match_list` (
 CREATE TABLE IF NOT EXISTS `participant` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `gameId` int(11) unsigned NOT NULL,
-  `participantId` int(11) NOT NULL COMMENT 'Given by Riot API',
+  `participantId` int(11) NOT NULL,
+  `accountId` varchar(100) NOT NULL,
   `championId` int(11) NOT NULL,
   `spell1Id` int(11) NOT NULL,
   `spell2Id` int(11) NOT NULL,
-  `teamId` int(11) NOT NULL COMMENT 'Given by Riot API',
+  `teamId` int(11) NOT NULL,
   `highestAchievedSeasonTier` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `gameId_participantId` (`gameId`,`participantId`),
@@ -868,16 +869,15 @@ INSERT INTO `spell` (`spellId`, `version`, `name`, `key`) VALUES
 -- Dumping structure for table riot.summoner
 CREATE TABLE IF NOT EXISTS `summoner` (
   `puuid` varchar(100) NOT NULL COMMENT 'Given by Riot API',
-  `summonerId` varchar(50) NOT NULL COMMENT 'Given by Riot API',
-  `accountId` varchar(50) NOT NULL COMMENT 'Given by Riot API',
+  `summonerId` varchar(100) NOT NULL COMMENT 'Given by Riot API',
+  `accountId` varchar(100) NOT NULL COMMENT 'Given by Riot API',
   `profileIconId` int(11) NOT NULL,
   `summonerLevel` int(11) NOT NULL,
   `name` varchar(50) NOT NULL,
   `revisionDate` datetime NOT NULL,
   `lastUpdated` datetime DEFAULT NULL,
   PRIMARY KEY (`puuid`),
-  KEY `IX_summonerId_name_puuid` (`puuid`,`summonerId`,`name`),
-  KEY `accountId` (`accountId`)
+  KEY `IX_summonerId_name_puuid` (`puuid`,`summonerId`,`accountId`,`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Dumping data for table riot.summoner: ~0 rows (approximately)
@@ -985,22 +985,6 @@ CREATE TABLE IF NOT EXISTS `xref_participant_perk` (
 -- Dumping data for table riot.xref_participant_perk: ~0 rows (approximately)
 /*!40000 ALTER TABLE `xref_participant_perk` DISABLE KEYS */;
 /*!40000 ALTER TABLE `xref_participant_perk` ENABLE KEYS */;
-
--- Dumping structure for table riot.xref_participant_summoner
-CREATE TABLE IF NOT EXISTS `xref_participant_summoner` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `accountId` varchar(50) NOT NULL,
-  `participantId` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `summonerId_gameId_participantId` (`accountId`,`participantId`),
-  KEY `FK_xref_summoner_game_participantId` (`participantId`),
-  CONSTRAINT `FK_xref_summoner_game_accountId` FOREIGN KEY (`accountId`) REFERENCES `summoner` (`accountId`),
-  CONSTRAINT `FK_xref_summoner_game_participantId` FOREIGN KEY (`participantId`) REFERENCES `participant` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- Dumping data for table riot.xref_participant_summoner: ~0 rows (approximately)
-/*!40000 ALTER TABLE `xref_participant_summoner` DISABLE KEYS */;
-/*!40000 ALTER TABLE `xref_participant_summoner` ENABLE KEYS */;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;

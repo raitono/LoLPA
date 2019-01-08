@@ -17,4 +17,3 @@ export * from './team-ban.controller';
 export * from './team-stat.controller';
 export * from './xref-participant-item.controller';
 export * from './xref-participant-perk.controller';
-export * from './xref-participant-summoner.controller';

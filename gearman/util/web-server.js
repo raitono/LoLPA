@@ -37,6 +37,9 @@ module.exports.URLs = {
 		},
 	},
 	Participant: {
+		getWhere: function(whereClause) {
+			return process.env.WEB_SERVER + '/participants?filter={"where":'+whereClause+'}';
+		},
 		post: function() {
 			return process.env.WEB_SERVER + '/participants';
 		},
@@ -102,20 +105,6 @@ module.exports.URLs = {
 	TeamBan: {
 		post: function() {
 			return process.env.WEB_SERVER + '/team-bans';
-		},
-	},
-	XrefSummonerGame: {
-		put: function(xrefId) {
-			return process.env.WEB_SERVER + '/xref-summoner-games/' + xrefId;
-		},
-		post: function() {
-			return process.env.WEB_SERVER + '/xref-summoner-games';
-		},
-		replaceOrCreate: function() {
-			return process.env.WEB_SERVER + '/xref-summoner-games/replaceOrCreate';
-		},
-		get: function(whereClause) {
-			return process.env.WEB_SERVER + '/xref-summoner-games?filter={"where":'+whereClause+'}';
 		},
 	},
 	XrefParticipantItem: {

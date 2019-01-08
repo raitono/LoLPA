@@ -33,7 +33,7 @@ const updateMatchList = async function(summoner) {
 
 	const existingMatches = await request({
 		method: 'GET',
-		uri: webServer.URLs.Matches.get('{"gameId": {"inq": ' + JSON.stringify(matchBatch) + '}}'),
+		uri: webServer.URLs.Matches.getWhere('{"gameId": {"inq": ' + JSON.stringify(matchBatch) + '}}'),
 		json: true,
 	});
 	matchBatch = matchBatch.filter((m) => existingMatches.findIndex((e) => e.gameId === m) === -1);
@@ -45,10 +45,10 @@ const updateMatchList = async function(summoner) {
 
 	// Get the matches from RIOT
 	const matches = await Promise.all(matchBatch.map(Kayn.MatchV4.get));
+	const deltaTypes = JSON.parse(await request(webServer.URLs.DeltaType.getAll()));
 	let matchCount = 0;
 	const matchInsertBatch = [];
 	const matchListBatch = [];
-	const summonerGameXrefBatch = [];
 	const teamStatBatch = [];
 	const teamBanBatch = [];
 	const participantBatch = [];
@@ -86,6 +86,8 @@ const updateMatchList = async function(summoner) {
 				body: {
 					gameId: gameId,
 					participantId: participant.participantId,
+					accountId: match.participantIdentities.filter(
+						(i) => i.participantId === participant.participantId)[0].player.accountId,
 					championId: participant.championId,
 					spell1Id: participant.spell1Id,
 					spell2Id: participant.spell2Id,
@@ -278,29 +280,32 @@ const updateMatchList = async function(summoner) {
 		});
 	});
 
-	// This is necessary because of the db call in parseMatchParticipantIdentity.
-	// Array.ForEach doesn't handle async calls well. It will return before the DB operation completes
-	while (matchCount < matches.length) {
-		await parseMatchParticipantWithDuplicateCheck(
-			matches[matchCount],
-			summonerGameXrefBatch,
-			timelineDeltaBatch
-		);
-		matchCount = matchCount + 1;
-	}
-
 	try {
 		// This has to be done separate because of the foreign keys.
 		await Promise.all(matchInsertBatch.map(request));
 		debug('Match Insert Done');
-		await Promise.all(participantBatch.map(request));
-		debug('Participant Insert Done');
-		await Promise.all(matchListBatch.map(request));
+		await Promise.all([matchListBatch.map(request), participantBatch.map(request)]);
 		debug('Match List Insert Done');
-		// if (summonerGameXrefBatch.length > 0) {
-		// 	await Promise.all(summonerGameXrefBatch.map(request));
-		// 	debug('SummonerGameXref Insert Done');
+		debug('Participant Insert Done');
+
+		// This is necessary because of the db call in parseMatchParticipantIdentity.
+		// Array.ForEach doesn't handle async calls well. It will return before the DB operation completes
+		// while (matchCount < matches.length) {
+		// 	const dbParticipants = await request({
+		// 		method: 'GET',
+		// 		uri: webServer.URLs.Participant.getWhere('{"gameId": ' + matches[matchCount].gameId + '}'),
+		// 		json: true,
+		// 	});
+
+		// 	await parseMatchParticipantWithDuplicateCheck(
+		// 		matches[matchCount],
+		// 		timelineDeltaBatch,
+		// 		deltaTypes,
+		// 		dbParticipants
+		// 	);
+		// 	matchCount = matchCount + 1;
 		// }
+
 		// if (timelineDeltaBatch.length > 0) {
 		// 	await Promise.all(timelineDeltaBatch.map(request));
 		// 	debug('timelineDeltaBatch Insert Done');
@@ -400,7 +405,7 @@ const getMatchList = async (summoner, options) => {
 const getMatchDates = async (beginTime, endTime) => {
 	let dates = {};
 	if (util.isNullOrUndefined(beginTime)) {
-		let dbSeason = await request(webServer.URLs.Season.get('{"isCurrent":1}'));
+		let dbSeason = await request(webServer.URLs.Season.getWhere('{"isCurrent":1}'));
 		dbSeason = JSON.parse(dbSeason);
 		dbSeason = dbSeason[0];
 		const seasonStart = new Date(dbSeason.startDate).getTime();
@@ -425,76 +430,29 @@ const getMatchDates = async (beginTime, endTime) => {
 /**
  * Loops through the match's participants and parse them into the relevant batches
  * @param {Object} match The match to parse
- * @param {Array} summonerGameXrefBatch Array of Requests to add the participant to
+ * @param {Array} participantSummonerXrefBatch Array of Requests to add the participant to
  * @param {Array} timelineDeltaBatch Array of Requests to add the delta to
+ * @param {Array} deltaTypes
+ * @param {Array} dbParticipants
  */
 const parseMatchParticipantWithDuplicateCheck = async (match,
-	summonerGameXrefBatch, timelineDeltaBatch) => {
+	participantSummonerXrefBatch, timelineDeltaBatch, deltaTypes, dbParticipants) => {
 	let participantCounter = 0;
 	let deltaTypeCounter = 0;
-	const deltaTypes = JSON.parse(await request(webServer.URLs.DeltaType.getAll()));
 
 	while (participantCounter < match.participantIdentities.length) {
 		deltaTypeCounter = 0;
-		await parseMatchParticipantIdentity(match.gameId,
-			match.participantIdentities[participantCounter],
-			summonerGameXrefBatch
-		);
 
-		while (deltaTypeCounter < deltaTypes.length) {
-			await parseMatchParticipantTimelineDelta(match.gameId, deltaTypes[deltaTypeCounter],
-				match.participants[participantCounter].timeline,
-				timelineDeltaBatch
-			);
+		// while (deltaTypeCounter < deltaTypes.length) {
+		// 	await parseMatchParticipantTimelineDelta(match.gameId, deltaTypes[deltaTypeCounter],
+		// 		match.participants[participantCounter].timeline,
+		// 		timelineDeltaBatch
+		// 	);
 
-			deltaTypeCounter = deltaTypeCounter + 1;
-		}
+		// 	deltaTypeCounter = deltaTypeCounter + 1;
+		// }
 
 		participantCounter = participantCounter + 1;
-	}
-};
-
-/**
- * Check if the summoner game xref already exists. If not, insert it into the Requests array.
- * This is required because Loopback appends 'ON DUPLICATE UPDATE' to the end of the SQL if we do
- * a simple POST. Notice there is nothing after the UPDATE keyword, this breaks the SQL syntax and
- * causes an error. I think this is because every field in the table is a part of the key.
- * @param {String} gameId The game's ID given by RIOT
- * @param {Object} identity The identity to add
- * @param {Array} summonerGameXrefBatch Array of Requests to add the participant to
- */
-const parseMatchParticipantIdentity = async (gameId, identity, summonerGameXrefBatch) => {
-	let exists = null;
-	try {
-		exists = await request(webServer.URLs.XrefSummonerGame.findOne(
-			'{"summonerId": "' + identity.player.summonerId + '",' +
-			'"gameId": "' + gameId + '",' +
-			'"participantId": "' + identity.participantId + '"' +
-			'}'));
-		if (JSON.parse(exists)) {
-			exists = true;
-		}
-	} catch (error) {
-		// It does this when there are no records in the database,
-		// so will only happen the first time.
-		if (error.toString().indexOf('MODEL_NOT_FOUND')) {
-			exists = false;
-		} else {
-			throw error;
-		}
-	}
-
-	if (!exists) {
-		summonerGameXrefBatch.push({
-			method: 'POST',
-			uri: webServer.URLs.XrefSummonerGame.post(),
-			body: {
-				summonerId: identity.player.summonerId,
-				gameId: gameId,
-				participantId: identity.participantId,
-			},
-			json: true,
-		});
 	}
 };
 

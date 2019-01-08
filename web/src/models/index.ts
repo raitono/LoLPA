@@ -16,4 +16,3 @@ export * from './team-ban.model';
 export * from './team-stat.model';
 export * from './xref-participant-item.model';
 export * from './xref-participant-perk.model';
-export * from './xref-participant-summoner.model';
