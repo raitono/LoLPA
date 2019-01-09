@@ -16,6 +16,9 @@ module.exports.URLs = {
 		},
 	},
 	Item: {
+		post: function() {
+			return process.env.WEB_SERVER + '/items';
+		},
 		put: function(itemId) {
 			return process.env.WEB_SERVER + '/items/' + itemId;
 		},
@@ -48,6 +51,9 @@ module.exports.URLs = {
 		},
 	},
 	ParticipantStat: {
+		post: function() {
+			return process.env.WEB_SERVER + '/participant-stats';
+		},
 		put: function(statId) {
 			return process.env.WEB_SERVER + '/participant-stats/' + statId;
 		},
@@ -106,11 +112,17 @@ module.exports.URLs = {
 		},
 	},
 	XrefParticipantItem: {
+		post: function() {
+			return process.env.WEB_SERVER + '/xref-participant-items';
+		},
 		put: function(xrefId) {
 			return process.env.WEB_SERVER + '/xref-participant-items/' + xrefId;
 		},
 	},
 	XrefParticipantPerk: {
+		post: function() {
+			return process.env.WEB_SERVER + '/xref-participant-perks';
+		},
 		put: function(xrefId) {
 			return process.env.WEB_SERVER + '/xref-participant-perks/' + xrefId;
 		},

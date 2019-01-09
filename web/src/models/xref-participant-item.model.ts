@@ -12,12 +12,6 @@ export class XrefParticipantItem extends Entity {
     type: 'number',
     required: true,
   })
-  gameId?: number;
-
-  @property({
-    type: 'number',
-    required: true,
-  })
   participantId?: number;
 
   @property({

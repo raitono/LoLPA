@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS `champion` (
   PRIMARY KEY (`championId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='VERY incomplete until I do more with champions. Right now I only need basic info to identify them by their IDs.';
 
--- Dumping data for table riot.champion: ~143 rows (approximately)
+-- Dumping data for table riot.champion: ~21 rows (approximately)
 /*!40000 ALTER TABLE `champion` DISABLE KEYS */;
 INSERT INTO `champion` (`championId`, `name`, `title`) VALUES
 	(-1, 'None', 'None'),
@@ -827,7 +827,7 @@ CREATE TABLE IF NOT EXISTS `spell` (
   PRIMARY KEY (`spellId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='summoner spells';
 
--- Dumping data for table riot.spell: ~21 rows (approximately)
+-- Dumping data for table riot.spell: ~0 rows (approximately)
 /*!40000 ALTER TABLE `spell` DISABLE KEYS */;
 INSERT INTO `spell` (`spellId`, `version`, `name`, `key`) VALUES
 	(1, '8.24.1', 'Cleanse', 'SummonerBoost'),
@@ -935,16 +935,13 @@ CREATE TABLE IF NOT EXISTS `xref_champion_tag` (
 -- Dumping structure for table riot.xref_participant_item
 CREATE TABLE IF NOT EXISTS `xref_participant_item` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `gameId` int(11) unsigned NOT NULL,
   `participantId` int(11) NOT NULL,
   `itemId` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_participant_items_participantId` (`participantId`),
-  KEY `FK_xref_participant_item_gameId` (`gameId`),
   KEY `FK_xref_participant_item_itemId` (`itemId`),
-  CONSTRAINT `FK_xref_participant_item_gameId` FOREIGN KEY (`gameId`) REFERENCES `match` (`gameId`),
   CONSTRAINT `FK_xref_participant_item_itemId` FOREIGN KEY (`itemId`) REFERENCES `item` (`itemId`),
-  CONSTRAINT `FK_xref_participant_item_participantId` FOREIGN KEY (`participantId`) REFERENCES `participant` (`participantId`)
+  CONSTRAINT `FK_xref_participant_item_participantId` FOREIGN KEY (`participantId`) REFERENCES `participant` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Might not be strictly needed, just as with bans, but it breaks from the normalized structure if I leave them part of the participants_stats table.\r\n\r\nThinking about it deeper, it really is a many-many relationship, so deserves its own table.';
 
 -- Dumping data for table riot.xref_participant_item: ~0 rows (approximately)
@@ -954,18 +951,16 @@ CREATE TABLE IF NOT EXISTS `xref_participant_item` (
 -- Dumping structure for table riot.xref_participant_perk
 CREATE TABLE IF NOT EXISTS `xref_participant_perk` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `gameId` int(11) unsigned NOT NULL,
   `participantId` int(11) NOT NULL,
   `perkId` varchar(4) NOT NULL,
   `varId` int(11) NOT NULL COMMENT 'Every perk gets 3. Pulling these into their own table allows me to expand the amount of vars instead of adding more columns to the stats table if Riot ever decides to use more.',
   `description` varchar(50) DEFAULT NULL,
   `value` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `gameId_participantId_perkId_varId` (`gameId`,`participantId`,`perkId`,`varId`),
+  UNIQUE KEY `gameId_participantId_perkId_varId` (`participantId`,`perkId`,`varId`),
   KEY `FK_perkId` (`perkId`),
   KEY `FK_participantId` (`participantId`),
-  CONSTRAINT `FK_gameId` FOREIGN KEY (`gameId`) REFERENCES `match` (`gameId`),
-  CONSTRAINT `FK_participantId` FOREIGN KEY (`participantId`) REFERENCES `participant` (`participantId`),
+  CONSTRAINT `FK_participantId` FOREIGN KEY (`participantId`) REFERENCES `participant` (`id`),
   CONSTRAINT `FK_perkId` FOREIGN KEY (`perkId`) REFERENCES `perk` (`perkId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
