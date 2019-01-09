@@ -1,119 +1,130 @@
 module.exports.URLs = {
 	Champion: {
-		put: function() {
-			return process.env.WEB_SERVER + '/Champions';
+		put: function(championId) {
+			return process.env.WEB_SERVER + '/champions/' + championId;
 		},
 	},
 	DeltaType: {
 		getAll: function() {
-			return process.env.WEB_SERVER + '/Delta_Types';
+			return process.env.WEB_SERVER + '/delta-types';
 		},
-		get: function(whereClause) {
-			return process.env.WEB_SERVER + '/Delta_Types?filter={"where":'+whereClause+'}';
+		getWhere: function(whereClause) {
+			return process.env.WEB_SERVER + '/delta-types?filter={"where":'+whereClause+'}';
 		},
-		put: function() {
-			return process.env.WEB_SERVER + '/Delta_Types';
+		put: function(deltaTypeId) {
+			return process.env.WEB_SERVER + '/delta-types/' + deltaTypeId;
 		},
 	},
 	Item: {
-		put: function() {
-			return process.env.WEB_SERVER + '/Items';
+		post: function() {
+			return process.env.WEB_SERVER + '/items';
+		},
+		put: function(itemId) {
+			return process.env.WEB_SERVER + '/items/' + itemId;
 		},
 	},
 	MatchList: {
-		put: function() {
-			return process.env.WEB_SERVER + '/Match_Lists';
+		post: function() {
+			return process.env.WEB_SERVER + '/match-lists';
+		},
+		put: function(matchListId) {
+			return process.env.WEB_SERVER + '/match-lists/' + matchListId;
 		},
 	},
 	Matches: {
-		put: function() {
-			return process.env.WEB_SERVER + '/Matches';
+		getWhere: function(whereClause) {
+			return process.env.WEB_SERVER + '/matches?filter={"where":'+whereClause+'}';
+		},
+		put: function(matchId) {
+			return process.env.WEB_SERVER + '/matches/' + matchId;
 		},
 	},
 	Participant: {
-		put: function() {
-			return process.env.WEB_SERVER + '/Participants';
+		getWhere: function(whereClause) {
+			return process.env.WEB_SERVER + '/participants?filter={"where":'+whereClause+'}';
+		},
+		post: function() {
+			return process.env.WEB_SERVER + '/participants';
+		},
+		put: function(participantId) {
+			return process.env.WEB_SERVER + '/participants/' + participantId;
 		},
 	},
 	ParticipantStat: {
-		put: function() {
-			return process.env.WEB_SERVER + '/Participant_Stats';
+		post: function() {
+			return process.env.WEB_SERVER + '/participant-stats';
 		},
-	},
-	ParticipantTimeline: {
-		put: function() {
-			return process.env.WEB_SERVER + '/Participant_Timelines';
+		put: function(statId) {
+			return process.env.WEB_SERVER + '/participant-stats/' + statId;
 		},
 	},
 	ParticipantTimelineDelta: {
-		put: function() {
-			return process.env.WEB_SERVER + '/Participant_Timeline_Delta';
+		getWhere: function(whereClause) {
+			return process.env.WEB_SERVER + '/participant-timeline-deltas?filter={"where":'+whereClause+'}';
 		},
-		findOne: function(whereClause) {
-			return process.env.WEB_SERVER + '/Participant_Timeline_Delta/findOne?filter={"where":'+whereClause+'}';
+		post: function() {
+			return process.env.WEB_SERVER + '/participant-timeline-deltas';
+		},
+		put: function(deltaId) {
+			return process.env.WEB_SERVER + '/participant-timeline-deltas/' + deltaId;
 		},
 	},
 	Rune: {
-		put: function() {
-			return process.env.WEB_SERVER + '/Perks';
+		put: function(perkId) {
+			return process.env.WEB_SERVER + '/perks/' + perkId;
 		},
-		put_style: function() {
-			return process.env.WEB_SERVER + '/Perk_Styles';
+		put_style: function(perkStyleId) {
+			return process.env.WEB_SERVER + '/perk-styles/' + perkStyleId;
 		},
 	},
 	Summoner: {
-		get: function(whereClause) {
-			return process.env.WEB_SERVER + '/Summoners?filter={"where":'+whereClause+'}';
+		getWhere: function(whereClause) {
+			return process.env.WEB_SERVER + '/summoners?filter={"where":'+whereClause+'}';
 		},
 		getByName: function(name) {
-			return process.env.WEB_SERVER + '/Summoners/findOne?filter={"where":{"name":"'+name+'"}}';
+			return process.env.WEB_SERVER + '/summoners?filter={"where":{"name":"'+name+'"}}';
 		},
-		upsertWithWhere: function(whereClause) {
-			return process.env.WEB_SERVER + '/Summoners/upsertWithWhere?where='+whereClause;
+		post: function() {
+			return process.env.WEB_SERVER + '/summoners';
+		},
+		put: function(puuid) {
+			return process.env.WEB_SERVER + '/summoners/' + puuid;
 		},
 	},
 	SummonerSpell: {
-		put: function() {
-			return process.env.WEB_SERVER + '/Spells';
+		put: function(spellId) {
+			return process.env.WEB_SERVER + '/spells/' + spellId;
 		},
 	},
 	Season: {
-		get: function(whereClause) {
-			return process.env.WEB_SERVER + '/Seasons?filter={"where":'+whereClause+'}';
+		getWhere: function(whereClause) {
+			return process.env.WEB_SERVER + '/seasons?filter={"where":'+whereClause+'}';
 		},
 	},
 	TeamStat: {
-		put: function() {
-			return process.env.WEB_SERVER + '/Team_Stats';
+		post: function() {
+			return process.env.WEB_SERVER + '/team-stats';
 		},
 	},
 	TeamBan: {
-		put: function() {
-			return process.env.WEB_SERVER + '/Team_Bans';
-		},
-	},
-	XrefSummonerGame: {
-		put: function() {
-			return process.env.WEB_SERVER + '/Xref_Summoner_Games';
-		},
 		post: function() {
-			return process.env.WEB_SERVER + '/Xref_Summoner_Games';
-		},
-		replaceOrCreate: function() {
-			return process.env.WEB_SERVER + '/Xref_Summoner_Games/replaceOrCreate';
-		},
-		findOne: function(whereClause) {
-			return process.env.WEB_SERVER + '/Xref_Summoner_Games/findOne?filter={"where":'+whereClause+'}';
+			return process.env.WEB_SERVER + '/team-bans';
 		},
 	},
 	XrefParticipantItem: {
-		put: function() {
-			return process.env.WEB_SERVER + '/Xref_Participant_Items';
+		post: function() {
+			return process.env.WEB_SERVER + '/xref-participant-items';
+		},
+		put: function(xrefId) {
+			return process.env.WEB_SERVER + '/xref-participant-items/' + xrefId;
 		},
 	},
 	XrefParticipantPerk: {
-		put: function() {
-			return process.env.WEB_SERVER + '/Xref_Participant_Perks';
+		post: function() {
+			return process.env.WEB_SERVER + '/xref-participant-perks';
+		},
+		put: function(xrefId) {
+			return process.env.WEB_SERVER + '/xref-participant-perks/' + xrefId;
 		},
 	},
 };

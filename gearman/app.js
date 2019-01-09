@@ -1,4 +1,5 @@
 require('dotenv-safe').config();
+require('./util/utilExtension');
 
 const debug = require('debug')('lolpa-gearman:app');
 const express = require('express');
@@ -38,19 +39,20 @@ app.listen(port, () => {
 	run();
 });
 
-let run = async () => {
-	let summonerName = 'Raitono';
-	/* await worker.submitJob('updateStaticData', 'ThisIsNecessaryButNotUsed')
-	debug('updateStaticData queued'); */
+const run = async () => {
+	// await client.submitJob('updateStaticData', 'ThisIsNecessaryButNotUsed');
+	// debug('updateStaticData queued');
+	const summonerName = 'Raitono';
 
 	let dbSummoner = undefined;
 	try {
 		dbSummoner = JSON.parse(await client.submitJob('getSummonerByName', summonerName));
 	} catch (error) {
 		debug('Unable to update summoner');
+		debug(error);
 	}
 
-	let updateSummonerResult = JSON.parse(await client.submitJob('determineUpdates', JSON.stringify(dbSummoner)));
+	const updateSummonerResult = JSON.parse(await client.submitJob('determineUpdates', JSON.stringify(dbSummoner)));
 	debug('Updated summoner: ' + summonerName);
 
 	if (updateSummonerResult.shouldUpdateMatches) {

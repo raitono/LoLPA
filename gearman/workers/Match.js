@@ -11,7 +11,7 @@ const webServer = require('../util/web-server');
  * @param {Object} summoner Summoner whose matches we are updating
  * @param {Object} options JSON options containing beginTime and endTime in UNIX milliseconds
  */
-let updateMatchList = async function(summoner) {
+const updateMatchList = async function(summoner) {
 	try {
 		summoner = JSON.parse(summoner);
 	} catch (e) {
@@ -20,34 +20,50 @@ let updateMatchList = async function(summoner) {
 
 	await getMatchList(summoner);
 
+	if (!summoner.matchList) {
+		debug('No matchList');
+		return;
+	}
+
 	// We have all the matches. Extract the gameIds.
 	let matchBatch = [];
 	summoner.matchList.forEach((matchList) => {
 		matchBatch.push(matchList.gameId);
 	});
 
+	const existingMatches = await request({
+		method: 'GET',
+		uri: webServer.URLs.Matches.getWhere('{"gameId": {"inq": ' + JSON.stringify(matchBatch) + '}}'),
+		json: true,
+	});
+	matchBatch = matchBatch.filter((m) => existingMatches.findIndex((e) => e.gameId === m) === -1);
+
+	if (util.isNullOrUndefined(matchBatch[0])) {
+		debug('All matches already exist');
+		return;
+	}
+
 	// Get the matches from RIOT
-	let matches = await Promise.all(matchBatch.map(Kayn.Match.get));
-	let matchCount = 0;
-	let matchInsertBatch = [];
-	let matchListBatch = [];
-	let summonerGameXrefBatch = [];
-	let teamStatBatch = [];
-	let teamBanBatch = [];
-	let participantBatch = [];
-	let statBatch = [];
-	let timelineBatch = [];
-	let timelineDeltaBatch = [];
-	let itemBatch =[];
-	let perkBatch = [];
+	const matches = await Promise.all(matchBatch.map(Kayn.MatchV4.get));
+	const deltaTypes = JSON.parse(await request(webServer.URLs.DeltaType.getAll()));
+	const matchInsertBatch = [];
+	const matchListBatch = [];
+	const teamStatBatch = [];
+	const teamBanBatch = [];
+	const participantBatch = [];
+	const statBatch = [];
+	const timelineDeltaBatch = [];
+	const itemBatch =[];
+	const perkBatch = [];
 
 	// Batch up the insert options
-	matches.forEach( async (match) => {
+	matches.forEach((match) => {
+		const gameId = parseInt(match.gameId);
 		matchInsertBatch.push({
 			method: 'PUT',
-			uri: webServer.URLs.Matches.put(),
+			uri: webServer.URLs.Matches.put(gameId),
 			body: {
-				gameId: match.gameId,
+				gameId: gameId,
 				seasonId: match.seasonId,
 				queueId: match.queueId,
 				mapId: match.mapId,
@@ -56,17 +72,17 @@ let updateMatchList = async function(summoner) {
 				gameMode: match.gameMode,
 				gameType: match.gameType,
 				gameDuration: match.gameDuration,
-				gameCreation: match.gameCreation,
+				gameCreation: util.parseDate(match.gameCreation),
 			},
 			json: true,
 		});
 
 		match.teams.forEach((team) => {
 			teamStatBatch.push({
-				method: 'PUT',
-				uri: webServer.URLs.TeamStat.put(),
+				method: 'POST',
+				uri: webServer.URLs.TeamStat.post(),
 				body: {
-					gameId: match.gameId,
+					gameId: gameId,
 					teamId: team.teamId,
 					win: team.win,
 					baronKills: team.baronKills,
@@ -87,8 +103,8 @@ let updateMatchList = async function(summoner) {
 
 			team.bans.forEach((ban) => {
 				teamBanBatch.push({
-					method: 'PUT',
-					uri: webServer.URLs.TeamBan.put(),
+					method: 'POST',
+					uri: webServer.URLs.TeamBan.post(),
 					body: {
 						gameId: match.gameId,
 						teamId: team.teamId,
@@ -102,170 +118,37 @@ let updateMatchList = async function(summoner) {
 
 		match.participants.forEach((participant) => {
 			participantBatch.push({
-				method: 'PUT',
-				uri: webServer.URLs.Participant.put(),
+				method: 'POST',
+				uri: webServer.URLs.Participant.post(),
 				body: {
-					gameId: match.gameId,
+					gameId: gameId,
 					participantId: participant.participantId,
+					accountId: match.participantIdentities.filter(
+						(i) => i.participantId === participant.participantId)[0].player.accountId,
 					championId: participant.championId,
 					spell1Id: participant.spell1Id,
 					spell2Id: participant.spell2Id,
+					lane: participant.timeline.lane,
+					role: participant.timeline.role,
 					teamId: participant.teamId,
 					highestAchievedSeasonTier: participant.highestAchievedSeasonTier,
 				},
 				json: true,
 			});
-
-			statBatch.push({
-				method: 'PUT',
-				uri: webServer.URLs.ParticipantStat.put(),
-				body: {
-					gameId: match.gameId,
-					participantId: participant.participantId,
-					win: participant.stats.win,
-					kills: participant.stats.kills,
-					deaths: participant.stats.deaths,
-					assists: participant.stats.assists,
-					largestKillingSpree: participant.stats.largestKillingSpree,
-					killingSprees: participant.stats.killingSprees,
-					largestMultiKill: participant.stats.largestMultiKill,
-					doubleKills: participant.stats.doubleKills,
-					tripleKills: participant.stats.tripleKills,
-					quadraKills: participant.stats.quadraKills,
-					pentaKills: participant.stats.pentaKills,
-					unrealKills: participant.stats.unrealKills,
-					physicalDamageDealt: participant.stats.physicalDamageDealt,
-					physicalDamageDealtToChampions: participant.stats.physicalDamageDealtToChampions,
-					magicDamageDealt: participant.stats.magicDamageDealt,
-					magicDamageDealtToChampions: participant.stats.magicDamageDealtToChampions,
-					trueDamageDealt: participant.stats.trueDamageDealt,
-					trueDamageDealtToChampions: participant.stats.trueDamageDealtToChampions,
-					totalDamageDealtToChampions: participant.stats.totalDamageDealtToChampions,
-					damageDealtToObjectives: participant.stats.damageDealtToObjectives,
-					totalDamageDealt: participant.stats.totalDamageDealt,
-					totalUnitsHealed: participant.stats.totalUnitsHealed,
-					totalHeal: participant.stats.totalHeal,
-					largestCriticalStrike: participant.stats.largestCriticalStrike,
-					totalMinionsKilled: participant.stats.totalMinionsKilled,
-					neutralMinionsKilled: participant.stats.neutralMinionsKilled,
-					neutralMinionsKilledTeamJungle: participant.stats.neutralMinionsKilledTeamJungle || 0, // These could be undefined if neutralMinions is 0
-					neutralMinionsKilledEnemyJungle: participant.stats.neutralMinionsKilledEnemyJungle || 0,
-					sightWardsBoughtInGame: participant.stats.sightWardsBoughtInGame,
-					visionWardsBoughtInGame: participant.stats.visionWardsBoughtInGame,
-					wardsKilled: participant.stats.wardsKilled || 0,
-					wardsPlaced: participant.stats.wardsPlaced || 0,
-					visionScore: participant.stats.visionScore,
-					objectivePlayerScore: participant.stats.objectivePlayerScore,
-					combatPlayerScore: participant.stats.combatPlayerScore,
-					totalPlayerScore: participant.stats.totalPlayerScore,
-					totalScoreRank: participant.stats.totalScoreRank,
-					altarsCaptured: participant.stats.altarsCaptured || 0,
-					teamObjective: participant.stats.teamObjective || 0,
-					totalTimeCrowdControlDealt: participant.stats.totalTimeCrowdControlDealt,
-					timeCCingOthers: participant.stats.timeCCingOthers,
-					longestTimeSpentLiving: participant.stats.longestTimeSpentLiving,
-					turretKills: participant.stats.turretKills,
-					damageDealtToTurrets: participant.stats.damageDealtToTurrets,
-					inhibitorKills: participant.stats.inhibitorKills,
-					firstTowerAssist: participant.stats.firstTowerAssist,
-					firstTowerKill: participant.stats.firstTowerKill,
-					firstBloodAssist: participant.stats.firstBloodAssist,
-					firstInhibitorKill: participant.stats.firstInhibitorKill || 0,
-					firstInhibitorAssist: participant.stats.firstInhibitorAssist || 0,
-					firstBloodKill: participant.stats.firstBloodKill,
-					champLevel: participant.stats.champLevel,
-					nodeNeutralize: participant.stats.nodeNeutralize || 0,
-					nodeNeutralizeAssist: participant.stats.nodeNeutralizeAssists || 0,
-					nodeCapture: participant.stats.nodeCapture || 0,
-					nodeCaptureAssist: participant.stats.nodeCaptureAssist || 0,
-					altarsNeutralized: participant.stats.altarsNeutralized || 0,
-					goldEarned: participant.stats.goldEarned,
-					goldSpent: participant.stats.goldSpent,
-					physicalDamageTaken: participant.stats.physicalDamageTaken,
-					magicalDamageTaken: participant.stats.magicalDamageTaken,
-					trueDamageTaken: participant.stats.trueDamageTaken,
-					totalDamageTaken: participant.stats.totalDamageTaken,
-					perkPrimaryStyle: participant.stats.perkPrimaryStyle,
-					perkSubStyle: participant.stats.perkSubStyle,
-				},
-				json: true,
-			});
-
-			timelineBatch.push({
-				method: 'PUT',
-				uri: webServer.URLs.ParticipantTimeline.put(),
-				body: {
-					gameId: match.gameId,
-					participantId: participant.participantId,
-					lane: participant.timeline.lane,
-					role: participant.timeline.role,
-				},
-				json: true,
-			});
-
-			let itemCount = 0;
-			while (!util.isNullOrUndefined(participant.stats['item'+itemCount])) {
-				itemBatch.push({
-					method: 'PUT',
-					uri: webServer.URLs.XrefParticipantItem.put(),
-					body: {
-						gameId: match.gameId,
-						participantId: participant.participantId,
-						itemId: participant.stats['item'+itemCount],
-					},
-					json: true,
-				});
-
-				itemCount = itemCount + 1;
-			}
-
-			let perkCount = 0;
-			while (!util.isNullOrUndefined(participant.stats['perk'+perkCount])) {
-				let perkVarCount = 1;
-
-				while (!util.isNullOrUndefined(participant.stats['perk'+perkCount+'Var'+perkVarCount])) {
-					perkBatch.push({
-						method: 'PUT',
-						uri: webServer.URLs.XrefParticipantPerk.put(),
-						body: {
-							gameId: match.gameId,
-							participantId: participant.participantId,
-							perkId: participant.stats['perk'+perkCount],
-							varId: perkVarCount,
-							value: participant.stats['perk'+perkCount+'Var'+perkVarCount],
-						},
-						json: true,
-					});
-					perkVarCount = perkVarCount + 1;
-				}
-				perkCount = perkCount + 1;
-				perkVarCount = 1;
-			}
 		});
 	});
 
-	// This is necessary because of the db call in parseMatchParticipantIdentity.
-	// Array.ForEach doesn't handle async calls well. It will return before the DB operation completes
-	while (matchCount < matches.length) {
-		await parseMatchParticipantWithDuplicateCheck(
-			matches[matchCount],
-			summonerGameXrefBatch,
-			timelineDeltaBatch
-		);
-		matchCount = matchCount + 1;
-	}
-
 	summoner.matchList.forEach((matchList) => {
 		matchListBatch.push({
-			method: 'PUT',
-			uri: webServer.URLs.MatchList.put(),
+			method: 'POST',
+			uri: webServer.URLs.MatchList.post(),
 			body: {
-				summonerId: summoner.summonerId,
-				gameId: matchList.gameId,
+				summonerPUUID: summoner.puuid,
+				gameId: parseInt(matchList.gameId),
 				championId: matchList.champion,
 				lane: matchList.lane,
 				role: matchList.role,
-				timestamp: matchList.timestamp,
+				timestamp: util.parseDate(matchList.timestamp),
 			},
 			json: true,
 		});
@@ -275,23 +158,20 @@ let updateMatchList = async function(summoner) {
 		// This has to be done separate because of the foreign keys.
 		await Promise.all(matchInsertBatch.map(request));
 		debug('Match Insert Done');
-		await Promise.all(participantBatch.map(request));
-		debug('Participant Insert Done');
-		await Promise.all(matchListBatch.map(request));
+		await Promise.all([matchListBatch.map(request), participantBatch.map(request)]);
 		debug('Match List Insert Done');
-		if (summonerGameXrefBatch.length > 0) {
-			await Promise.all(summonerGameXrefBatch.map(request));
-			debug('SummonerGameXref Insert Done');
-		}
-		if (timelineDeltaBatch.length > 0) {
-			await Promise.all(timelineDeltaBatch.map(request));
-			debug('timelineDeltaBatch Insert Done');
-		}
+		debug('Participant Insert Done');
+
+		await transformParticipantDependants(matches, deltaTypes,
+			timelineDeltaBatch, statBatch, itemBatch, perkBatch);
+
+		await Promise.all(timelineDeltaBatch.map(request));
+		debug('timelineDeltaBatch Insert Done');
+
 		await Promise.all(
 			teamStatBatch.map(request),
 			teamBanBatch.map(request),
 			statBatch.map(request),
-			timelineBatch.map(request),
 			itemBatch.map(request),
 			perkBatch.map(request),
 		);
@@ -307,7 +187,7 @@ let updateMatchList = async function(summoner) {
  * @param {Object} options Object with beginTime and endTime to specify the dates to find matches
  * @return {Object} MatchList object from RIOT API
  */
-let getMatchList = async (summoner, options) => {
+const getMatchList = async (summoner, options) => {
 	if (!util.isObject(summoner)) {
 		try {
 			summoner = JSON.parse(summoner);
@@ -330,12 +210,16 @@ let getMatchList = async (summoner, options) => {
 	let riotMatchList = null;
 	try {
 		// Send request to RIOT API
-		riotMatchList = await Kayn.Matchlist.by.accountID(summoner.accountId).query(options);
+		riotMatchList = await Kayn.MatchlistV4.by.accountID(summoner.accountId).query(options);
 	} catch (err) {
 		if (err.statusCode == 404) {
 			// This just means they don't have any matches during the time period
 			// so return the options and a null list
 			riotMatchList = null;
+		} else if (err.statusCode == 400) {
+			debug('Bad dates');
+			debug('BeginTime: ' + options.beginTime);
+			debug('EndTime:   ' + options.endTime);
 		} else {
 			debug('Problem calling Kayn');
 			debug(err);
@@ -369,176 +253,202 @@ let getMatchList = async (summoner, options) => {
  * @param {long} endTime UNIX milliseconds representing the last time the Summoner was updated according to RIOT
  * @return {Object} JSON object containing beginTime and endTime to be used with a match method
  */
-let getMatchDates = async (beginTime, endTime) => {
+const getMatchDates = async (beginTime, endTime) => {
+	let dates = {};
 	if (util.isNullOrUndefined(beginTime)) {
-		let dbSeason = await request(webServer.URLs.Season.get('{"endDate": null}'));
-		dbSeason = JSON.parse(dbSeason)[0];
-		let seasonStart = new Date(dbSeason.startDate).getTime();
-		return {
+		let dbSeason = await request(webServer.URLs.Season.getWhere('{"isCurrent":1}'));
+		dbSeason = JSON.parse(dbSeason);
+		dbSeason = dbSeason[0];
+		const seasonStart = new Date(dbSeason.startDate).getTime();
+		dates = {
 			beginTime: seasonStart,
 			endTime: seasonStart + 604800000,
 		};
 	} else {
-		return {
+		dates = {
 			beginTime: new Date(beginTime).getTime(),
 			endTime: new Date(endTime).getTime(),
 		};
 	}
+
+	if (dates.beginTime > dates.endTime) {
+		dates.endTime = dates.beginTime;
+	}
+
+	return dates;
 };
 
 /**
- * Loops through the match's participants and parse them into the relevant batches
- * @param {Object} match The match to parse
- * @param {Array} summonerGameXrefBatch Array of Requests to add the participant to
- * @param {Array} timelineDeltaBatch Array of Requests to add the delta to
+ * Iterate over matches again to load deltas. Need Participants loaded first so that we can get their IDs.
+ * @param {Array} matches
+ * @param {Array} deltaTypes
+ * @param {Array} timelineDeltaBatch
+ * @param {Array} statBatch
+ * @param {Array} itemBatch
+ * @param {Array} perkBatch
  */
-let parseMatchParticipantWithDuplicateCheck = async (match,
-	summonerGameXrefBatch, timelineDeltaBatch) => {
-	let participantCounter = 0;
-	let deltaTypeCounter = 0;
-	let deltaTypes = JSON.parse(await request(webServer.URLs.DeltaType.getAll()));
-
-	while (participantCounter < match.participantIdentities.length) {
-		deltaTypeCounter = 0;
-		await parseMatchParticipantIdentity(match.gameId,
-			match.participantIdentities[participantCounter],
-			summonerGameXrefBatch
-		);
-
-		while (deltaTypeCounter < deltaTypes.length) {
-			await parseMatchParticipantTimelineDelta(match.gameId, deltaTypes[deltaTypeCounter],
-				match.participants[participantCounter].timeline,
-				timelineDeltaBatch
-			);
-
-			deltaTypeCounter = deltaTypeCounter + 1;
-		}
-
-		participantCounter = participantCounter + 1;
-	}
-};
-
-/**
- * Check if the summoner game xref already exists. If not, insert it into the Requests array.
- * This is required because Loopback appends 'ON DUPLICATE UPDATE' to the end of the SQL if we do
- * a simple POST. Notice there is nothing after the UPDATE keyword, this breaks the SQL syntax and
- * causes an error. I think this is because every field in the table is a part of the key.
- * @param {String} gameId The game's ID given by RIOT
- * @param {Object} identity The identity to add
- * @param {Array} summonerGameXrefBatch Array of Requests to add the participant to
- */
-let parseMatchParticipantIdentity = async (gameId, identity, summonerGameXrefBatch) => {
-	let exists = null;
-	try {
-		exists = await request(webServer.URLs.XrefSummonerGame.findOne(
-			'{"summonerId": "' + identity.player.summonerId + '",' +
-			'"gameId": "' + gameId + '",' +
-			'"participantId": "' + identity.participantId + '"' +
-			'}'));
-		if (JSON.parse(exists)) {
-			exists = true;
-		}
-	} catch (error) {
-		// It does this when there are no records in the database,
-		// so will only happen the first time.
-		if (error.toString().indexOf('MODEL_NOT_FOUND')) {
-			exists = false;
-		} else {
-			throw error;
-		}
-	}
-
-	if (!exists) {
-		summonerGameXrefBatch.push({
-			method: 'POST',
-			uri: webServer.URLs.XrefSummonerGame.post(),
-			body: {
-				summonerId: identity.player.summonerId,
-				gameId: gameId,
-				participantId: identity.participantId,
-			},
+const transformParticipantDependants = async (matches, deltaTypes,
+	timelineDeltaBatch, statBatch, itemBatch, perkBatch) => {
+	await Promise.all(matches.map(async (match) => {
+		const dbParticipants = await request({
+			method: 'GET',
+			uri: webServer.URLs.Participant.getWhere('{"gameId": ' + match.gameId + '}'),
 			json: true,
 		});
-	}
-};
 
-/**
- * Check if the timeline delta already exists. If not, insert it into the Requests array.
- * This is required because Loopback appends 'ON DUPLICATE UPDATE' to the end of the SQL if we do
- * a simple POST. Notice there is nothing after the UPDATE keyword, this breaks the SQL syntax and
- * causes an error. I think this is because every field in the table is a part of the key.
- * @param {String} gameId The game's ID given by RIOT
- * @param {Array} deltaType Delta type name used to pull the values from the timeline
- * @param {Object} timeline The timeline to add
- * @param {Array} timelineDeltaBatch Array of Requests to add the delta to
- */
-let parseMatchParticipantTimelineDelta = async (gameId, deltaType,
-	timeline, timelineDeltaBatch) => {
-	let exists = null;
-	let timelineKeys = null;
-	let timelineKeysCounter = 0;
+		dbParticipants.forEach((dbParticipant) => {
+			const dataParticipant = match.participants.filter(
+				(p) => p.participantId === dbParticipant.participantId)[0];
 
-	try {
-		timelineKeys = Object.keys(timeline[deltaType.name]);
-	} catch (error) {
-		// Happens when the DeltaType doesn't exist in the Timeline.
-		// Sometimes we just don't get the info.
-		if (error.toString().indexOf('Cannot convert undefined')) {
-			return;
-		} else {
-			throw error;
-		}
-	}
+			deltaTypes.forEach(async (deltaType) => {
+				let timelineKeys = null;
 
-	while (timelineKeysCounter < timelineKeys.length) {
-		let increment = timelineKeys[timelineKeysCounter];
-		let value = timeline[deltaType.name][increment];
-		exists = null;
+				try {
+					timelineKeys = Object.keys(dataParticipant.timeline[deltaType.name]);
+				} catch (error) {
+					// Happens when the DeltaType doesn't exist in the Timeline.
+					// Sometimes we just don't get the info.
+					if (error.toString().indexOf('Cannot convert undefined')) {
+						return;
+					} else {
+						throw error;
+					}
+				}
 
-		try {
-			exists = await request(webServer.URLs.ParticipantTimelineDelta.findOne(
-				'{"gameId": "' + gameId + '",' +
-				'"participantId": "' + timeline.participantId + '",' +
-				'"deltaTypeId": "' + deltaType.id + '",' +
-				'"increment": "' + increment + '"' +
-				'}'));
+				timelineKeys.forEach((increment) => {
+					const value = dataParticipant.timeline[deltaType.name][increment];
+					timelineDeltaBatch.push({
+						method: 'POST',
+						uri: webServer.URLs.ParticipantTimelineDelta.post(),
+						body: {
+							participantId: dbParticipant.id,
+							deltaTypeId: deltaType.id,
+							increment: increment,
+							value: value,
+						},
+						json: true,
+					});
+				});
+			});
 
-			if (JSON.parse(exists)) {
-				exists = true;
-			}
-		} catch (error) {
-			// It does this when there are no records in the database,
-			// so will only happen the first time.
-			if (error.toString().indexOf('MODEL_NOT_FOUND')) {
-				exists = false;
-			} else {
-				throw error;
-			}
-		} finally {
-			timelineKeysCounter = timelineKeysCounter + 1;
-		}
-
-		if (!exists) {
-			timelineDeltaBatch.push({
-				method: 'PUT',
-				uri: webServer.URLs.ParticipantTimelineDelta.put(),
+			statBatch.push({
+				method: 'POST',
+				uri: webServer.URLs.ParticipantStat.post(),
 				body: {
-					gameId: gameId,
-					participantId: timeline.participantId,
-					deltaTypeId: deltaType.id,
-					increment: increment,
-					value: value,
+					participantId: dbParticipant.id,
+					win: dataParticipant.stats.win,
+					kills: dataParticipant.stats.kills,
+					deaths: dataParticipant.stats.deaths,
+					assists: dataParticipant.stats.assists,
+					largestKillingSpree: dataParticipant.stats.largestKillingSpree,
+					killingSprees: dataParticipant.stats.killingSprees,
+					largestMultiKill: dataParticipant.stats.largestMultiKill,
+					doubleKills: dataParticipant.stats.doubleKills,
+					tripleKills: dataParticipant.stats.tripleKills,
+					quadraKills: dataParticipant.stats.quadraKills,
+					pentaKills: dataParticipant.stats.pentaKills,
+					unrealKills: dataParticipant.stats.unrealKills,
+					physicalDamageDealt: dataParticipant.stats.physicalDamageDealt,
+					physicalDamageDealtToChampions: dataParticipant.stats.physicalDamageDealtToChampions,
+					magicDamageDealt: dataParticipant.stats.magicDamageDealt,
+					magicDamageDealtToChampions: dataParticipant.stats.magicDamageDealtToChampions,
+					trueDamageDealt: dataParticipant.stats.trueDamageDealt,
+					trueDamageDealtToChampions: dataParticipant.stats.trueDamageDealtToChampions,
+					totalDamageDealtToChampions: dataParticipant.stats.totalDamageDealtToChampions,
+					damageDealtToObjectives: dataParticipant.stats.damageDealtToObjectives,
+					totalDamageDealt: dataParticipant.stats.totalDamageDealt,
+					totalUnitsHealed: dataParticipant.stats.totalUnitsHealed,
+					totalHeal: dataParticipant.stats.totalHeal,
+					largestCriticalStrike: dataParticipant.stats.largestCriticalStrike,
+					totalMinionsKilled: dataParticipant.stats.totalMinionsKilled,
+					neutralMinionsKilled: dataParticipant.stats.neutralMinionsKilled,
+					neutralMinionsKilledTeamJungle: dataParticipant.stats.neutralMinionsKilledTeamJungle || 0, // These could be undefined if neutralMinions is 0
+					neutralMinionsKilledEnemyJungle: dataParticipant.stats.neutralMinionsKilledEnemyJungle || 0,
+					sightWardsBoughtInGame: dataParticipant.stats.sightWardsBoughtInGame,
+					visionWardsBoughtInGame: dataParticipant.stats.visionWardsBoughtInGame,
+					wardsKilled: dataParticipant.stats.wardsKilled || 0,
+					wardsPlaced: dataParticipant.stats.wardsPlaced || 0,
+					visionScore: dataParticipant.stats.visionScore,
+					objectivePlayerScore: dataParticipant.stats.objectivePlayerScore,
+					combatPlayerScore: dataParticipant.stats.combatPlayerScore,
+					totalPlayerScore: dataParticipant.stats.totalPlayerScore,
+					totalScoreRank: dataParticipant.stats.totalScoreRank,
+					altarsCaptured: dataParticipant.stats.altarsCaptured || 0,
+					teamObjective: dataParticipant.stats.teamObjective || 0,
+					totalTimeCrowdControlDealt: dataParticipant.stats.totalTimeCrowdControlDealt,
+					timeCCingOthers: dataParticipant.stats.timeCCingOthers,
+					longestTimeSpentLiving: dataParticipant.stats.longestTimeSpentLiving,
+					turretKills: dataParticipant.stats.turretKills,
+					damageDealtToTurrets: dataParticipant.stats.damageDealtToTurrets,
+					inhibitorKills: dataParticipant.stats.inhibitorKills,
+					firstTowerAssist: dataParticipant.stats.firstTowerAssist || false,
+					firstTowerKill: dataParticipant.stats.firstTowerKill || false,
+					firstBloodAssist: dataParticipant.stats.firstBloodAssist || false,
+					firstInhibitorKill: dataParticipant.stats.firstInhibitorKill || false,
+					firstInhibitorAssist: dataParticipant.stats.firstInhibitorAssist || false,
+					firstBloodKill: dataParticipant.stats.firstBloodKill || false,
+					champLevel: dataParticipant.stats.champLevel,
+					nodeNeutralize: dataParticipant.stats.nodeNeutralize || 0,
+					nodeNeutralizeAssist: dataParticipant.stats.nodeNeutralizeAssists || 0,
+					nodeCapture: dataParticipant.stats.nodeCapture || 0,
+					nodeCaptureAssist: dataParticipant.stats.nodeCaptureAssist || 0,
+					altarsNeutralized: dataParticipant.stats.altarsNeutralized || 0,
+					goldEarned: dataParticipant.stats.goldEarned,
+					goldSpent: dataParticipant.stats.goldSpent || 0,
+					physicalDamageTaken: dataParticipant.stats.physicalDamageTaken,
+					magicalDamageTaken: dataParticipant.stats.magicalDamageTaken,
+					trueDamageTaken: dataParticipant.stats.trueDamageTaken,
+					totalDamageTaken: dataParticipant.stats.totalDamageTaken,
+					perkPrimaryStyle: dataParticipant.stats.perkPrimaryStyle,
+					perkSubStyle: dataParticipant.stats.perkSubStyle,
 				},
 				json: true,
 			});
-		}
-	}
+
+			let itemCount = 0;
+			while (!util.isNullOrUndefined(dataParticipant.stats['item'+itemCount])) {
+				itemBatch.push({
+					method: 'POST',
+					uri: webServer.URLs.XrefParticipantItem.post(),
+					body: {
+						participantId: dbParticipant.id,
+						itemId: dataParticipant.stats['item'+itemCount],
+					},
+					json: true,
+				});
+
+				itemCount = itemCount + 1;
+			}
+
+			let perkCount = 0;
+			while (!util.isNullOrUndefined(dataParticipant.stats['perk'+perkCount])) {
+				let perkVarCount = 1;
+
+				while (!util.isNullOrUndefined(dataParticipant.stats['perk'+perkCount+'Var'+perkVarCount])) {
+					perkBatch.push({
+						method: 'POST',
+						uri: webServer.URLs.XrefParticipantPerk.post(),
+						body: {
+							participantId: dbParticipant.id,
+							perkId: dataParticipant.stats['perk'+perkCount].toString(),
+							varId: perkVarCount,
+							value: dataParticipant.stats['perk'+perkCount+'Var'+perkVarCount],
+						},
+						json: true,
+					});
+					perkVarCount = perkVarCount + 1;
+				}
+				perkCount = perkCount + 1;
+				perkVarCount = 1;
+			}
+		});
+	}));
 };
 
 module.exports.registerWorkers = (worker) => {
 	worker.registerWorker('updateMatchList', async (task) => {
 		debug('Update Match List:', JSON.parse(task.payload).name);
-		let result = await updateMatchList(task.payload);
+		const result = await updateMatchList(task.payload);
 		task.end(result);
 	});
 
