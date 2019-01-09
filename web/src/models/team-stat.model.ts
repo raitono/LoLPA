@@ -1,6 +1,6 @@
 import {Entity, model, property} from '@loopback/repository';
 
-@model()
+@model({name: 'Team_Stat'})
 export class TeamStat extends Entity {
   @property({
     type: 'number',
