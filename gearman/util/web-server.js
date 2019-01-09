@@ -59,7 +59,7 @@ module.exports.URLs = {
 		},
 	},
 	ParticipantTimelineDelta: {
-		get: function(whereClause) {
+		getWhere: function(whereClause) {
 			return process.env.WEB_SERVER + '/participant-timeline-deltas?filter={"where":'+whereClause+'}';
 		},
 		post: function() {
@@ -78,7 +78,7 @@ module.exports.URLs = {
 		},
 	},
 	Summoner: {
-		get: function(whereClause) {
+		getWhere: function(whereClause) {
 			return process.env.WEB_SERVER + '/summoners?filter={"where":'+whereClause+'}';
 		},
 		getByName: function(name) {
