@@ -59,7 +59,7 @@ const updateMatchList = async function(summoner) {
 	const perkBatch = [];
 
 	// Batch up the insert options
-	matches.forEach( async (match) => {
+	matches.forEach((match) => {
 		const gameId = parseInt(match.gameId);
 		matchInsertBatch.push({
 			method: 'PUT',
@@ -290,30 +290,10 @@ const updateMatchList = async function(summoner) {
 		debug('Match List Insert Done');
 		debug('Participant Insert Done');
 
-		// This is necessary because of the db call in parseMatchParticipantIdentity.
-		// Array.ForEach doesn't handle async calls well. It will return before the DB operation completes
-		// while (matchCount < matches.length) {
-		// 	const dbParticipants = await request({
-		// 		method: 'GET',
-		// 		uri: webServer.URLs.Participant.getWhere('{"gameId": ' + matches[matchCount].gameId + '}'),
-		// 		json: true,
-		// 	});
+		transformTimelineDeltas(matches, deltaTypes, timelineDeltaBatch);
 
-		// 	await parseMatchParticipantWithDuplicateCheck(
-		// 		matches[matchCount],
-		// 		timelineDeltaBatch,
-		// 		deltaTypes,
-		// 		dbParticipants
-		// 	);
-		// 	matchCount = matchCount + 1;
-		// }
-
-		//matches.forEach();
-
-		// if (timelineDeltaBatch.length > 0) {
-		// 	await Promise.all(timelineDeltaBatch.map(request));
-		// 	debug('timelineDeltaBatch Insert Done');
-		// }
+		await Promise.all(timelineDeltaBatch.map(request));
+		debug('timelineDeltaBatch Insert Done');
 		// await Promise.all(
 		// 	teamStatBatch.map(request),
 		// 	teamBanBatch.map(request),
@@ -432,105 +412,55 @@ const getMatchDates = async (beginTime, endTime) => {
 };
 
 /**
- * Loops through the match's participants and parse them into the relevant batches
- * @param {Object} match The match to parse
- * @param {Array} participantSummonerXrefBatch Array of Requests to add the participant to
- * @param {Array} timelineDeltaBatch Array of Requests to add the delta to
+ * Iterate over matches again to load deltas. Need Participants loaded first so that we can get their IDs.
+ * @param {Array} matches
  * @param {Array} deltaTypes
- * @param {Array} dbParticipants
+ * @param {Array} timelineDeltaBatch
  */
-const parseMatchParticipantWithDuplicateCheck = async (match,
-	participantSummonerXrefBatch, timelineDeltaBatch, deltaTypes, dbParticipants) => {
-	let participantCounter = 0;
-	let deltaTypeCounter = 0;
+const transformTimelineDeltas = async (matches, deltaTypes, timelineDeltaBatch) => {
+	await Promise.all(matches.map(async (match) => {
+		const dbParticipants = await request({
+			method: 'GET',
+			uri: webServer.URLs.Participant.getWhere('{"gameId": ' + match.gameId + '}'),
+			json: true,
+		});
 
-	while (participantCounter < match.participantIdentities.length) {
-		deltaTypeCounter = 0;
+		dbParticipants.forEach((dbParticipant) => {
+			const dataParticipant = match.participants.filter(
+				(p) => p.participantId === dbParticipant.participantId)[0];
 
-		// while (deltaTypeCounter < deltaTypes.length) {
-		// 	await parseMatchParticipantTimelineDelta(match.gameId, deltaTypes[deltaTypeCounter],
-		// 		match.participants[participantCounter].timeline,
-		// 		timelineDeltaBatch
-		// 	);
+			deltaTypes.forEach(async (deltaType) => {
+				let timelineKeys = null;
 
-		// 	deltaTypeCounter = deltaTypeCounter + 1;
-		// }
+				try {
+					timelineKeys = Object.keys(dataParticipant.timeline[deltaType.name]);
+				} catch (error) {
+					// Happens when the DeltaType doesn't exist in the Timeline.
+					// Sometimes we just don't get the info.
+					if (error.toString().indexOf('Cannot convert undefined')) {
+						return;
+					} else {
+						throw error;
+					}
+				}
 
-		participantCounter = participantCounter + 1;
-	}
-};
-
-/**
- * Check if the timeline delta already exists. If not, insert it into the Requests array.
- * This is required because Loopback appends 'ON DUPLICATE UPDATE' to the end of the SQL if we do
- * a simple POST. Notice there is nothing after the UPDATE keyword, this breaks the SQL syntax and
- * causes an error. I think this is because every field in the table is a part of the key.
- * @param {String} gameId The game's ID given by RIOT
- * @param {Array} deltaType Delta type name used to pull the values from the timeline
- * @param {Object} timeline The timeline to add
- * @param {Array} timelineDeltaBatch Array of Requests to add the delta to
- */
-const parseMatchParticipantTimelineDelta = async (gameId, deltaType,
-	timeline, timelineDeltaBatch) => {
-	let exists = null;
-	let timelineKeys = null;
-	let timelineKeysCounter = 0;
-
-	try {
-		timelineKeys = Object.keys(timeline[deltaType.name]);
-	} catch (error) {
-		// Happens when the DeltaType doesn't exist in the Timeline.
-		// Sometimes we just don't get the info.
-		if (error.toString().indexOf('Cannot convert undefined')) {
-			return;
-		} else {
-			throw error;
-		}
-	}
-
-	while (timelineKeysCounter < timelineKeys.length) {
-		const increment = timelineKeys[timelineKeysCounter];
-		const value = timeline[deltaType.name][increment];
-		exists = null;
-
-		try {
-			exists = await request(webServer.URLs.ParticipantTimelineDelta.findOne(
-				'{"gameId": "' + gameId + '",' +
-				'"participantId": "' + timeline.participantId + '",' +
-				'"deltaTypeId": "' + deltaType.id + '",' +
-				'"increment": "' + increment + '"' +
-				'}'));
-
-			if (JSON.parse(exists)) {
-				exists = true;
-			}
-		} catch (error) {
-			// It does this when there are no records in the database,
-			// so will only happen the first time.
-			if (error.toString().indexOf('MODEL_NOT_FOUND')) {
-				exists = false;
-			} else {
-				throw error;
-			}
-		}
-
-		if (!exists) {
-			timelineDeltaBatch.push({
-				method: 'PUT',
-				uri: webServer.URLs.ParticipantTimelineDelta.put(),
-				body: {
-					gameId: gameId,
-					participantId: timeline.participantId,
-					deltaTypeId: deltaType.id,
-					increment: increment,
-					value: value,
-				},
-				json: true,
+				timelineKeys.forEach((increment) => {
+					const value = dataParticipant.timeline[deltaType.name][increment];
+					timelineDeltaBatch.push({
+						method: 'POST',
+						uri: webServer.URLs.ParticipantTimelineDelta.post(),
+						body: {
+							participantId: dbParticipant.id,
+							deltaTypeId: deltaType.id,
+							increment: increment,
+							value: value,
+						},
+						json: true,
+					});
+				});
 			});
-		}
-
-		timelineKeysCounter = timelineKeysCounter + 1;
-	}
+		});
+	}));
 };
 
 module.exports.registerWorkers = (worker) => {

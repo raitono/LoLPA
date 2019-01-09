@@ -52,17 +52,15 @@ module.exports.URLs = {
 			return process.env.WEB_SERVER + '/participant-stats/' + statId;
 		},
 	},
-	ParticipantTimeline: {
-		put: function(timelineId) {
-			return process.env.WEB_SERVER + '/participant-timelines/' + timelineId;
-		},
-	},
 	ParticipantTimelineDelta: {
-		put: function(deltaId) {
-			return process.env.WEB_SERVER + '/participant-timeline-delta/' + deltaId;
-		},
 		get: function(whereClause) {
-			return process.env.WEB_SERVER + '/participant-timeline-delta?filter={"where":'+whereClause+'}';
+			return process.env.WEB_SERVER + '/participant-timeline-deltas?filter={"where":'+whereClause+'}';
+		},
+		post: function() {
+			return process.env.WEB_SERVER + '/participant-timeline-deltas';
+		},
+		put: function(deltaId) {
+			return process.env.WEB_SERVER + '/participant-timeline-deltas/' + deltaId;
 		},
 	},
 	Rune: {
