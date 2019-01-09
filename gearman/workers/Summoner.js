@@ -22,7 +22,7 @@ const determineUpdates = async (summoner) => {
 	} else if (Date.now() - Date.parse(ret.summoner.lastUpdated) >= 600000) {
 		const rawSummoner = await Kayn.SummonerV4.by.name(ret.summoner.name);
 		if ((rawSummoner.revisionDate - Date.parse(ret.summoner.revisionDate)) != 0) {
-			const updatedSummoner = await request({
+			await request({
 				method: 'PUT',
 				uri: webServer.URLs.Summoner.put(rawSummoner.puuid),
 				body: {
@@ -32,13 +32,18 @@ const determineUpdates = async (summoner) => {
 					profileIconId: rawSummoner.profileIconId,
 					summonerLevel: rawSummoner.summonerLevel,
 					name: rawSummoner.name,
-					revisionDate: summoner.revisionDate,
+					revisionDate: new Date(rawSummoner.revisionDate),
+					lastUpdated: new Date(ret.summoner.lastUpdated),
 				},
 				json: true,
 			});
-			debug(updatedSummoner);
+
 			ret = {
-				summoner: updatedSummoner[0],
+				summoner: await request({
+					method: 'GET',
+					uri: webServer.URLs.Summoner.get(rawSummoner.puuid),
+					json: true,
+				}),
 				shouldUpdateMatches: true,
 			};
 		}
@@ -64,7 +69,9 @@ const getSummonerByName = async (summonerName) => {
 	summoner = await request(summonerDBRequestOptions);
 	summoner = summoner[0];
 
-	if (!summoner) {
+	if (summoner) {
+		debug('Retrieved Summoner');
+	} else {
 		debug('Summoner not found in db');
 		try {
 			const rawSummoner = await Kayn.SummonerV4.by.name(summonerName);

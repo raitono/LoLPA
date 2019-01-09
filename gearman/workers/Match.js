@@ -72,7 +72,7 @@ const updateMatchList = async function(summoner) {
 				gameMode: match.gameMode,
 				gameType: match.gameType,
 				gameDuration: match.gameDuration,
-				gameCreation: util.parseDate(match.gameCreation),
+				gameCreation: new Date(match.gameCreation),
 			},
 			json: true,
 		});
@@ -148,7 +148,7 @@ const updateMatchList = async function(summoner) {
 				championId: matchList.champion,
 				lane: matchList.lane,
 				role: matchList.role,
-				timestamp: util.parseDate(matchList.timestamp),
+				timestamp: new Date(matchList.timestamp),
 			},
 			json: true,
 		});

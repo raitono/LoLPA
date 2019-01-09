@@ -1,5 +1,4 @@
 require('dotenv-safe').config();
-require('./util/utilExtension');
 
 const debug = require('debug')('lolpa-gearman:app');
 const express = require('express');

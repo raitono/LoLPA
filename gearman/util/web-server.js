@@ -84,6 +84,9 @@ module.exports.URLs = {
 		getByName: function(name) {
 			return process.env.WEB_SERVER + '/summoners?filter={"where":{"name":"'+name+'"}}';
 		},
+		get: function(puuid) {
+			return process.env.WEB_SERVER + '/summoners/' + puuid;
+		},
 		post: function() {
 			return process.env.WEB_SERVER + '/summoners';
 		},
