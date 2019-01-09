@@ -5,7 +5,6 @@ export * from './match.model';
 export * from './match-list.model';
 export * from './participant.model';
 export * from './participant-stat.model';
-export * from './participant-timeline.model';
 export * from './participant-timeline-delta.model';
 export * from './perk.model';
 export * from './perk-style.model';

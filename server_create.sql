@@ -2,7 +2,7 @@
 -- Host:                         127.0.0.1
 -- Server version:               5.7.20-log - MySQL Community Server (GPL)
 -- Server OS:                    Win64
--- HeidiSQL Version:             9.5.0.5282
+-- HeidiSQL Version:             9.5.0.5278
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -591,6 +591,8 @@ CREATE TABLE IF NOT EXISTS `participant` (
   `spell1Id` int(11) NOT NULL,
   `spell2Id` int(11) NOT NULL,
   `teamId` int(11) NOT NULL,
+  `lane` varchar(6) NOT NULL,
+  `role` varchar(11) NOT NULL,
   `highestAchievedSeasonTier` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `gameId_participantId` (`gameId`,`participantId`),
@@ -685,21 +687,6 @@ CREATE TABLE IF NOT EXISTS `participant_stat` (
 -- Dumping data for table riot.participant_stat: ~0 rows (approximately)
 /*!40000 ALTER TABLE `participant_stat` DISABLE KEYS */;
 /*!40000 ALTER TABLE `participant_stat` ENABLE KEYS */;
-
--- Dumping structure for table riot.participant_timeline
-CREATE TABLE IF NOT EXISTS `participant_timeline` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `participantId` int(11) NOT NULL,
-  `lane` varchar(6) NOT NULL,
-  `role` varchar(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FK_participant_timelines_participantId` (`participantId`),
-  CONSTRAINT `FK_participant_timelines_participantId` FOREIGN KEY (`participantId`) REFERENCES `participant` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- Dumping data for table riot.participant_timeline: ~0 rows (approximately)
-/*!40000 ALTER TABLE `participant_timeline` DISABLE KEYS */;
-/*!40000 ALTER TABLE `participant_timeline` ENABLE KEYS */;
 
 -- Dumping structure for table riot.participant_timeline_delta
 CREATE TABLE IF NOT EXISTS `participant_timeline_delta` (

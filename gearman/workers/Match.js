@@ -91,6 +91,8 @@ const updateMatchList = async function(summoner) {
 					championId: participant.championId,
 					spell1Id: participant.spell1Id,
 					spell2Id: participant.spell2Id,
+					lane: participant.timeline.lane,
+					role: participant.timeline.role,
 					teamId: participant.teamId,
 					highestAchievedSeasonTier: participant.highestAchievedSeasonTier,
 				},
@@ -305,6 +307,8 @@ const updateMatchList = async function(summoner) {
 		// 	);
 		// 	matchCount = matchCount + 1;
 		// }
+
+		//matches.forEach();
 
 		// if (timelineDeltaBatch.length > 0) {
 		// 	await Promise.all(timelineDeltaBatch.map(request));

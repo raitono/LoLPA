@@ -5,7 +5,6 @@ export * from './match-list.repository';
 export * from './match.repository';
 export * from './participant-stat.repository';
 export * from './participant-timeline-delta.repository';
-export * from './participant-timeline.repository';
 export * from './participant.repository';
 export * from './perk-style.repository';
 export * from './perk.repository';

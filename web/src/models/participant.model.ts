@@ -54,6 +54,18 @@ export class Participant extends Entity {
     type: 'string',
     required: true,
   })
+  lane: string;
+
+  @property({
+    type: 'string',
+    required: true,
+  })
+  role: string;
+
+  @property({
+    type: 'string',
+    required: true,
+  })
   highestAchievedSeasonTier: string;
 
   constructor(data?: Partial<Participant>) {

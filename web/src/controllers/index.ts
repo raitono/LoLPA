@@ -7,7 +7,6 @@ export * from './match-list.controller';
 export * from './match.controller';
 export * from './participant-stat.controller';
 export * from './participant-timeline-delta.controller';
-export * from './participant-timeline.controller';
 export * from './participant.controller';
 export * from './perk-style.controller';
 export * from './season.controller';
