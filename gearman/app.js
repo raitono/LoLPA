@@ -59,7 +59,7 @@ const run = async () => {
 		try {
 			await client.submitJob('updateMatchList', JSON.stringify(updateSummonerResult.summoner));
 			debug('Updated match list for ' + summonerName);
-			// client.submitJob('updateSummonerLastUpdated', JSON.stringify(updateSummonerResult.summoner));
+			client.submitJob('updateSummonerLastUpdated', JSON.stringify(updateSummonerResult.summoner));
 		} catch (error) {
 			debug(error);
 		}
