@@ -4,6 +4,14 @@ module.exports.URLs = {
 			return process.env.WEB_SERVER + '/champions/' + championId;
 		},
 	},
+	ChampionTags: {
+		getWhere: function(whereClause) {
+			return process.env.WEB_SERVER + '/champion-tags?filter={"where":'+whereClause+'}';
+		},
+		post: function() {
+			return process.env.WEB_SERVER + '/champion-tags';
+		},
+	},
 	DeltaType: {
 		getAll: function() {
 			return process.env.WEB_SERVER + '/delta-types';
