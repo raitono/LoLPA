@@ -125,6 +125,27 @@ const parseAndLoad = async (version) => {
 					championId: -1,
 					name: 'None',
 					title: 'None',
+					partype: 'None',
+					hp: 0,
+					hpperlevel: 0,
+					mp: 0,
+					mpperlevel: 0,
+					movespeed: 0,
+					armor: 0,
+					armorperlevel: 0,
+					spellblock: 0,
+					spellblockperlevel: 0,
+					attackrange: 0,
+					hpregen: 0,
+					hpregenperlevel: 0,
+					mpregen: 0,
+					mpregenperlevel: 0,
+					crit: 0,
+					critperlevel: 0,
+					attackdamage: 0,
+					attackdamageperlevel: 0,
+					attackspeedperlevel: 0,
+					attackspeed: 0,
 				},
 				json: true,
 			});
@@ -140,6 +161,27 @@ const parseAndLoad = async (version) => {
 						championId: championId,
 						name: data.data[key].name,
 						title: data.data[key].title,
+						partype: data.data[key].partype,
+						hp: data.data[key].stats.hp,
+						hpperlevel: data.data[key].stats.hpperlevel,
+						mp: data.data[key].stats.mp,
+						mpperlevel: data.data[key].stats.mpperlevel,
+						movespeed: data.data[key].stats.movespeed,
+						armor: data.data[key].stats.armor,
+						armorperlevel: data.data[key].stats.armorperlevel,
+						spellblock: data.data[key].stats.spellblock,
+						spellblockperlevel: data.data[key].stats.spellblockperlevel,
+						attackrange: data.data[key].stats.attackrange,
+						hpregen: data.data[key].stats.hpregen,
+						hpregenperlevel: data.data[key].stats.hpregenperlevel,
+						mpregen: data.data[key].stats.mpregen,
+						mpregenperlevel: data.data[key].stats.mpregenperlevel,
+						crit: data.data[key].stats.crit,
+						critperlevel: data.data[key].stats.critperlevel,
+						attackdamage: data.data[key].stats.attackdamage,
+						attackdamageperlevel: data.data[key].stats.attackdamageperlevel,
+						attackspeedperlevel: data.data[key].stats.attackspeedperlevel,
+						attackspeed: data.data[key].stats.attackspeed,
 					},
 					json: true,
 				});
@@ -189,7 +231,7 @@ const parseAndLoad = async (version) => {
 							const tagXrefBatch = [];
 							championTags.forEach((championTag) => {
 								championTag.tags.forEach((cTag) => {
-									let tagId = dbTags.filter((t) => t.name === cTag);
+									const tagId = dbTags.filter((t) => t.name === cTag);
 									// If a crossreference doesn't exist, create it
 									if (tagId[0] && !existingXrefs.filter(
 										(x) => x.championId === championTag.championId && x.tagId === tagId[0].id)[0]) {
