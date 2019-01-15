@@ -58,7 +58,6 @@ const updateStaticData = async function() {
 			});
 		});
 	});
-	parseAndLoad(latestVersion);
 };
 
 const parseAndLoad = async (version) => {
@@ -176,39 +175,38 @@ const parseAndLoad = async (version) => {
 						});
 					});
 
-				operationsBatch.map(request);
-
-				return request({
-					method: 'GET',
-					url: webServer.URLs.ChampionTag.get(),
-					json: true,
-				}).then((dbTags) => {
-					return request({
+				return Promise.all(operationsBatch.map(request)).then(() => {
+					request({
 						method: 'GET',
-						url: webServer.URLs.XrefChampionTag.get(),
+						url: webServer.URLs.ChampionTag.get(),
 						json: true,
-					}).then((existingXrefs) => {
-						const tagXrefBatch = [];
-						championTags.forEach((championTag) => {
-							championTag.tags.forEach((cTag) => {
-								const tagId = dbTags.filter((t) => t.name === cTag)[0].id;
-
-								// If a crossreference doesn't exist, create it
-								if (!existingXrefs.filter(
-									(x) => x.championId === championTag.championId && x.tagId === tagId)[0]) {
-									tagXrefBatch.push({
-										method: 'POST',
-										url: webServer.URLs.XrefChampionTag.post(),
-										body: {
-											championId: championTag.championId,
-											tagId: tagId,
-										},
-										json: true,
-									});
-								}
+					}).then((dbTags) => {
+						return request({
+							method: 'GET',
+							url: webServer.URLs.XrefChampionTag.get(),
+							json: true,
+						}).then((existingXrefs) => {
+							const tagXrefBatch = [];
+							championTags.forEach((championTag) => {
+								championTag.tags.forEach((cTag) => {
+									let tagId = dbTags.filter((t) => t.name === cTag);
+									// If a crossreference doesn't exist, create it
+									if (tagId[0] && !existingXrefs.filter(
+										(x) => x.championId === championTag.championId && x.tagId === tagId[0].id)[0]) {
+										tagXrefBatch.push({
+											method: 'POST',
+											url: webServer.URLs.XrefChampionTag.post(),
+											body: {
+												championId: championTag.championId,
+												tagId: tagId[0].id,
+											},
+											json: true,
+										});
+									}
+								});
 							});
+							tagXrefBatch.map(request);
 						});
-						tagXrefBatch.map(request);
 					});
 				});
 			});
