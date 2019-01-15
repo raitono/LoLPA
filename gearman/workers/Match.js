@@ -33,7 +33,7 @@ const updateMatchList = async function(summoner) {
 
 	const existingMatches = await request({
 		method: 'GET',
-		uri: webServer.URLs.Matches.getWhere('{"gameId": {"inq": ' + JSON.stringify(matchBatch) + '}}'),
+		uri: webServer.URLs.Match.getWhere('{"gameId": {"inq": ' + JSON.stringify(matchBatch) + '}}'),
 		json: true,
 	});
 	matchBatch = matchBatch.filter((m) => existingMatches.findIndex((e) => e.gameId === m) === -1);
@@ -61,7 +61,7 @@ const updateMatchList = async function(summoner) {
 		const gameId = parseInt(match.gameId);
 		matchInsertBatch.push({
 			method: 'PUT',
-			uri: webServer.URLs.Matches.put(gameId),
+			uri: webServer.URLs.Match.put(gameId),
 			body: {
 				gameId: gameId,
 				seasonId: match.seasonId,

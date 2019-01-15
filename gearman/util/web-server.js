@@ -4,7 +4,10 @@ module.exports.URLs = {
 			return process.env.WEB_SERVER + '/champions/' + championId;
 		},
 	},
-	ChampionTags: {
+	ChampionTag: {
+		get: function() {
+			return process.env.WEB_SERVER + '/champion-tags';
+		},
 		getWhere: function(whereClause) {
 			return process.env.WEB_SERVER + '/champion-tags?filter={"where":'+whereClause+'}';
 		},
@@ -39,7 +42,7 @@ module.exports.URLs = {
 			return process.env.WEB_SERVER + '/match-lists/' + matchListId;
 		},
 	},
-	Matches: {
+	Match: {
 		getWhere: function(whereClause) {
 			return process.env.WEB_SERVER + '/matches?filter={"where":'+whereClause+'}';
 		},
@@ -120,6 +123,17 @@ module.exports.URLs = {
 	TeamBan: {
 		post: function() {
 			return process.env.WEB_SERVER + '/team-bans';
+		},
+	},
+	XrefChampionTag: {
+		get: function() {
+			return process.env.WEB_SERVER + '/xref-champion-tags';
+		},
+		getWhere: function(whereClause) {
+			return process.env.WEB_SERVER + '/xref-champion-tags?filter={"where":'+whereClause+'}';
+		},
+		post: function() {
+			return process.env.WEB_SERVER + '/xref-champion-tags';
 		},
 	},
 	XrefParticipantItem: {

@@ -161,29 +161,56 @@ const parseAndLoad = async (version) => {
 
 			return request({
 				method: 'GET',
-				uri: webServer.URLs.ChampionTags.getWhere('{"name": {"inq": ' + JSON.stringify(uniqueTags) + '}}'),
+				uri: webServer.URLs.ChampionTag.getWhere('{"name": {"inq": ' + JSON.stringify(uniqueTags) + '}}'),
 				json: true,
 			}).then((existingTags) => {
-				debug(uniqueTags);
-				debug(existingTags);
+				uniqueTags.filter((t) => existingTags.findIndex((e) => e.name === t) === -1)
+					.forEach((tag) => {
+						operationsBatch.push({
+							method: 'POST',
+							url: webServer.URLs.ChampionTag.post(),
+							body: {
+								name: tag,
+							},
+							json: true,
+						});
+					});
 
-				if (uniqueTags.length !== existingTags.length) {
-					uniqueTags.filter((t) => existingTags.findIndex((e) => e.name === t) === -1)
-						.forEach((tag) => {
-							operationsBatch.push({
-								method: 'POST',
-								url: webServer.URLs.ChampionTags.post(),
-								body: {
-									name: tag,
-								},
-								json: true,
+				operationsBatch.map(request);
+
+				return request({
+					method: 'GET',
+					url: webServer.URLs.ChampionTag.get(),
+					json: true,
+				}).then((dbTags) => {
+					return request({
+						method: 'GET',
+						url: webServer.URLs.XrefChampionTag.get(),
+						json: true,
+					}).then((existingXrefs) => {
+						const tagXrefBatch = [];
+						championTags.forEach((championTag) => {
+							championTag.tags.forEach((cTag) => {
+								const tagId = dbTags.filter((t) => t.name === cTag)[0].id;
+
+								// If a crossreference doesn't exist, create it
+								if (!existingXrefs.filter(
+									(x) => x.championId === championTag.championId && x.tagId === tagId)[0]) {
+									tagXrefBatch.push({
+										method: 'POST',
+										url: webServer.URLs.XrefChampionTag.post(),
+										body: {
+											championId: championTag.championId,
+											tagId: tagId,
+										},
+										json: true,
+									});
+								}
 							});
 						});
-				}
-
-				return operationsBatch.map(request);
-				// Need to next pull the tags and replace the names in ChamptionTags with the Ids generated
-				// I can then insert into the xref_champion_tag table
+						tagXrefBatch.map(request);
+					});
+				});
 			});
 		}));
 
