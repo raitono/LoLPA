@@ -147,6 +147,17 @@ module.exports.URLs = {
 			return process.env.WEB_SERVER + '/xref-champion-tags';
 		},
 	},
+	XrefItemTag: {
+		get: function() {
+			return process.env.WEB_SERVER + '/xref-item-tags';
+		},
+		getWhere: function(whereClause) {
+			return process.env.WEB_SERVER + '/xref-item-tags?filter={"where":'+whereClause+'}';
+		},
+		post: function() {
+			return process.env.WEB_SERVER + '/xref-item-tags';
+		},
+	},
 	XrefParticipantItem: {
 		post: function() {
 			return process.env.WEB_SERVER + '/xref-participant-items';
