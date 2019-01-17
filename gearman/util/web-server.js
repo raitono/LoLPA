@@ -34,6 +34,17 @@ module.exports.URLs = {
 			return process.env.WEB_SERVER + '/items/' + itemId;
 		},
 	},
+	ItemTag: {
+		get: function() {
+			return process.env.WEB_SERVER + '/item-tags';
+		},
+		getWhere: function(whereClause) {
+			return process.env.WEB_SERVER + '/item-tags?filter={"where":'+whereClause+'}';
+		},
+		post: function() {
+			return process.env.WEB_SERVER + '/item-tags';
+		},
+	},
 	MatchList: {
 		post: function() {
 			return process.env.WEB_SERVER + '/match-lists';
