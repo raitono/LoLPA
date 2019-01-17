@@ -18,3 +18,5 @@ export * from './xref-participant-item.controller';
 export * from './xref-participant-perk.controller';
 export * from './champion-tag.controller';
 export * from './xref-champion-tag.controller';
+export * from './item-tag.controller';
+export * from './xref-item-tag.controller';

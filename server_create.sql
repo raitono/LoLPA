@@ -198,19 +198,18 @@ INSERT INTO `champion` (`championId`, `name`, `title`, `partype`, `hp`, `hpperle
 CREATE TABLE IF NOT EXISTS `champion_tag` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `IX_champion_tags_name` (`name`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COMMENT='Not guaranteed to have the same ID if data is wiped. It depends on what order the engine decides to insert them in.';
 
 -- Dumping data for table riot.champion_tag: ~6 rows (approximately)
 /*!40000 ALTER TABLE `champion_tag` DISABLE KEYS */;
 INSERT INTO `champion_tag` (`id`, `name`) VALUES
-	(5, 'Assassin'),
 	(1, 'Fighter'),
 	(2, 'Mage'),
 	(3, 'Marksman'),
-	(6, 'Support'),
-	(4, 'Tank');
+	(4, 'Tank'),
+	(5, 'Assassin'),
+	(6, 'Support');
 /*!40000 ALTER TABLE `champion_tag` ENABLE KEYS */;
 
 -- Dumping structure for table riot.delta_type
@@ -569,6 +568,17 @@ INSERT INTO `item` (`itemId`, `name`, `goldSellsFor`, `goldTotal`, `goldBase`, `
 	(4402, 'Innervating Locket', 1960, 2800, 600, b'1'),
 	(4403, 'Stat-Stick of Stoicism', 5136, 7337, 687, b'1');
 /*!40000 ALTER TABLE `item` ENABLE KEYS */;
+
+-- Dumping structure for table riot.item_tag
+CREATE TABLE IF NOT EXISTS `item_tag` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Not guaranteed to have the same ID if data is wiped. It depends on what order the engine decides to insert them in.';
+
+-- Dumping data for table riot.item_tag: ~0 rows (approximately)
+/*!40000 ALTER TABLE `item_tag` DISABLE KEYS */;
+/*!40000 ALTER TABLE `item_tag` ENABLE KEYS */;
 
 -- Dumping structure for table riot.match
 CREATE TABLE IF NOT EXISTS `match` (
@@ -1219,6 +1229,22 @@ INSERT INTO `xref_champion_tag` (`id`, `championId`, `tagId`) VALUES
 	(156, 555, 5),
 	(157, 555, 6);
 /*!40000 ALTER TABLE `xref_champion_tag` ENABLE KEYS */;
+
+-- Dumping structure for table riot.xref_item_tag
+CREATE TABLE IF NOT EXISTS `xref_item_tag` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `itemId` int(11) NOT NULL,
+  `tagId` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_xref_item_tag_item` (`itemId`),
+  KEY `FK_xref_item_tag_tag` (`tagId`),
+  CONSTRAINT `FK_xref_item_tag_item` FOREIGN KEY (`itemId`) REFERENCES `item` (`itemId`),
+  CONSTRAINT `FK_xref_item_tag_tag` FOREIGN KEY (`tagId`) REFERENCES `item_tag` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Dumping data for table riot.xref_item_tag: ~0 rows (approximately)
+/*!40000 ALTER TABLE `xref_item_tag` DISABLE KEYS */;
+/*!40000 ALTER TABLE `xref_item_tag` ENABLE KEYS */;
 
 -- Dumping structure for table riot.xref_participant_item
 CREATE TABLE IF NOT EXISTS `xref_participant_item` (

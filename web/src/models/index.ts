@@ -17,3 +17,5 @@ export * from './xref-participant-item.model';
 export * from './xref-participant-perk.model';
 export * from './champion-tag.model';
 export * from './xref-champion-tag.model';
+export * from './item-tag.model';
+export * from './xref-item-tag.model';
