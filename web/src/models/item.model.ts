@@ -38,6 +38,27 @@ export class Item extends Entity {
   })
   purchasable: boolean;
 
+  @property({
+    type: 'string',
+  })
+  description: string;
+
+  @property({
+    type: 'string',
+  })
+  colloq: string;
+
+  @property({
+    type: 'string',
+  })
+  plaintext: string;
+
+  @property({
+    type: 'number',
+    default: 1,
+  })
+  depth: number;
+
   constructor(data?: Partial<Item>) {
     super(data);
   }

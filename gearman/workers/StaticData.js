@@ -289,6 +289,10 @@ const parseAndLoad = async (version) => {
 						goldTotal: data.data[key].gold.total,
 						goldBase: data.data[key].gold.base,
 						purchasable: data.data[key].gold.purchasable,
+						description: data.data[key].description,
+						colloq: data.data[key].colloq,
+						plaintext: data.data[key].plaintext,
+						depth: data.data[key].depth,
 					},
 					json: true,
 				});
@@ -350,7 +354,7 @@ const parseAndLoad = async (version) => {
 									});
 								}
 							});
-							debug(tagXrefBatch);
+
 							tagXrefBatch.map(request);
 						});
 					});
