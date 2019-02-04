@@ -625,6 +625,32 @@ INSERT INTO `item_tag` (`id`, `name`) VALUES
 	(30, 'Trinket');
 /*!40000 ALTER TABLE `item_tag` ENABLE KEYS */;
 
+-- Dumping structure for table riot.map
+CREATE TABLE IF NOT EXISTS `map` (
+  `mapId` int(11) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `notes` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Dumping data for table riot.map: ~14 rows (approximately)
+/*!40000 ALTER TABLE `map` DISABLE KEYS */;
+INSERT INTO `map` (`mapId`, `name`, `notes`) VALUES
+	(1, 'Summoner\'s Rift', 'Original Summer variant'),
+	(2, 'Summoner\'s Rift', 'Original Autumn variant'),
+	(3, 'The Proving Grounds', 'Tutorial map'),
+	(4, 'Twisted Treeline', 'Original version'),
+	(8, 'The Crystal Scar', 'Dominion map'),
+	(10, 'Twisted Treeline', 'Current version'),
+	(11, 'Summoner\'s Rift', 'Current version'),
+	(12, 'Howling Abyss', 'ARAM map'),
+	(14, 'Butcher\'s Bidge', 'ARAM map'),
+	(16, 'Cosmic Ruins', 'Dark Star: Singularity map'),
+	(18, 'Valoran City Park', 'Star Guardian Invasion map'),
+	(19, 'Substructure 43', 'PROJECT: Hunters map'),
+	(20, 'Crash Site', 'Odyssey: Extraction map'),
+	(21, 'Nexus Blitz', 'Nexus Blitz map');
+/*!40000 ALTER TABLE `map` ENABLE KEYS */;
+
 -- Dumping structure for table riot.match
 CREATE TABLE IF NOT EXISTS `match` (
   `gameId` int(11) unsigned NOT NULL COMMENT 'Given by Riot API',
@@ -885,6 +911,65 @@ INSERT INTO `perk_style` (`styleId`, `name`) VALUES
 	('8300', 'Inspiration'),
 	('8400', 'Resolve');
 /*!40000 ALTER TABLE `perk_style` ENABLE KEYS */;
+
+-- Dumping structure for table riot.queue
+CREATE TABLE IF NOT EXISTS `queue` (
+  `queueId` int(11) NOT NULL,
+  `mapId` int(11) DEFAULT NULL,
+  `map` varchar(50) NOT NULL,
+  `description` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Dumping data for table riot.queue: ~46 rows (approximately)
+/*!40000 ALTER TABLE `queue` DISABLE KEYS */;
+INSERT INTO `queue` (`queueId`, `mapId`, `map`, `description`) VALUES
+	(0, NULL, 'Custom games', NULL),
+	(72, 12, 'Howling Abyss', '1v1 Snowdown Showdown games'),
+	(73, 12, 'Howling Abyss', '2v2 Snowdown Showdown games'),
+	(75, 11, 'Summoner\'s Rift', '6v6 Hexakill games'),
+	(76, 11, 'Summoner\'s Rift', 'Ultra Rapid Fire games'),
+	(78, 12, 'Howling Abyss', 'One For All: Mirror Mode games'),
+	(83, 11, 'Summoner\'s Rift', 'Co-op vs AI Ultra Rapid Fire games'),
+	(98, 4, 'Twisted Treeline', '6v6 Hexakill games'),
+	(100, 14, 'Butcher\'s Bridge', '5v5 ARAM games'),
+	(310, 11, 'Summoner\'s Rift', 'Nemesis games'),
+	(313, 11, 'Summoner\'s Rift', 'Black Market Brawlers games'),
+	(317, 8, 'Crystal Scar', 'Definitely Not Dominion games'),
+	(325, 11, 'Summoner\'s Rift', 'All Random games'),
+	(400, 11, 'Summoner\'s Rift', '5v5 Draft Pick games'),
+	(420, 11, 'Summoner\'s Rift', '5v5 Ranked Solo games'),
+	(430, 11, 'Summoner\'s Rift', '5v5 Blind Pick games'),
+	(440, 11, 'Summoner\'s Rift', '5v5 Ranked Flex games'),
+	(450, 12, 'Howling Abyss', '5v5 ARAM games'),
+	(460, 4, 'Twisted Treeline', '3v3 Blind Pick games'),
+	(470, 4, 'Twisted Treeline', '3v3 Ranked Flex games'),
+	(600, 11, 'Summoner\'s Rift', 'Blood Hunt Assassin games'),
+	(610, 16, 'Cosmic Ruins', 'Dark Star: Singularity games'),
+	(700, 11, 'Summoner\'s Rift', 'Clash games'),
+	(800, 4, 'Twisted Treeline', 'Co-op vs. AI Intermediate Bot games'),
+	(810, 4, 'Twisted Treeline', 'Co-op vs. AI Intro Bot games'),
+	(820, 4, 'Twisted Treeline', 'Co-op vs. AI Beginner Bot games'),
+	(830, 11, 'Summoner\'s Rift', 'Co-op vs. AI Intro Bot games'),
+	(840, 11, 'Summoner\'s Rift', 'Co-op vs. AI Beginner Bot games'),
+	(850, 11, 'Summoner\'s Rift', 'Co-op vs. AI Intermediate Bot games'),
+	(900, 11, 'Summoner\'s Rift', 'ARURF games'),
+	(910, 8, 'Crystal Scar', 'Ascension games'),
+	(920, 12, 'Howling Abyss', 'Legend of the Poro King games'),
+	(940, 11, 'Summoner\'s Rift', 'Nexus Siege games'),
+	(950, 11, 'Summoner\'s Rift', 'Doom Bots Voting games'),
+	(960, 11, 'Summoner\'s Rift', 'Doom Bots Standard games'),
+	(980, 18, 'Valoran City Park', 'Star Guardian Invasion: Normal games'),
+	(990, 18, 'Valoran City Park', 'Star Guardian Invasion: Onslaught games'),
+	(1000, 19, 'Overcharge', 'PROJECT: Hunters games'),
+	(1010, 11, 'Summoner\'s Rift', 'Snow ARURF games'),
+	(1020, 11, 'Summoner\'s Rift', 'One for All games'),
+	(1030, 20, 'Crash Site', 'Odyssey Extraction: Intro games'),
+	(1040, 20, 'Crash Site', 'Odyssey Extraction: Cadet games'),
+	(1050, 20, 'Crash Site', 'Odyssey Extraction: Crewmember games'),
+	(1060, 20, 'Crash Site', 'Odyssey Extraction: Captain games'),
+	(1070, 20, 'Crash Site', 'Odyssey Extraction: Onslaught games'),
+	(1200, 21, 'Nexus Blitz', 'Nexus Blitz games');
+/*!40000 ALTER TABLE `queue` ENABLE KEYS */;
 
 -- Dumping structure for table riot.season
 CREATE TABLE IF NOT EXISTS `season` (
