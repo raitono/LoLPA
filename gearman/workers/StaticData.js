@@ -19,7 +19,7 @@ fs.readFileAsync = util.promisify(fs.readFile);
 const updateStaticData = async function() {
 	// Find latest version number
 	const versions = await Kayn.DDragon.Version.list();
-	latestVersion = versions[0];
+	latestVersion = '9.1.1'; // versions[0];
 	debug('Latest version: ' + latestVersion);
 
 	// Download and extract tarball to temp directory
@@ -293,6 +293,16 @@ const parseAndLoad = async (version) => {
 						colloq: data.data[key].colloq,
 						plaintext: data.data[key].plaintext,
 						depth: data.data[key].depth,
+						from: JSON.stringify(data.data[key].from),
+						into: JSON.stringify(data.data[key].into),
+						hideFromAll: data.data[key].hideFromAll,
+						requiredAlly: data.data[key].requiredAlly,
+						requiredChampion: data.data[key].requiredChampion,
+						specialRecipe: data.data[key].specialRecipe,
+						stacks: data.data[key].stacks,
+						inStore: data.data[key].inStore,
+						consumed: data.data[key].consumed,
+						consumeOnFull: data.data[key].consumeOnFull,
 					},
 					json: true,
 				});

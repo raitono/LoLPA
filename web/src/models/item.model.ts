@@ -40,24 +40,87 @@ export class Item extends Entity {
 
   @property({
     type: 'string',
+    default: null,
   })
-  description: string;
+  description?: string;
 
   @property({
     type: 'string',
+    default: null,
   })
-  colloq: string;
+  colloq?: string;
 
   @property({
     type: 'string',
+    default: null,
   })
-  plaintext: string;
+  plaintext?: string;
 
   @property({
     type: 'number',
     default: 1,
   })
   depth: number;
+
+  @property({
+    type: 'string',
+    default: null,
+  })
+  from?: string;
+
+  @property({
+    type: 'string',
+    default: null,
+  })
+  into?: string;
+
+  @property({
+    type: 'boolean',
+    default: null,
+  })
+  hideFromAll?: boolean;
+
+  @property({
+    type: 'string',
+    default: null,
+  })
+  requiredAlly?: string;
+
+  @property({
+    type: 'string',
+    default: null,
+  })
+  requiredChampion?: string;
+
+  @property({
+    type: 'number',
+    default: null,
+  })
+  specialRecipe?: number;
+
+  @property({
+    type: 'number',
+    default: null,
+  })
+  stacks?: number;
+
+  @property({
+    type: 'boolean',
+    default: null,
+  })
+  inStore?: boolean;
+
+  @property({
+    type: 'boolean',
+    default: null,
+  })
+  consumed?: boolean;
+
+  @property({
+    type: 'boolean',
+    default: null,
+  })
+  consumeOnFull?: boolean;
 
   constructor(data?: Partial<Item>) {
     super(data);
