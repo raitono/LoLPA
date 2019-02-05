@@ -261,6 +261,8 @@ const parseAndLoad = async (version) => {
 			const itemMaps = [];
 			const allTags = [];
 			const itemMapXrefBatch = [];
+			const itemStats = [];
+			const itemStatBatch = [];
 			data = JSON.parse(data);
 
 			// Default item
@@ -316,9 +318,25 @@ const parseAndLoad = async (version) => {
 				Object.keys(data.data[key].maps).forEach((m) => {
 					itemMaps.push({'itemId': itemId, 'mapId': Number(m)});
 				});
+
+				Object.keys(data.data[key].stats).forEach((type) => {
+					// itemStats.push({'itemId': itemId, 'stat': type, 'value': data.data[key].stats[type]});
+					itemStatBatch.push({
+						method: 'PUT',
+						uri: webServer.URLs.ItemStat.put(itemId, type),
+						body: {
+							itemId: itemId,
+							type: type,
+							value: data.data[key].stats[type],
+						},
+						json: true,
+					});
+				});
 			});
 			itemBatch.map(request);
 			debug('Items added');
+			itemStatBatch.map(request);
+			debug('Item Stats added');
 
 			const uniqueTags = [...new Set(allTags)];
 

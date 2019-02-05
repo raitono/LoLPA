@@ -34,6 +34,11 @@ module.exports.URLs = {
 			return process.env.WEB_SERVER + '/items/' + itemId;
 		},
 	},
+	ItemStat: {
+		put: (itemId, type) => {
+			return process.env.WEB_SERVER + '/item-stats/' + itemId + '/' + type;
+		},
+	},
 	ItemTag: {
 		get: () => {
 			return process.env.WEB_SERVER + '/item-tags';
