@@ -1,176 +1,184 @@
 module.exports.URLs = {
 	Champion: {
-		put: function(championId) {
+		put: (championId) => {
 			return process.env.WEB_SERVER + '/champions/' + championId;
 		},
 	},
 	ChampionTag: {
-		get: function() {
+		get: () => {
 			return process.env.WEB_SERVER + '/champion-tags';
 		},
-		getWhere: function(whereClause) {
+		getWhere: (whereClause) => {
 			return process.env.WEB_SERVER + '/champion-tags?filter={"where":'+whereClause+'}';
 		},
-		post: function() {
+		post: () => {
 			return process.env.WEB_SERVER + '/champion-tags';
 		},
 	},
 	DeltaType: {
-		getAll: function() {
+		getAll: () => {
 			return process.env.WEB_SERVER + '/delta-types';
 		},
-		getWhere: function(whereClause) {
+		getWhere: (whereClause) => {
 			return process.env.WEB_SERVER + '/delta-types?filter={"where":'+whereClause+'}';
 		},
-		put: function(deltaTypeId) {
+		put: (deltaTypeId) => {
 			return process.env.WEB_SERVER + '/delta-types/' + deltaTypeId;
 		},
 	},
 	Item: {
-		post: function() {
+		post: () => {
 			return process.env.WEB_SERVER + '/items';
 		},
-		put: function(itemId) {
+		put: (itemId) => {
 			return process.env.WEB_SERVER + '/items/' + itemId;
 		},
 	},
 	ItemTag: {
-		get: function() {
+		get: () => {
 			return process.env.WEB_SERVER + '/item-tags';
 		},
-		getWhere: function(whereClause) {
+		getWhere: (whereClause) => {
 			return process.env.WEB_SERVER + '/item-tags?filter={"where":'+whereClause+'}';
 		},
-		post: function() {
+		post: () => {
 			return process.env.WEB_SERVER + '/item-tags';
 		},
 	},
 	MatchList: {
-		post: function() {
+		post: () => {
 			return process.env.WEB_SERVER + '/match-lists';
 		},
-		put: function(matchListId) {
+		put: (matchListId) => {
 			return process.env.WEB_SERVER + '/match-lists/' + matchListId;
 		},
 	},
 	Match: {
-		getWhere: function(whereClause) {
+		getWhere: (whereClause) => {
 			return process.env.WEB_SERVER + '/matches?filter={"where":'+whereClause+'}';
 		},
-		put: function(matchId) {
+		put: (matchId) => {
 			return process.env.WEB_SERVER + '/matches/' + matchId;
 		},
 	},
 	Participant: {
-		getWhere: function(whereClause) {
+		getWhere: (whereClause) => {
 			return process.env.WEB_SERVER + '/participants?filter={"where":'+whereClause+'}';
 		},
-		post: function() {
+		post: () => {
 			return process.env.WEB_SERVER + '/participants';
 		},
-		put: function(participantId) {
+		put: (participantId) => {
 			return process.env.WEB_SERVER + '/participants/' + participantId;
 		},
 	},
 	ParticipantStat: {
-		post: function() {
+		post: () => {
 			return process.env.WEB_SERVER + '/participant-stats';
 		},
-		put: function(statId) {
+		put: (statId) => {
 			return process.env.WEB_SERVER + '/participant-stats/' + statId;
 		},
 	},
 	ParticipantTimelineDelta: {
-		getWhere: function(whereClause) {
+		getWhere: (whereClause) => {
 			return process.env.WEB_SERVER + '/participant-timeline-deltas?filter={"where":'+whereClause+'}';
 		},
-		post: function() {
+		post: () => {
 			return process.env.WEB_SERVER + '/participant-timeline-deltas';
 		},
-		put: function(deltaId) {
+		put: (deltaId) => {
 			return process.env.WEB_SERVER + '/participant-timeline-deltas/' + deltaId;
 		},
 	},
 	Rune: {
-		put: function(perkId) {
+		put: (perkId) => {
 			return process.env.WEB_SERVER + '/perks/' + perkId;
 		},
-		put_style: function(perkStyleId) {
+		put_style: (perkStyleId) => {
 			return process.env.WEB_SERVER + '/perk-styles/' + perkStyleId;
 		},
 	},
 	Summoner: {
-		getWhere: function(whereClause) {
+		getWhere: (whereClause) => {
 			return process.env.WEB_SERVER + '/summoners?filter={"where":'+whereClause+'}';
 		},
-		getByName: function(name) {
+		getByName: (name) => {
 			return process.env.WEB_SERVER + '/summoners?filter={"where":{"name":"'+name+'"}}';
 		},
-		get: function(puuid) {
+		get: (puuid) => {
 			return process.env.WEB_SERVER + '/summoners/' + puuid;
 		},
-		post: function() {
+		post: () => {
 			return process.env.WEB_SERVER + '/summoners';
 		},
-		put: function(puuid) {
+		put: (puuid) => {
 			return process.env.WEB_SERVER + '/summoners/' + puuid;
 		},
 	},
 	SummonerSpell: {
-		put: function(spellId) {
+		put: (spellId) => {
 			return process.env.WEB_SERVER + '/spells/' + spellId;
 		},
 	},
 	Season: {
-		getWhere: function(whereClause) {
+		getWhere: (whereClause) => {
 			return process.env.WEB_SERVER + '/seasons?filter={"where":'+whereClause+'}';
 		},
 	},
 	TeamStat: {
-		post: function() {
+		post: () => {
 			return process.env.WEB_SERVER + '/team-stats';
 		},
 	},
 	TeamBan: {
-		post: function() {
+		post: () => {
 			return process.env.WEB_SERVER + '/team-bans';
 		},
 	},
 	XrefChampionTag: {
-		get: function() {
+		get: () => {
 			return process.env.WEB_SERVER + '/xref-champion-tags';
 		},
-		getWhere: function(whereClause) {
+		getWhere: (whereClause) => {
 			return process.env.WEB_SERVER + '/xref-champion-tags?filter={"where":'+whereClause+'}';
 		},
-		post: function() {
+		post: () => {
 			return process.env.WEB_SERVER + '/xref-champion-tags';
 		},
 	},
+	XrefItemMap: {
+		get: () => {
+			return process.env.WEB_SERVER + '/xref-item-maps';
+		},
+		post: () => {
+			return process.env.WEB_SERVER + '/xref-item-maps';
+		},
+	},
 	XrefItemTag: {
-		get: function() {
+		get: () => {
 			return process.env.WEB_SERVER + '/xref-item-tags';
 		},
-		getWhere: function(whereClause) {
+		getWhere: (whereClause) => {
 			return process.env.WEB_SERVER + '/xref-item-tags?filter={"where":'+whereClause+'}';
 		},
-		post: function() {
+		post: () => {
 			return process.env.WEB_SERVER + '/xref-item-tags';
 		},
 	},
 	XrefParticipantItem: {
-		post: function() {
+		post: () => {
 			return process.env.WEB_SERVER + '/xref-participant-items';
 		},
-		put: function(xrefId) {
+		put: (xrefId) => {
 			return process.env.WEB_SERVER + '/xref-participant-items/' + xrefId;
 		},
 	},
 	XrefParticipantPerk: {
-		post: function() {
+		post: () => {
 			return process.env.WEB_SERVER + '/xref-participant-perks';
 		},
-		put: function(xrefId) {
+		put: (xrefId) => {
 			return process.env.WEB_SERVER + '/xref-participant-perks/' + xrefId;
 		},
 	},

@@ -58,7 +58,6 @@ const updateStaticData = async function() {
 			});
 		});
 	});
-	parseAndLoad(latestVersion);
 };
 
 const parseAndLoad = async (version) => {
@@ -259,7 +258,9 @@ const parseAndLoad = async (version) => {
 		.then((data) => {
 			const itemBatch = [];
 			const itemTags = [];
+			const itemMaps = [];
 			const allTags = [];
+			const itemMapXrefBatch = [];
 			data = JSON.parse(data);
 
 			// Default item
@@ -311,61 +312,88 @@ const parseAndLoad = async (version) => {
 					itemTags.push({'itemId': itemId, 'tagName': t});
 					allTags.push(t);
 				});
+
+				Object.keys(data.data[key].maps).forEach((m) => {
+					itemMaps.push({'itemId': itemId, 'mapId': Number(m)});
+				});
 			});
 			itemBatch.map(request);
+			debug('Items added');
 
 			const uniqueTags = [...new Set(allTags)];
 
 			return request({
 				method: 'GET',
-				uri: webServer.URLs.ItemTag.getWhere('{"name": {"inq": ' + JSON.stringify(uniqueTags) + '}}'),
+				uri: webServer.URLs.XrefItemMap.get(),
 				json: true,
-			}).then((existingTags) => {
-				const tagBatch = [];
-				uniqueTags.filter((t) => existingTags.findIndex((e) => e.name === t) === -1)
-					.forEach((tag) => {
-						tagBatch.push({
+			}).then((existingItemMaps) => {
+				itemMaps.filter((m) => existingItemMaps.findIndex(
+					(e) => e.itemId === m.itemId && e.mapId === m.mapId) === -1)
+					.forEach((itemMap) => {
+						itemMapXrefBatch.push({
 							method: 'POST',
-							url: webServer.URLs.ItemTag.post(),
+							uri: webServer.URLs.XrefItemMap.post(),
 							body: {
-								name: tag,
+								itemId: itemMap.itemId,
+								mapId: itemMap.mapId,
 							},
 							json: true,
 						});
 					});
+				return request({
+					method: 'GET',
+					uri: webServer.URLs.ItemTag.getWhere('{"name": {"inq": ' + JSON.stringify(uniqueTags) + '}}'),
+					json: true,
+				}).then((existingTags) => {
+					const tagBatch = [];
+					uniqueTags.filter((t) => existingTags.findIndex((e) => e.name === t) === -1)
+						.forEach((tag) => {
+							tagBatch.push({
+								method: 'POST',
+								url: webServer.URLs.ItemTag.post(),
+								body: {
+									name: tag,
+								},
+								json: true,
+							});
+						});
 
-				return Promise.all(tagBatch.map(request)).then(() => {
-					return request({
-						method: 'GET',
-						url: webServer.URLs.ItemTag.get(),
-						json: true,
-					}).then((dbTags) => {
+					return Promise.all(tagBatch.map(request), itemMapXrefBatch.map(request)).then(() => {
+						debug('Item Tags added');
+						debug('Item Map Xrefs added');
 						return request({
 							method: 'GET',
-							url: webServer.URLs.XrefItemTag.get(),
+							url: webServer.URLs.ItemTag.get(),
 							json: true,
-						}).then((existingXrefs) => {
-							const tagXrefBatch = [];
+						}).then((dbTags) => {
+							return request({
+								method: 'GET',
+								url: webServer.URLs.XrefItemTag.get(),
+								json: true,
+							}).then((existingXrefs) => {
+								const tagXrefBatch = [];
 
-							itemTags.forEach((itemTag) => {
-								const tagId = dbTags.filter((t) => t.name === itemTag.tagName);
+								itemTags.forEach((itemTag) => {
+									const tagId = dbTags.filter((t) => t.name === itemTag.tagName);
 
-								// If a crossreference doesn't exist, create it
-								if (tagId[0] && !existingXrefs.filter(
-									(x) => x.itemId === itemTag.itemId && x.tagId === tagId[0].id)[0]) {
-									tagXrefBatch.push({
-										method: 'POST',
-										url: webServer.URLs.XrefItemTag.post(),
-										body: {
-											itemId: itemTag.itemId,
-											tagId: tagId[0].id,
-										},
-										json: true,
-									});
-								}
+									// If a crossreference doesn't exist, create it
+									if (tagId[0] && !existingXrefs.filter(
+										(x) => x.itemId === itemTag.itemId && x.tagId === tagId[0].id)[0]) {
+										tagXrefBatch.push({
+											method: 'POST',
+											url: webServer.URLs.XrefItemTag.post(),
+											body: {
+												itemId: itemTag.itemId,
+												tagId: tagId[0].id,
+											},
+											json: true,
+										});
+									}
+								});
+
+								tagXrefBatch.map(request);
+								debug('Item Tag Xrefs added');
 							});
-
-							tagXrefBatch.map(request);
 						});
 					});
 				});

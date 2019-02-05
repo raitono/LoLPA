@@ -19,3 +19,4 @@ export * from './champion-tag.model';
 export * from './xref-champion-tag.model';
 export * from './item-tag.model';
 export * from './xref-item-tag.model';
+export * from './xref-item-map.model';

@@ -19,3 +19,4 @@ export * from './champion-tag.repository';
 export * from './xref-champion-tag.repository';
 export * from './item-tag.repository';
 export * from './xref-item-tag.repository';
+export * from './xref-item-map.repository';
