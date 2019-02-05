@@ -38,6 +38,12 @@ module.exports.URLs = {
 		put: (itemId, type) => {
 			return process.env.WEB_SERVER + '/item-stats/' + itemId + '/' + type;
 		},
+		resetExists: () => {
+			return process.env.WEB_SERVER + '/item-stats/resetExists';
+		},
+		deleteMissing: () => {
+			return process.env.WEB_SERVER + '/item-stats/deleteMissing';
+		},
 	},
 	ItemTag: {
 		get: () => {

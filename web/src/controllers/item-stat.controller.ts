@@ -4,7 +4,6 @@ import {
   Filter,
   repository,
   Where,
-  FilterBuilder,
 } from '@loopback/repository';
 import {
   post,
@@ -132,6 +131,28 @@ export class ItemStatController {
         throw error;
       }
     }
+  }
+
+  @post('/item-stats/resetExists', {
+    responses: {
+      '200': {
+        description: 'ItemStat reset Exists success',
+      },
+    },
+  })
+  async resetExists(): Promise<void> {
+    await this.itemStatRepository.dataSource.execute('UPDATE item_stat SET `exists` = 0');
+  }
+
+  @post('/item-stats/deleteMissing', {
+    responses: {
+      '200': {
+        description: 'ItemStat delete missing success',
+      },
+    },
+  })
+  async deleteMissing(): Promise<void> {
+    await this.itemStatRepository.dataSource.execute('DELETE FROM item_stat WHERE `exists` = 0');
   }
 
   @put('/item-stats/{itemId}/{type}', {
