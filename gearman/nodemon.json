@@ -1,6 +1,0 @@
-{
-    "ignore": ["gearman/temp/"],
-    "env": {
-        "DEBUG_DEPTH": 3
-    }
-}

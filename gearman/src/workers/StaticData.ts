@@ -1,14 +1,14 @@
 // 3rd party imports
-const Kayn	= require('../kayn');
+import Kayn = require("../kayn");
 
 // my imports
-const RunesReforged = require("./parsers/RunesReforged");
+import RunesReforged = require("./parsers/RunesReforged");
 
 // globals
 // tslint:disable-next-line:no-var-requires
 const debug: any = require("debug")("lolpa-gearman:StaticData");
-let latestVersion = "";
-const staticTarballURL = "https://ddragon.leagueoflegends.com/cdn/dragontail-{version}.tgz";
+let latestVersion: string = "";
+const staticTarballURL: string = "https://ddragon.leagueoflegends.com/cdn/dragontail-{version}.tgz";
 
 /**
  * Retrieve the latest static data tarball from RIOT and upsert it into the database.
