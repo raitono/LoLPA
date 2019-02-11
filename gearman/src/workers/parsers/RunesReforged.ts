@@ -1,26 +1,20 @@
 // 3rd party imports
-import * as fs from "fs";
 import requestPromiseNative = require("request-promise-native");
-import * as util from "util";
 
 // my imports
+import { readFileAsync, request } from "../../util/common";
 import * as WebServer from "../../util/web-server";
 
 // globals
 // tslint:disable-next-line:no-var-requires
 const debug: any = require("debug")("lolpa-gearman:RunesReforged");
-const readFileAsync = util.promisify(fs.readFile);
 const serverURLs = new WebServer.URLs();
-const request = (value: requestPromiseNative.OptionsWithUri) => {
-    requestPromiseNative(value);
-};
 
 /**
  * Reads a JSON file from the filesystem and import its data into the database.
  * @param {String} filePath Path to the JSON file containing Runes Reforged data
  */
 export async function parse(filePath: string): Promise<void> {
-    const batches = [];
     const runeStyleBatch: requestPromiseNative.OptionsWithUri[] = [];
     const runeBatch: requestPromiseNative.OptionsWithUri[] = [];
     const runeDataFile: Buffer = await readFileAsync(filePath);

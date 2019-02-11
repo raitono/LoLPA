@@ -2,6 +2,7 @@
 import Kayn = require("../kayn");
 
 // my imports
+import Champion = require("./parsers/Champion");
 import RunesReforged = require("./parsers/RunesReforged");
 
 // globals
@@ -30,10 +31,11 @@ const updateStaticData = async () => {
 
 const parseAndLoad = async (version: string) => {
     const tempFilePath = "./temp/" + version + "/data/en_US/";
-    const batches = [];
-    const championTags = [];
 
-    return RunesReforged.parse(tempFilePath + "runesReforged.json");
+    return Promise.all([
+        Champion.parse(tempFilePath + "champion.json"),
+        // RunesReforged.parse(tempFilePath + "runesReforged.json"),
+    ]);
 };
 
 export function registerWorkers(worker) {
