@@ -1,6 +1,6 @@
 export class URLs {
     public Champion = {
-        put: (championId: string) => {
+        put: (championId: number) => {
             return process.env.WEB_SERVER + "/champions/" + championId;
         },
     };
