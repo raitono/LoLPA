@@ -20,6 +20,11 @@ export class XrefItemMap extends Entity {
   })
   mapId: number;
 
+  @property({
+    type: 'boolean',
+    default: false,
+  })
+  enabled: boolean;
 
   constructor(data?: Partial<XrefItemMap>) {
     super(data);
