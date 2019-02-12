@@ -3,6 +3,7 @@ import Kayn = require("../kayn");
 
 // my imports
 import Champion = require("./parsers/Champion");
+import Item = require("./parsers/Item");
 import RunesReforged = require("./parsers/RunesReforged");
 
 // globals
@@ -33,7 +34,8 @@ const parseAndLoad = async (version: string) => {
     const tempFilePath = "./temp/" + version + "/data/en_US/";
 
     return Promise.all([
-        Champion.parse(tempFilePath + "champion.json"),
+        // Champion.parse(tempFilePath + "champion.json"),
+        Item.parse(tempFilePath + "item.json"),
         // RunesReforged.parse(tempFilePath + "runesReforged.json"),
     ]);
 };

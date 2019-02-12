@@ -30,7 +30,7 @@ export class URLs {
         post: () => {
             return process.env.WEB_SERVER + "/items";
         },
-        put: (itemId: string) => {
+        put: (itemId: number) => {
             return process.env.WEB_SERVER + "/items/" + itemId;
         },
     };
@@ -38,7 +38,7 @@ export class URLs {
         deleteMissing: () => {
             return process.env.WEB_SERVER + "/item-stats/deleteMissing";
         },
-        put: (itemId: string, type: string) => {
+        put: (itemId: number, type: string) => {
             return process.env.WEB_SERVER + "/item-stats/" + itemId + "/" + type;
         },
         resetExists: () => {
