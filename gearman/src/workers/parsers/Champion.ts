@@ -19,7 +19,7 @@ export async function parse(filePath: string): Promise<void> {
     const champDataFile: Buffer = await readFileAsync(filePath);
     const champDataWrapper: IChampionFileWrapper = JSON.parse(champDataFile.toString());
     const champData: IChampion[] = Object.keys(champDataWrapper.data).map(
-        (key) => champDataWrapper.data[key] as IChampion);
+        (index) => champDataWrapper.data[index] as IChampion);
     const championBatch: requestPromiseNative.OptionsWithUri[] = [];
     const championTagBatch: requestPromiseNative.OptionsWithUri[] = [];
     const championTags: Array<{championId: number; tags: string[]}> = [];
@@ -103,6 +103,11 @@ export async function parse(filePath: string): Promise<void> {
         });
     });
 
+    // We don't care about the return from this, so just start it and move on
+    Promise.all(championBatch.map(request)).then(() => {
+        debug("Champions done");
+    });
+
     // Use the Set type to create a unique array of tags
     const uniqueTags = [...new Set(tags)];
 
@@ -125,21 +130,25 @@ export async function parse(filePath: string): Promise<void> {
             });
         });
 
-    await Promise.all([championBatch.map(request), championTagBatch.map(request)]);
-    debug("Champions done");
+    // We do need the return from this one before we can move on
+    await championTagBatch.map(request);
     debug("Champion tags done");
 
-    const dbTags = await request({
-        json: true,
-        method: "GET",
-        uri: serverURLs.ChampionTag.get(),
-    });
-
-    const existingXrefs = await request({
-        json: true,
-        method: "GET",
-        uri: serverURLs.XrefChampionTag.get(),
-    });
+    // Efficiency!
+    const tx = await Promise.all([
+        request({
+            json: true,
+            method: "GET",
+            uri: serverURLs.ChampionTag.get(),
+        }),
+        request({
+            json: true,
+            method: "GET",
+            uri: serverURLs.XrefChampionTag.get(),
+        }),
+    ]);
+    const dbTags = tx[0];
+    const existingXrefs = tx[1];
 
     const tagXrefBatch = [];
     championTags.forEach((championTag) => {
@@ -160,6 +169,9 @@ export async function parse(filePath: string): Promise<void> {
             }
         });
     });
-    await tagXrefBatch.map(request);
-    debug("Champion Tag Xref done");
+
+    // Don't need to await, just start it and let this bit exit since it is the last thing.
+    Promise.all(tagXrefBatch.map(request)).then(() => {
+        debug("Champion Tag Xref done");
+    });
 }
