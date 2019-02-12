@@ -5,6 +5,6 @@
         "tslint-eslint-rules"
     ],
     "jsRules": {},
-    "rules": {},
+    "rules": { "radix":false },
     "rulesDirectory": []
 }
