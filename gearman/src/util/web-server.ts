@@ -167,6 +167,9 @@ export class URLs {
         },
     };
     public XrefItemTag = {
+        delete: (xrefId: number) => {
+            return process.env.WEB_SERVER + "/xref-item-tags/" + xrefId;
+        },
         get: () => {
             return process.env.WEB_SERVER + "/xref-item-tags";
         },

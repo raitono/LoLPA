@@ -28,9 +28,10 @@ export async function parse(filePath: string): Promise<void> {
     const itemStatBatch: requestPromiseNative.OptionsWithUri[] = [];
     const itemMapXrefBatch: requestPromiseNative.OptionsWithUri[] = [];
     const itemTagXrefBatch: requestPromiseNative.OptionsWithUri[] = [];
+    const itemTagXrefRemovalBatch: requestPromiseNative.OptionsWithUri[] = [];
     const itemTags: Array<{ itemId: number; tagName: string; }> = [];
-    const allTags: string[] = [];
-    const itemMaps: Array<{ itemId: number; mapId: number; enabled: boolean; }> = [];
+    const uniqueTags: Set<string> = new Set();
+    const itemMaps: Set<{ itemId: number; mapId: number; enabled: boolean; }> = new Set();
 
     // Default item
     itemBatch.push({
@@ -78,11 +79,11 @@ export async function parse(filePath: string): Promise<void> {
 
         item.tags.forEach((t) => {
             itemTags.push({itemId: item.id, tagName: t});
-            allTags.push(t);
+            uniqueTags.add(t);
         });
 
         Object.keys(item.maps).forEach((m) => {
-            itemMaps.push({itemId: item.id, mapId: Number(m), enabled: item.maps[m]});
+            itemMaps.add({itemId: item.id, mapId: Number(m), enabled: item.maps[m]});
         });
 
         Object.keys(item.stats).forEach((type) => {
@@ -110,7 +111,7 @@ export async function parse(filePath: string): Promise<void> {
         uri: serverURLs.XrefItemMap.get(),
     });
 
-    itemMaps.filter((m) => existingItemMaps.findIndex(
+    [...itemMaps].filter((m) => existingItemMaps.findIndex(
         (e) => e.itemId === m.itemId && e.mapId === m.mapId) === -1)
         .forEach((itemMap) => {
             itemMapXrefBatch.push({
@@ -125,14 +126,13 @@ export async function parse(filePath: string): Promise<void> {
             });
         });
 
-    const uniqueTags = [...new Set(allTags)];
     const existingTags = await request({
         json: true,
         method: "GET",
-        uri: serverURLs.ItemTag.getWhere("{\"name\": {\"inq\": " + JSON.stringify(uniqueTags) + "}}"),
+        uri: serverURLs.ItemTag.getWhere("{\"name\": {\"inq\": " + JSON.stringify([...uniqueTags]) + "}}"),
     });
 
-    uniqueTags.filter((t) => existingTags.findIndex((e) => e.name === t) === -1)
+    [...uniqueTags].filter((t) => existingTags.findIndex((e) => e.name === t) === -1)
         .forEach((tag) => {
             itemTagBatch.push({
                 body: {
@@ -160,19 +160,19 @@ export async function parse(filePath: string): Promise<void> {
             uri: serverURLs.XrefItemTag.get(),
         }),
     ]);
-    const dbTags = tx[0];
-    const existingXrefs = tx[1];
+    const dbTags: Array<{id: number, name: string}> = tx[0];
+    let existingXrefs: Array<{id: number, itemId: number, tagId: number}> = tx[1];
 
     itemTags.forEach((itemTag) => {
-        const tagId = dbTags.filter((t) => t.name === itemTag.tagName);
+        const tag = dbTags.filter((t) => t.name === itemTag.tagName)[0];
 
         // If a crossreference doesn't exist, create it
-        if (tagId[0] && !existingXrefs.filter(
-            (x) => x.itemId === itemTag.itemId && x.tagId === tagId[0].id)[0]) {
+        if (tag && existingXrefs.findIndex(
+            (x) => x.itemId === itemTag.itemId && x.tagId === tag.id) === -1) {
             itemTagXrefBatch.push({
                 body: {
                     itemId: itemTag.itemId,
-                    tagId: tagId[0].id,
+                    tagId: tag.id,
                 },
                 json: true,
                 method: "POST",
@@ -181,15 +181,35 @@ export async function parse(filePath: string): Promise<void> {
         }
     });
 
+    await itemTagXrefBatch.map(request);
+    debug("Item Tag Xrefs added");
+    existingXrefs = await request({
+        json: true,
+        method: "GET",
+        uri: serverURLs.XrefItemTag.get(),
+    });
+
+    // Remove tags that no longer exist
+    existingXrefs.filter((x) =>
+        itemTags.findIndex((i) => i.itemId === x.itemId
+            && i.tagName === dbTags.filter((t) => t.id === x.tagId)[0].name) === -1,
+    ).forEach((x) => {
+        itemTagXrefRemovalBatch.push({
+            json: true,
+            method: "DELETE",
+            uri: serverURLs.XrefItemTag.delete(x.id),
+        });
+    });
+
     // Batch all the ones that don't need any particular order last so that they can all run together
     await request({
         json: true,
         method: "POST",
         uri: serverURLs.ItemStat.resetExists(),
     });
-    await Promise.all(itemStatBatch.concat(itemMapXrefBatch).concat(itemTagXrefBatch).map(request));
+    await Promise.all(itemStatBatch.concat(itemMapXrefBatch).concat(itemTagXrefRemovalBatch).map(request));
     debug("Item Map Xrefs added");
-    debug("Item Tag Xrefs added");
+    debug("Item Tag Xrefs removed");
     Promise.all([request({
             json: true,
             method: "POST",
