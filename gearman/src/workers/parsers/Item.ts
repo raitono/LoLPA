@@ -26,6 +26,7 @@ export async function parse(filePath: string): Promise<void> {
     const itemBatch: requestPromiseNative.OptionsWithUri[] = [];
     const itemTagBatch: requestPromiseNative.OptionsWithUri[] = [];
     const itemStatBatch: requestPromiseNative.OptionsWithUri[] = [];
+    const itemStatRemovalBatch: requestPromiseNative.OptionsWithUri[] = [];
     const itemMapXrefBatch: requestPromiseNative.OptionsWithUri[] = [];
     const itemTagXrefBatch: requestPromiseNative.OptionsWithUri[] = [];
     const itemTagXrefRemovalBatch: requestPromiseNative.OptionsWithUri[] = [];
@@ -203,18 +204,8 @@ export async function parse(filePath: string): Promise<void> {
     });
 
     // Batch all the ones that don't need any particular order last so that they can all run together
-    await request({
-        json: true,
-        method: "POST",
-        uri: serverURLs.ItemStat.resetExists(),
-    });
     await Promise.all(itemStatBatch.concat(itemMapXrefBatch).concat(itemTagXrefRemovalBatch).map(request));
     debug("Item Map Xrefs added");
     debug("Item Tag Xrefs removed");
-    Promise.all([request({
-            json: true,
-            method: "POST",
-            uri: serverURLs.ItemStat.deleteMissing(),
-        }),
-    ]).then(() => { debug("Item Stats added"); });
+    Promise.all(itemStatRemovalBatch.map(request)).then(() => debug("Item Stats removed"));
 }

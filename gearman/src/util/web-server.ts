@@ -35,14 +35,11 @@ export class URLs {
         },
     };
     public ItemStat = {
-        deleteMissing: () => {
-            return process.env.WEB_SERVER + "/item-stats/deleteMissing";
+        delete: (itemStatId: number) => {
+            return process.env.WEB_SERVER + "/item-stats/" + itemStatId;
         },
         put: (itemId: number, type: string) => {
             return process.env.WEB_SERVER + "/item-stats/" + itemId + "/" + type;
-        },
-        resetExists: () => {
-            return process.env.WEB_SERVER + "/item-stats/resetExists";
         },
     };
     public ItemTag = {
