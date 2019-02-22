@@ -13,7 +13,7 @@ export interface IChampion {
     title: string;
     blurb: string;
     info: IChampionInfo;
-    image: IChampionImage;
+    image: IImage;
     tags: string[];
     partype: string;
     stats: IChampionStats;
@@ -24,7 +24,7 @@ export interface IChampionInfo {
     magic: number;
     difficulty: number;
 }
-export interface IChampionImage {
+export interface IImage {
     full: string;
     sprite: string;
     group: string;
@@ -169,4 +169,60 @@ export interface IItemStats {
     rFlatEnergyModPerLevel: number;
     PercentLifeStealMod: number;
     PercentSpellVampMod: number;
+}
+
+// Rune Interfaces
+export interface IRuneStyle {
+    id: number;
+    key: string;
+    icon: string;
+    name: string;
+    slots: IRuneSlot[];
+}
+export interface IRuneSlot {
+    runes: IRune[];
+}
+export interface IRune {
+    id: number;
+    key: string;
+    icon: string;
+    name: string;
+    shortDesc: string;
+    longDesc: string;
+}
+
+// Summoner Spell Interfaces
+export interface ISummonerSpellFileWrapper {
+    type: string;
+    version: string;
+    data: any;
+}
+export interface ISummonerSpell {
+    id: string;
+    name: string;
+    description: string;
+    tooltip: string;
+    maxrank: string;
+    cooldown: number[];
+    cooldownBurn: string;
+    cost: number[];
+    costBurn: string;
+    dataValues: any;
+    effect: number[][];
+    effectBurn: string[];
+    vars: ISpellVars[];
+    key: string;
+    summonerLevel: number;
+    modes: string[];
+    costType: string;
+    maxammo: string;
+    range: number[];
+    rangeBurn: string;
+    image: IImage;
+    resource: string;
+}
+export interface ISpellVars {
+    link: string;
+    coeff: number;
+    key: string;
 }

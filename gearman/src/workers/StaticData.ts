@@ -5,6 +5,7 @@ import Kayn = require("../kayn");
 import Champion = require("./parsers/Champion");
 import Item = require("./parsers/Item");
 import RunesReforged = require("./parsers/RunesReforged");
+import SummonerSpell = require("./parsers/SummonerSpell");
 
 // globals
 // tslint:disable-next-line:no-var-requires
@@ -34,9 +35,10 @@ const parseAndLoad = async (version: string) => {
     const tempFilePath = "./temp/" + version + "/data/en_US/";
 
     return Promise.all([
-        // Champion.parse(tempFilePath + "champion.json"),
+        Champion.parse(tempFilePath + "champion.json"),
         Item.parse(tempFilePath + "item.json"),
-        // RunesReforged.parse(tempFilePath + "runesReforged.json"),
+        RunesReforged.parse(tempFilePath + "runesReforged.json"),
+        SummonerSpell.parse(tempFilePath + "summoner.json"),
     ]);
 };
 

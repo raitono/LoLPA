@@ -3,6 +3,7 @@ import requestPromiseNative = require("request-promise-native");
 
 // my imports
 import { readFileAsync, request } from "../../util/common";
+import { IRuneStyle } from "../../util/interfaces";
 import * as WebServer from "../../util/web-server";
 
 // globals
@@ -53,25 +54,4 @@ export async function parse(filePath: string): Promise<void> {
 
     await runeBatch.map(request);
     debug("Runes added");
-}
-
-interface IRuneStyle {
-    id: number;
-    key: string;
-    icon: string;
-    name: string;
-    slots: IRuneSlot[];
-}
-
-interface IRuneSlot {
-    runes: IRune[];
-}
-
-interface IRune {
-    id: number;
-    key: string;
-    icon: string;
-    name: string;
-    shortDesc: string;
-    longDesc: string;
 }
