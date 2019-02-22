@@ -3,7 +3,7 @@ import requestPromiseNative = require("request-promise-native");
 
 // my imports
 import { readFileAsync, request } from "../../util/common";
-import { IItem, IItemFileWrapper } from "../../util/interfaces";
+import { IItem, IItemFileWrapper, IItemStats } from "../../util/interfaces";
 import * as WebServer from "../../util/web-server";
 
 // globals
@@ -24,15 +24,19 @@ export async function parse(filePath: string): Promise<void> {
             return itemDataWrapper.data[key] as IItem;
         });
     const itemBatch: requestPromiseNative.OptionsWithUri[] = [];
+    const itemRemovalBatch: requestPromiseNative.OptionsWithUri[] = [];
     const itemTagBatch: requestPromiseNative.OptionsWithUri[] = [];
     const itemStatBatch: requestPromiseNative.OptionsWithUri[] = [];
     const itemStatRemovalBatch: requestPromiseNative.OptionsWithUri[] = [];
     const itemMapXrefBatch: requestPromiseNative.OptionsWithUri[] = [];
+    const itemMapXrefRemovalBatch: requestPromiseNative.OptionsWithUri[] = [];
     const itemTagXrefBatch: requestPromiseNative.OptionsWithUri[] = [];
     const itemTagXrefRemovalBatch: requestPromiseNative.OptionsWithUri[] = [];
     const itemTags: Array<{ itemId: number; tagName: string; }> = [];
-    let uniqueTags: string[] = [];
+    const itemStats: Array<{itemId: number, type: string, value: number}> = [];
     const itemMaps: Array<{ itemId: number; mapId: number; enabled: boolean; }> = [];
+    const itemIds: number[] = [];
+    let uniqueTags: string[] = [];
 
     // Default item
     itemBatch.push({
@@ -50,6 +54,8 @@ export async function parse(filePath: string): Promise<void> {
     });
 
     itemData.forEach((item) => {
+        itemIds.push(item.id);
+
         itemBatch.push({
             body: {
                 colloq: item.colloq,
@@ -88,45 +94,25 @@ export async function parse(filePath: string): Promise<void> {
         });
 
         Object.keys(item.stats).forEach((type) => {
+            const stat = {
+                itemId: item.id,
+                type,
+                value: item.stats[type],
+            };
             itemStatBatch.push({
-                body: {
-                    exists: true,
-                    itemId: item.id,
-                    type,
-                    value: item.stats[type],
-                },
+                body: stat,
                 json: true,
                 method: "PUT",
                 uri: serverURLs.ItemStat.put(item.id, type),
             });
+            itemStats.push(stat);
         });
     });
-
-    uniqueTags = [...new Set(uniqueTags)];
 
     await Promise.all(itemBatch.map(request));
     debug("Items added");
 
-    const existingItemMaps = await request({
-        json: true,
-        method: "GET",
-        uri: serverURLs.XrefItemMap.get(),
-    });
-
-    itemMaps.filter((m) => existingItemMaps.findIndex(
-        (e) => e.itemId === m.itemId && e.mapId === m.mapId) === -1)
-        .forEach((itemMap) => {
-            itemMapXrefBatch.push({
-                body: {
-                    enabled: itemMap.enabled,
-                    itemId: itemMap.itemId,
-                    mapId: itemMap.mapId,
-                },
-                json: true,
-                method: "POST",
-                uri: serverURLs.XrefItemMap.post(),
-            });
-        });
+    uniqueTags = [...new Set(uniqueTags)];
 
     const existingTags = await request({
         json: true,
@@ -163,13 +149,13 @@ export async function parse(filePath: string): Promise<void> {
         }),
     ]);
     const dbTags: Array<{id: number, name: string}> = tx[0];
-    let existingXrefs: Array<{id: number, itemId: number, tagId: number}> = tx[1];
+    let existingTagXrefs: Array<{id: number, itemId: number, tagId: number}> = tx[1];
 
     itemTags.forEach((itemTag) => {
         const tag = dbTags.filter((t) => t.name === itemTag.tagName)[0];
 
         // If a crossreference doesn't exist, create it
-        if (tag && existingXrefs.findIndex(
+        if (tag && existingTagXrefs.findIndex(
             (x) => x.itemId === itemTag.itemId && x.tagId === tag.id) === -1) {
             itemTagXrefBatch.push({
                 body: {
@@ -183,16 +169,41 @@ export async function parse(filePath: string): Promise<void> {
         }
     });
 
-    await itemTagXrefBatch.map(request);
+    let existingItemMaps: Array<{id: number, itemId: number, mapId: number, enabled: boolean}> = await request({
+        json: true,
+        method: "GET",
+        uri: serverURLs.XrefItemMap.get(),
+    });
+
+    itemMaps.filter((m) => existingItemMaps.findIndex(
+        (e) => e.itemId === m.itemId && e.mapId === m.mapId) === -1)
+        .forEach((itemMap) => {
+            itemMapXrefBatch.push({
+                body: {
+                    enabled: itemMap.enabled,
+                    itemId: itemMap.itemId,
+                    mapId: itemMap.mapId,
+                },
+                json: true,
+                method: "POST",
+                uri: serverURLs.XrefItemMap.post(),
+            });
+        });
+
+    // Batch all the ones that don't need any particular order last so that they can all run together
+    await Promise.all(itemStatBatch.concat(itemMapXrefBatch).concat(itemTagXrefBatch).map(request));
+    debug("Item Stats added");
+    debug("Item Map Xrefs added");
     debug("Item Tag Xrefs added");
-    existingXrefs = await request({
+
+    existingTagXrefs = await request({
         json: true,
         method: "GET",
         uri: serverURLs.XrefItemTag.get(),
     });
 
-    // Remove tags that no longer exist
-    existingXrefs.filter((x) =>
+    // Remove entries that no longer exist
+    existingTagXrefs.filter((x) =>
         itemTags.findIndex((i) => i.itemId === x.itemId
             && i.tagName === dbTags.filter((t) => t.id === x.tagId)[0].name) === -1,
     ).forEach((x) => {
@@ -203,9 +214,62 @@ export async function parse(filePath: string): Promise<void> {
         });
     });
 
-    // Batch all the ones that don't need any particular order last so that they can all run together
-    await Promise.all(itemStatBatch.concat(itemMapXrefBatch).concat(itemTagXrefRemovalBatch).map(request));
-    debug("Item Map Xrefs added");
+    const existingStats: Array<{id: number, itemId: number, type: string, value: number}> = await request({
+        json: true,
+        method: "GET",
+        uri: serverURLs.ItemStat.get(),
+    });
+
+    existingStats.filter((e) =>
+        itemStats.findIndex((s) => s.itemId === e.itemId && s.type === e.type && s.value === e.value) === -1)
+    .forEach((e) => {
+        itemStatRemovalBatch.push({
+            json: true,
+            method: "DELETE",
+            uri: serverURLs.ItemStat.delete(e.id),
+        });
+    });
+
+    const existingItems = await request({
+        json: true,
+        method: "GET",
+        uri: serverURLs.Item.get(),
+    });
+
+    const existingItemIds: number[] = existingItems.map((i) => {
+        return i.itemId;
+    });
+
+    existingItemIds.filter((e) => itemIds.findIndex((i) => i === e) === -1)
+    .forEach((e) => {
+        itemRemovalBatch.push({
+            json: true,
+            method: "DELETE",
+            uri: serverURLs.Item.delete(e),
+        });
+    });
+
+    existingItemMaps = await request({
+        json: true,
+        method: "GET",
+        uri: serverURLs.XrefItemMap.get(),
+    });
+
+    existingItemMaps.filter((e) => itemMaps.findIndex((m) => m.itemId === e.itemId && m.mapId === e.mapId) === -1)
+    .forEach((e) => {
+        itemMapXrefRemovalBatch.push({
+            json: true,
+            method: "DELETE",
+            uri: serverURLs.XrefItemMap.delete(e.id),
+        });
+    });
+
+    // Batch removals together
+    await Promise.all(itemStatRemovalBatch.concat(itemTagXrefRemovalBatch)
+        .concat(itemMapXrefRemovalBatch).map(request));
+    debug("Item Stats removed");
     debug("Item Tag Xrefs removed");
-    Promise.all(itemStatRemovalBatch.map(request)).then(() => debug("Item Stats removed"));
+    debug("Item Map Xrefs removed");
+
+    Promise.all(itemRemovalBatch.map(request)).then(() => debug("Items removed"));
 }

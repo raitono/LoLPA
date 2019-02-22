@@ -27,6 +27,12 @@ export class URLs {
         },
     };
     public Item = {
+        delete: (itemId: number) => {
+            return process.env.WEB_SERVER + "/items/" + itemId;
+        },
+        get: () => {
+            return process.env.WEB_SERVER + "/items";
+        },
         post: () => {
             return process.env.WEB_SERVER + "/items";
         },
@@ -37,6 +43,9 @@ export class URLs {
     public ItemStat = {
         delete: (itemStatId: number) => {
             return process.env.WEB_SERVER + "/item-stats/" + itemStatId;
+        },
+        get: () => {
+            return process.env.WEB_SERVER + "/item-stats";
         },
         put: (itemId: number, type: string) => {
             return process.env.WEB_SERVER + "/item-stats/" + itemId + "/" + type;
@@ -156,6 +165,9 @@ export class URLs {
         },
     };
     public XrefItemMap = {
+        delete: (xrefId: number) => {
+            return process.env.WEB_SERVER + "/xref-item-maps/" + xrefId;
+        },
         get: () => {
             return process.env.WEB_SERVER + "/xref-item-maps";
         },
