@@ -1398,7 +1398,6 @@ INSERT INTO `season` (`seasonId`, `number`, `name`, `startDate`, `endDate`, `isC
 -- Dumping structure for table riot.spell
 CREATE TABLE IF NOT EXISTS `spell` (
   `spellId` int(11) NOT NULL COMMENT 'Given by Riot API',
-  `version` varchar(10) DEFAULT NULL,
   `name` varchar(50) NOT NULL,
   `key` varchar(50) NOT NULL,
   PRIMARY KEY (`spellId`)
@@ -1406,28 +1405,28 @@ CREATE TABLE IF NOT EXISTS `spell` (
 
 -- Dumping data for table riot.spell: ~21 rows (approximately)
 /*!40000 ALTER TABLE `spell` DISABLE KEYS */;
-INSERT INTO `spell` (`spellId`, `version`, `name`, `key`) VALUES
-	(1, '9.2.1', 'Cleanse', 'SummonerBoost'),
-	(3, '9.2.1', 'Exhaust', 'SummonerExhaust'),
-	(4, '9.2.1', 'Flash', 'SummonerFlash'),
-	(6, '9.2.1', 'Ghost', 'SummonerHaste'),
-	(7, '9.2.1', 'Heal', 'SummonerHeal'),
-	(11, '9.2.1', 'Smite', 'SummonerSmite'),
-	(12, '9.2.1', 'Teleport', 'SummonerTeleport'),
-	(13, '9.2.1', 'Clarity', 'SummonerMana'),
-	(14, '9.2.1', 'Ignite', 'SummonerDot'),
-	(21, '9.2.1', 'Barrier', 'SummonerBarrier'),
-	(30, '9.2.1', 'To the King!', 'SummonerPoroRecall'),
-	(31, '9.2.1', 'Poro Toss', 'SummonerPoroThrow'),
-	(32, '9.2.1', 'Mark', 'SummonerSnowball'),
-	(33, '9.2.1', 'Nexus Siege: Siege Weapon Slot', 'SummonerSiegeChampSelect1'),
-	(34, '9.2.1', 'Nexus Siege: Siege Weapon Slot', 'SummonerSiegeChampSelect2'),
-	(35, '9.2.1', 'Disabled Summoner Spells', 'SummonerDarkStarChampSelect1'),
-	(36, '9.2.1', 'Disabled Summoner Spells', 'SummonerDarkStarChampSelect2'),
-	(39, '9.2.1', 'Ultra (Rapidly Flung) Mark', 'SummonerSnowURFSnowball_Mark'),
-	(50, '9.2.1', 'Resuscitate', 'SummonerOdysseyRevive'),
-	(51, '9.2.1', 'Ghost', 'SummonerOdysseyGhost'),
-	(52, '9.2.1', 'Warp', 'SummonerOdysseyFlash');
+INSERT INTO `spell` (`spellId`, `name`, `key`) VALUES
+	(1, 'Cleanse', 'SummonerBoost'),
+	(3, 'Exhaust', 'SummonerExhaust'),
+	(4, 'Flash', 'SummonerFlash'),
+	(6, 'Ghost', 'SummonerHaste'),
+	(7, 'Heal', 'SummonerHeal'),
+	(11, 'Smite', 'SummonerSmite'),
+	(12, 'Teleport', 'SummonerTeleport'),
+	(13, 'Clarity', 'SummonerMana'),
+	(14, 'Ignite', 'SummonerDot'),
+	(21, 'Barrier', 'SummonerBarrier'),
+	(30, 'To the King!', 'SummonerPoroRecall'),
+	(31, 'Poro Toss', 'SummonerPoroThrow'),
+	(32, 'Mark', 'SummonerSnowball'),
+	(33, 'Nexus Siege: Siege Weapon Slot', 'SummonerSiegeChampSelect1'),
+	(34, 'Nexus Siege: Siege Weapon Slot', 'SummonerSiegeChampSelect2'),
+	(35, 'Disabled Summoner Spells', 'SummonerDarkStarChampSelect1'),
+	(36, 'Disabled Summoner Spells', 'SummonerDarkStarChampSelect2'),
+	(39, 'Ultra (Rapidly Flung) Mark', 'SummonerSnowURFSnowball_Mark'),
+	(50, 'Resuscitate', 'SummonerOdysseyRevive'),
+	(51, 'Ghost', 'SummonerOdysseyGhost'),
+	(52, 'Warp', 'SummonerOdysseyFlash');
 /*!40000 ALTER TABLE `spell` ENABLE KEYS */;
 
 -- Dumping structure for table riot.summoner

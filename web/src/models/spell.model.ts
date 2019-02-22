@@ -10,12 +10,6 @@ export class Spell extends Entity {
 
   @property({
     type: 'string',
-    default: null,
-  })
-  version?: string;
-
-  @property({
-    type: 'string',
     required: true,
   })
   name: string;
