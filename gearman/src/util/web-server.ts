@@ -174,6 +174,9 @@ export class URLs {
         post: () => {
             return process.env.WEB_SERVER + "/xref-item-maps";
         },
+        put: (itemId: number, mapId: number) => {
+            return process.env.WEB_SERVER + "/xref-item-maps/" + itemId + "/" + mapId;
+        },
     };
     public XrefItemTag = {
         delete: (xrefId: number) => {

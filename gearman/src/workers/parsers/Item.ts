@@ -175,8 +175,10 @@ export async function parse(filePath: string): Promise<void> {
         uri: serverURLs.XrefItemMap.get(),
     });
 
+    // I'm 100% sure this works, but because of a bug in the loopback MySQL connector, it doesn't.
+    // See issue #19
     itemMaps.filter((m) => existingItemMaps.findIndex(
-        (e) => e.itemId === m.itemId && e.mapId === m.mapId) === -1)
+        (e) => e.itemId === m.itemId && e.mapId === m.mapId && e.enabled === m.enabled) === -1)
         .forEach((itemMap) => {
             itemMapXrefBatch.push({
                 body: {
@@ -185,8 +187,8 @@ export async function parse(filePath: string): Promise<void> {
                     mapId: itemMap.mapId,
                 },
                 json: true,
-                method: "POST",
-                uri: serverURLs.XrefItemMap.post(),
+                method: "PUT",
+                uri: serverURLs.XrefItemMap.put(itemMap.itemId, itemMap.mapId),
             });
         });
 
