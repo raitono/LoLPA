@@ -26,12 +26,6 @@ export class ItemStat extends Entity {
   })
   value: number;
 
-  @property({
-    type: 'boolean',
-    default: false,
-  })
-  exists: boolean;
-
   constructor(data?: Partial<ItemStat>) {
     super(data);
   }
