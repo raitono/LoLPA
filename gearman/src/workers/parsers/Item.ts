@@ -30,8 +30,8 @@ export async function parse(filePath: string): Promise<void> {
     const itemTagXrefBatch: requestPromiseNative.OptionsWithUri[] = [];
     const itemTagXrefRemovalBatch: requestPromiseNative.OptionsWithUri[] = [];
     const itemTags: Array<{ itemId: number; tagName: string; }> = [];
-    const uniqueTags: Set<string> = new Set();
-    const itemMaps: Set<{ itemId: number; mapId: number; enabled: boolean; }> = new Set();
+    let uniqueTags: string[] = [];
+    const itemMaps: Array<{ itemId: number; mapId: number; enabled: boolean; }> = [];
 
     // Default item
     itemBatch.push({
@@ -79,11 +79,11 @@ export async function parse(filePath: string): Promise<void> {
 
         item.tags.forEach((t) => {
             itemTags.push({itemId: item.id, tagName: t});
-            uniqueTags.add(t);
+            uniqueTags.push(t);
         });
 
         Object.keys(item.maps).forEach((m) => {
-            itemMaps.add({itemId: item.id, mapId: Number(m), enabled: item.maps[m]});
+            itemMaps.push({itemId: item.id, mapId: Number(m), enabled: item.maps[m]});
         });
 
         Object.keys(item.stats).forEach((type) => {
@@ -101,7 +101,8 @@ export async function parse(filePath: string): Promise<void> {
         });
     });
 
-    // Order is Items > ItemStats > ItemMaps > ItemTags > ItemMapXrefs > ItemTagXrefs
+    uniqueTags = [...new Set(uniqueTags)];
+
     await Promise.all(itemBatch.map(request));
     debug("Items added");
 
@@ -111,7 +112,7 @@ export async function parse(filePath: string): Promise<void> {
         uri: serverURLs.XrefItemMap.get(),
     });
 
-    [...itemMaps].filter((m) => existingItemMaps.findIndex(
+    itemMaps.filter((m) => existingItemMaps.findIndex(
         (e) => e.itemId === m.itemId && e.mapId === m.mapId) === -1)
         .forEach((itemMap) => {
             itemMapXrefBatch.push({
@@ -129,10 +130,10 @@ export async function parse(filePath: string): Promise<void> {
     const existingTags = await request({
         json: true,
         method: "GET",
-        uri: serverURLs.ItemTag.getWhere("{\"name\": {\"inq\": " + JSON.stringify([...uniqueTags]) + "}}"),
+        uri: serverURLs.ItemTag.getWhere("{\"name\": {\"inq\": " + JSON.stringify(uniqueTags) + "}}"),
     });
 
-    [...uniqueTags].filter((t) => existingTags.findIndex((e) => e.name === t) === -1)
+    uniqueTags.filter((t) => existingTags.findIndex((e) => e.name === t) === -1)
         .forEach((tag) => {
             itemTagBatch.push({
                 body: {
