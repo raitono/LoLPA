@@ -5,9 +5,9 @@ const debug = require("debug")("lolpa-gearman:app");
 import fs = require("fs");
 
 import Gearman = require("abraxas");
-// const Summoner = require("../src/workers/Summoner");
 // const Match = require("../src/workers/Match");
 import StaticData = require("./workers/StaticData");
+import Summoner = require("./workers/Summoner");
 
 const staticDataTempDir = "./temp";
 let client;
@@ -28,7 +28,7 @@ app.listen(port, () => {
         fs.mkdirSync(staticDataTempDir);
     }
 
-    // Summoner.registerWorkers(client);
+    Summoner.registerWorkers(client);
     // Match.registerWorkers(client);
     StaticData.registerWorkers(client);
 
@@ -36,20 +36,21 @@ app.listen(port, () => {
 });
 
 const run = async () => {
-    await client.submitJob("updateStaticData", "ThisIsNecessaryButNotUsed");
-    debug("updateStaticData queued");
-    // const summonerName = "Raitono";
+    // await client.submitJob("updateStaticData", "ThisIsNecessaryButNotUsed");
+    // debug("updateStaticData queued");
+    const summonerName = "Raitono";
 
-    // let dbSummoner = undefined;
-    // try {
-    //     dbSummoner = JSON.parse(await client.submitJob("getSummonerByName", summonerName));
-    // } catch (error) {
-    //     debug("Unable to update summoner");
-    //     debug(error);
-    // }
+    let dbSummoner;
+    try {
+        dbSummoner = JSON.parse(await client.submitJob("getSummonerByName", summonerName));
+    } catch (error) {
+        debug("Unable to update summoner");
+        debug(error);
+    }
 
-    // const updateSummonerResult = JSON.parse(await client.submitJob("determineUpdates", JSON.stringify(dbSummoner)));
-    // debug("Updated summoner: " + summonerName);
+    const updateSummonerResult = JSON.parse(await client.submitJob("determineUpdates", JSON.stringify(dbSummoner)));
+    debug("Updated summoner: " + summonerName);
+    debug(updateSummonerResult);
 
     // if (updateSummonerResult.shouldUpdateMatches) {
     //     try {
