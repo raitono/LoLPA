@@ -12,6 +12,12 @@ export class Champion extends Entity {
     type: 'string',
     required: true,
   })
+  version: string;
+
+  @property({
+    type: 'string',
+    required: true,
+  })
   name: string;
 
   @property({
