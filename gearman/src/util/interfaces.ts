@@ -226,3 +226,28 @@ export interface ISpellVars {
     coeff: number;
     key: string;
 }
+
+export interface IDBSummoner {
+    accountId: string;
+    lastUpdated?: Date;
+    name: string;
+    profileIconId: number;
+    puuid: string;
+    revisionDate: Date;
+    summonerId: string;
+    summonerLevel: number;
+}
+
+/**
+ * Summoner object received from the Riot API.
+ * revisionDate is type long and represents a UNIX timestamp in milliseconds
+ */
+export interface IAPISummoner {
+    accountId: string;
+    id: string;
+    name: string;
+    profileIconId: number;
+    puuid: string;
+    revisionDate: number;
+    summonerLevel: number;
+}

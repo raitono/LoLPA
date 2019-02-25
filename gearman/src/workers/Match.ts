@@ -14,11 +14,12 @@ const serverURLs = new WebServer.URLs();
 
 /**
  * Pull new matches and add them to the database
- * @param {Object} summoner Summoner whose matches we are updating
+ * @param {string} summonerJSON Summoner whose matches we are updating
  */
-const updateMatchList = async (summoner) => {
+const updateMatchList = async (summonerJSON: string) => {
+    let summoner: any;
     try {
-        summoner = JSON.parse(summoner);
+        summoner = JSON.parse(summonerJSON);
     } catch (e) {
         debug(e);
     }
