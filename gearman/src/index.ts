@@ -5,7 +5,7 @@ const debug = require("debug")("lolpa-gearman:app");
 import fs = require("fs");
 
 import Gearman = require("abraxas");
-// const Match = require("../src/workers/Match");
+import Match = require("./workers/Match");
 import StaticData = require("./workers/StaticData");
 import Summoner = require("./workers/Summoner");
 
@@ -29,7 +29,7 @@ app.listen(port, () => {
     }
 
     Summoner.registerWorkers(client);
-    // Match.registerWorkers(client);
+    Match.registerWorkers(client);
     StaticData.registerWorkers(client);
 
     run();
@@ -50,15 +50,14 @@ const run = async () => {
 
     const updateSummonerResult = JSON.parse(await client.submitJob("determineUpdates", JSON.stringify(dbSummoner)));
     debug("Updated summoner: " + summonerName);
-    debug(updateSummonerResult);
 
-    // if (updateSummonerResult.shouldUpdateMatches) {
-    //     try {
-    //         await client.submitJob("updateMatchList", JSON.stringify(updateSummonerResult.summoner));
-    //         debug("Updated match list for " + summonerName);
-    //         client.submitJob("updateSummonerLastUpdated", JSON.stringify(updateSummonerResult.summoner));
-    //     } catch (error) {
-    //         debug(error);
-    //     }
-    // }
+    if (updateSummonerResult.shouldUpdateMatches) {
+        try {
+            await client.submitJob("updateMatchList", JSON.stringify(updateSummonerResult.summoner));
+            debug("Updated match list for " + summonerName);
+            client.submitJob("updateSummonerLastUpdated", JSON.stringify(updateSummonerResult.summoner));
+        } catch (error) {
+            debug(error);
+        }
+    }
 };
