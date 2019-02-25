@@ -63,9 +63,9 @@ const determineUpdates = async (summoner) => {
  * Retrieve a summoner from the database.
  * If the summoner cannot be found, retrieves it from RIOT and inserts it.
  * @param {string} summonerName Summoner name to update
- * @return {string} JSON string representing the summoner stored in the database
+ * @return {Promise<string>} JSON string representing the summoner stored in the database
  */
-const getSummonerByName = async (summonerName) => {
+const getSummonerByName = async (summonerName: string): Promise<string> => {
     let summoner = "";
     const summonerDBRequestOptions = {
         json: true,
@@ -114,10 +114,10 @@ const getSummonerByName = async (summonerName) => {
 
 /**
  * Updates the Summoner's lastUpdated field to now
- * @param {string} summoner Json representation of a Summoner
+ * @param {string} summonerJSON Json representation of a Summoner
  */
-const updateLastUpdated = async (summoner) => {
-    summoner = JSON.parse(summoner);
+const updateLastUpdated = async (summonerJSON: string) => {
+    const summoner = JSON.parse(summonerJSON);
     request({
         body: {
             accountId: summoner.accountId,
