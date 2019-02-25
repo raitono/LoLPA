@@ -15,6 +15,12 @@ export class Item extends Entity {
   name: string;
 
   @property({
+    type: 'string',
+    required: true,
+  })
+  version: string;
+
+  @property({
     type: 'number',
     required: true,
   })

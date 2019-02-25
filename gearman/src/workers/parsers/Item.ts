@@ -39,6 +39,7 @@ export async function parse(filePath: string): Promise<void> {
     let uniqueTags: string[] = [];
 
     // Default item
+    itemIds.push(0);
     itemBatch.push({
         body: {
             goldBase: 0,
@@ -47,6 +48,7 @@ export async function parse(filePath: string): Promise<void> {
             itemId: 0,
             name: "None",
             purchasable: false,
+            version: "None",
         },
         json: true,
         method: "PUT",
@@ -78,6 +80,7 @@ export async function parse(filePath: string): Promise<void> {
                 requiredChampion: item.requiredChampion,
                 specialRecipe: item.specialRecipe,
                 stacks: item.stacks,
+                version: itemDataWrapper.version,
             },
             json: true,
             method: "PUT",
@@ -98,6 +101,7 @@ export async function parse(filePath: string): Promise<void> {
                 itemId: item.id,
                 type,
                 value: item.stats[type],
+                version: itemDataWrapper.version,
             };
             itemStatBatch.push({
                 body: stat,

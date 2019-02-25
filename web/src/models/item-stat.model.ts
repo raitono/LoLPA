@@ -26,6 +26,12 @@ export class ItemStat extends Entity {
   })
   value: number;
 
+  @property({
+    type: 'string',
+    required: true,
+  })
+  version: string;
+
   constructor(data?: Partial<ItemStat>) {
     super(data);
   }
