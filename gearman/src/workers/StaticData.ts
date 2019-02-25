@@ -1,4 +1,5 @@
 // 3rd party imports
+import del = require("del");
 import * as fs from "fs";
 import https = require("https");
 import tar = require("tar");
@@ -66,12 +67,21 @@ const updateStaticData = async () => {
 const parseAndLoad = async (version: string) => {
     const tempFilePath = "./temp/" + version + "/data/en_US/";
 
-    return Promise.all([
+    await Promise.all([
         Champion.parse(tempFilePath + "champion.json"),
         Item.parse(tempFilePath + "item.json"),
         RunesReforged.parse(tempFilePath + "runesReforged.json"),
         SummonerSpell.parse(tempFilePath + "summoner.json"),
     ]);
+
+    // Clean up
+    // The glob pattern ** matches all children and the parent
+    del(["./temp/" + version + ".tgz", "./temp/" + version + "/**"])
+    .then(() => {
+        debug("Clean up done");
+    }).catch((err) => {
+        debug(err);
+    });
 };
 
 export function registerWorkers(worker) {
