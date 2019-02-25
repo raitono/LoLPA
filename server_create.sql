@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS `champion` (
   PRIMARY KEY (`championId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.champion: ~144 rows (approximately)
+-- Dumping data for table riot.champion: ~143 rows (approximately)
 /*!40000 ALTER TABLE `champion` DISABLE KEYS */;
 INSERT INTO `champion` (`championId`, `version`, `name`, `title`, `partype`, `hp`, `hpperlevel`, `mp`, `mpperlevel`, `movespeed`, `armor`, `armorperlevel`, `spellblock`, `spellblockperlevel`, `attackrange`, `hpregen`, `hpregenperlevel`, `mpregen`, `mpregenperlevel`, `crit`, `critperlevel`, `attackdamage`, `attackdamageperlevel`, `attackspeedperlevel`, `attackspeed`) VALUES
 	(-1, 'None', 'None', 'None', 'None', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
@@ -225,46 +225,8 @@ CREATE TABLE `champion_fullhistory` (
 	`attackspeed` DOUBLE NOT NULL
 ) ENGINE=MyISAM;
 
--- Dumping structure for table riot.champion_tag
-CREATE TABLE IF NOT EXISTS `champion_tag` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COMMENT='Not guaranteed to have the same ID if data is wiped. It depends on what order the engine decides to insert them in.';
-
--- Dumping data for table riot.champion_tag: ~6 rows (approximately)
-/*!40000 ALTER TABLE `champion_tag` DISABLE KEYS */;
-INSERT INTO `champion_tag` (`id`, `name`) VALUES
-	(1, 'Fighter'),
-	(2, 'Mage'),
-	(3, 'Marksman'),
-	(4, 'Tank'),
-	(5, 'Assassin'),
-	(6, 'Support');
-/*!40000 ALTER TABLE `champion_tag` ENABLE KEYS */;
-
--- Dumping structure for table riot.delta_type
-CREATE TABLE IF NOT EXISTS `delta_type` (
-  `id` int(11) NOT NULL,
-  `name` varchar(50) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `UX_DeltaType_Name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- Dumping data for table riot.delta_type: ~7 rows (approximately)
-/*!40000 ALTER TABLE `delta_type` DISABLE KEYS */;
-INSERT INTO `delta_type` (`id`, `name`) VALUES
-	(1, 'creepsPerMinDeltas'),
-	(4, 'csDiffPerMinDeltas'),
-	(7, 'damageTakenDiffPerMinDeltas'),
-	(6, 'damageTakenPerMinDeltas'),
-	(3, 'goldPerMinDeltas'),
-	(5, 'xpDiffPerMinDeltas'),
-	(2, 'xpPerMinDeltas');
-/*!40000 ALTER TABLE `delta_type` ENABLE KEYS */;
-
--- Dumping structure for table riot.historic_champion
-CREATE TABLE IF NOT EXISTS `historic_champion` (
+-- Dumping structure for table riot.champion_history
+CREATE TABLE IF NOT EXISTS `champion_history` (
   `historyId` int(11) NOT NULL AUTO_INCREMENT,
   `version` varchar(10) NOT NULL,
   `historyDate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -296,9 +258,9 @@ CREATE TABLE IF NOT EXISTS `historic_champion` (
   PRIMARY KEY (`historyId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=144 DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table riot.historic_champion: ~156 rows (approximately)
-/*!40000 ALTER TABLE `historic_champion` DISABLE KEYS */;
-INSERT INTO `historic_champion` (`historyId`, `version`, `historyDate`, `action`, `championId`, `name`, `title`, `partype`, `hp`, `hpperlevel`, `mp`, `mpperlevel`, `movespeed`, `armor`, `armorperlevel`, `spellblock`, `spellblockperlevel`, `attackrange`, `hpregen`, `hpregenperlevel`, `mpregen`, `mpregenperlevel`, `crit`, `critperlevel`, `attackdamage`, `attackdamageperlevel`, `attackspeedperlevel`, `attackspeed`) VALUES
+-- Dumping data for table riot.champion_history: ~143 rows (approximately)
+/*!40000 ALTER TABLE `champion_history` DISABLE KEYS */;
+INSERT INTO `champion_history` (`historyId`, `version`, `historyDate`, `action`, `championId`, `name`, `title`, `partype`, `hp`, `hpperlevel`, `mp`, `mpperlevel`, `movespeed`, `armor`, `armorperlevel`, `spellblock`, `spellblockperlevel`, `attackrange`, `hpregen`, `hpregenperlevel`, `mpregen`, `mpregenperlevel`, `crit`, `critperlevel`, `attackdamage`, `attackdamageperlevel`, `attackspeedperlevel`, `attackspeed`) VALUES
 	(1, '9.1.1', '2019-02-25 15:59:21', 'I', 266, 'Aatrox', 'the Darkin Blade', 'Blood Well', 580, 80, 0, 0, 345, 33, 3.25, 32.1, 1.25, 175, 5, 0.25, 0, 0, 0, 0, 60, 5, 2.5, 0.651),
 	(2, '9.1.1', '2019-02-25 15:59:22', 'I', 432, 'Bard', 'the Wandering Caretaker', 'Mana', 535, 89, 350, 50, 330, 34, 4, 30, 0.5, 500, 7.5, 0.55, 6, 0.45, 0, 0, 52, 3, 2, 0.625),
 	(3, '9.1.1', '2019-02-25 15:59:21', 'I', 1, 'Annie', 'the Dark Child', 'Mana', 524, 88, 418, 25, 335, 19.22, 4, 30, 0.5, 625, 5.5, 0.55, 8, 0.8, 0, 0, 50.41, 2.625, 1.36, 0.579),
@@ -442,7 +404,45 @@ INSERT INTO `historic_champion` (`historyId`, `version`, `historyDate`, `action`
 	(141, '9.1.1', '2019-02-25 15:59:23', 'I', 101, 'Xerath', 'the Magus Ascendant', 'Mana', 526, 92, 459, 22, 340, 21.88, 3.5, 30, 0.5, 525, 5.5, 0.55, 8, 0.8, 0, 0, 54.7, 3, 1.36, 0.625),
 	(142, '9.1.1', '2019-02-25 15:59:23', 'I', 26, 'Zilean', 'the Chronokeeper', 'Mana', 504, 82, 452, 30, 335, 24, 3.8, 30, 0.5, 550, 5.5, 0.5, 11.335, 0.8, 0, 0, 51.64, 3, 2.13, 0.625),
 	(143, '9.1.1', '2019-02-25 15:59:23', 'I', 142, 'Zoe', 'the Aspect of Twilight', 'Mana', 560, 92, 425, 25, 340, 20.8, 3.5, 30, 0.5, 550, 6.5, 0.6, 8, 0.65, 0, 0, 58, 3.3, 2.5, 0.625);
-/*!40000 ALTER TABLE `historic_champion` ENABLE KEYS */;
+/*!40000 ALTER TABLE `champion_history` ENABLE KEYS */;
+
+-- Dumping structure for table riot.champion_tag
+CREATE TABLE IF NOT EXISTS `champion_tag` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COMMENT='Not guaranteed to have the same ID if data is wiped. It depends on what order the engine decides to insert them in.';
+
+-- Dumping data for table riot.champion_tag: ~6 rows (approximately)
+/*!40000 ALTER TABLE `champion_tag` DISABLE KEYS */;
+INSERT INTO `champion_tag` (`id`, `name`) VALUES
+	(1, 'Fighter'),
+	(2, 'Mage'),
+	(3, 'Marksman'),
+	(4, 'Tank'),
+	(5, 'Assassin'),
+	(6, 'Support');
+/*!40000 ALTER TABLE `champion_tag` ENABLE KEYS */;
+
+-- Dumping structure for table riot.delta_type
+CREATE TABLE IF NOT EXISTS `delta_type` (
+  `id` int(11) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UX_DeltaType_Name` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Dumping data for table riot.delta_type: ~7 rows (approximately)
+/*!40000 ALTER TABLE `delta_type` DISABLE KEYS */;
+INSERT INTO `delta_type` (`id`, `name`) VALUES
+	(1, 'creepsPerMinDeltas'),
+	(4, 'csDiffPerMinDeltas'),
+	(7, 'damageTakenDiffPerMinDeltas'),
+	(6, 'damageTakenPerMinDeltas'),
+	(3, 'goldPerMinDeltas'),
+	(5, 'xpDiffPerMinDeltas'),
+	(2, 'xpPerMinDeltas');
+/*!40000 ALTER TABLE `delta_type` ENABLE KEYS */;
 
 -- Dumping structure for table riot.item
 CREATE TABLE IF NOT EXISTS `item` (
@@ -1714,7 +1714,7 @@ CREATE TABLE IF NOT EXISTS `xref_champion_tag` (
   CONSTRAINT `FK_xref_champion_tags_tagId` FOREIGN KEY (`tagId`) REFERENCES `champion_tag` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=256 DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.xref_champion_tag: ~0 rows (approximately)
+-- Dumping data for table riot.xref_champion_tag: ~255 rows (approximately)
 /*!40000 ALTER TABLE `xref_champion_tag` DISABLE KEYS */;
 INSERT INTO `xref_champion_tag` (`id`, `championId`, `tagId`) VALUES
 	(11, 1, 2),
@@ -4235,7 +4235,7 @@ CREATE TABLE IF NOT EXISTS `xref_participant_perk` (
 SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
 DELIMITER //
 CREATE TRIGGER `champion_after_insert` AFTER INSERT ON `champion` FOR EACH ROW BEGIN
-	INSERT INTO historic_champion(`version`, `action`, `championId`, `name`,
+	INSERT INTO champion_history(`version`, `action`, `championId`, `name`,
 	`title`, `partype`, `hp`, `hpperlevel`, `mp`, `mpperlevel`, `movespeed`,
 	`armor`, `armorperlevel`,`spellblock`, `spellblockperlevel`, `attackrange`,
 	`hpregen`,`hpregenperlevel`, `mpregen`, `mpregenperlevel`, `crit`,
@@ -4271,7 +4271,7 @@ CREATE TRIGGER `champion_after_update` AFTER UPDATE ON `champion` FOR EACH ROW B
 	NEW.attackspeedperlevel <> OLD.attackspeedperlevel OR
 	NEW.attackspeed <> OLD.attackspeed
 	) THEN
-	INSERT INTO historic_champion(`version`, `action`, `championId`, `name`,
+	INSERT INTO champion_history(`version`, `action`, `championId`, `name`,
 	`title`, `partype`, `hp`, `hpperlevel`, `mp`, `mpperlevel`, `movespeed`,
 	`armor`, `armorperlevel`,`spellblock`, `spellblockperlevel`, `attackrange`,
 	`hpregen`,`hpregenperlevel`, `mpregen`, `mpregenperlevel`, `crit`,
@@ -4292,7 +4292,7 @@ SET SQL_MODE=@OLDTMP_SQL_MODE;
 -- Dumping structure for view riot.champion_fullhistory
 -- Removing temporary table and create final VIEW structure
 DROP TABLE IF EXISTS `champion_fullhistory`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`SVCLOLPAWEB`@`%` SQL SECURITY DEFINER VIEW `champion_fullhistory` AS select `champion`.`championId` AS `championId`,`champion`.`version` AS `version`,`champion`.`name` AS `name`,`champion`.`title` AS `title`,`champion`.`partype` AS `partype`,`champion`.`hp` AS `hp`,`champion`.`hpperlevel` AS `hpperlevel`,`champion`.`mp` AS `mp`,`champion`.`mpperlevel` AS `mpperlevel`,`champion`.`movespeed` AS `movespeed`,`champion`.`armor` AS `armor`,`champion`.`armorperlevel` AS `armorperlevel`,`champion`.`spellblock` AS `spellblock`,`champion`.`spellblockperlevel` AS `spellblockperlevel`,`champion`.`attackrange` AS `attackrange`,`champion`.`hpregen` AS `hpregen`,`champion`.`hpregenperlevel` AS `hpregenperlevel`,`champion`.`mpregen` AS `mpregen`,`champion`.`mpregenperlevel` AS `mpregenperlevel`,`champion`.`crit` AS `crit`,`champion`.`critperlevel` AS `critperlevel`,`champion`.`attackdamage` AS `attackdamage`,`champion`.`attackdamageperlevel` AS `attackdamageperlevel`,`champion`.`attackspeedperlevel` AS `attackspeedperlevel`,`champion`.`attackspeed` AS `attackspeed` from `champion` union select `historic_champion`.`championId` AS `championId`,`historic_champion`.`version` AS `version`,`historic_champion`.`name` AS `name`,`historic_champion`.`title` AS `title`,`historic_champion`.`partype` AS `partype`,`historic_champion`.`hp` AS `hp`,`historic_champion`.`hpperlevel` AS `hpperlevel`,`historic_champion`.`mp` AS `mp`,`historic_champion`.`mpperlevel` AS `mpperlevel`,`historic_champion`.`movespeed` AS `movespeed`,`historic_champion`.`armor` AS `armor`,`historic_champion`.`armorperlevel` AS `armorperlevel`,`historic_champion`.`spellblock` AS `spellblock`,`historic_champion`.`spellblockperlevel` AS `spellblockperlevel`,`historic_champion`.`attackrange` AS `attackrange`,`historic_champion`.`hpregen` AS `hpregen`,`historic_champion`.`hpregenperlevel` AS `hpregenperlevel`,`historic_champion`.`mpregen` AS `mpregen`,`historic_champion`.`mpregenperlevel` AS `mpregenperlevel`,`historic_champion`.`crit` AS `crit`,`historic_champion`.`critperlevel` AS `critperlevel`,`historic_champion`.`attackdamage` AS `attackdamage`,`historic_champion`.`attackdamageperlevel` AS `attackdamageperlevel`,`historic_champion`.`attackspeedperlevel` AS `attackspeedperlevel`,`historic_champion`.`attackspeed` AS `attackspeed` from `historic_champion`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`SVCLOLPAWEB`@`%` SQL SECURITY DEFINER VIEW `champion_fullhistory` AS select `champion`.`championId` AS `championId`,`champion`.`version` AS `version`,`champion`.`name` AS `name`,`champion`.`title` AS `title`,`champion`.`partype` AS `partype`,`champion`.`hp` AS `hp`,`champion`.`hpperlevel` AS `hpperlevel`,`champion`.`mp` AS `mp`,`champion`.`mpperlevel` AS `mpperlevel`,`champion`.`movespeed` AS `movespeed`,`champion`.`armor` AS `armor`,`champion`.`armorperlevel` AS `armorperlevel`,`champion`.`spellblock` AS `spellblock`,`champion`.`spellblockperlevel` AS `spellblockperlevel`,`champion`.`attackrange` AS `attackrange`,`champion`.`hpregen` AS `hpregen`,`champion`.`hpregenperlevel` AS `hpregenperlevel`,`champion`.`mpregen` AS `mpregen`,`champion`.`mpregenperlevel` AS `mpregenperlevel`,`champion`.`crit` AS `crit`,`champion`.`critperlevel` AS `critperlevel`,`champion`.`attackdamage` AS `attackdamage`,`champion`.`attackdamageperlevel` AS `attackdamageperlevel`,`champion`.`attackspeedperlevel` AS `attackspeedperlevel`,`champion`.`attackspeed` AS `attackspeed` from `champion` union select `champion_history`.`championId` AS `championId`,`champion_history`.`version` AS `version`,`champion_history`.`name` AS `name`,`champion_history`.`title` AS `title`,`champion_history`.`partype` AS `partype`,`champion_history`.`hp` AS `hp`,`champion_history`.`hpperlevel` AS `hpperlevel`,`champion_history`.`mp` AS `mp`,`champion_history`.`mpperlevel` AS `mpperlevel`,`champion_history`.`movespeed` AS `movespeed`,`champion_history`.`armor` AS `armor`,`champion_history`.`armorperlevel` AS `armorperlevel`,`champion_history`.`spellblock` AS `spellblock`,`champion_history`.`spellblockperlevel` AS `spellblockperlevel`,`champion_history`.`attackrange` AS `attackrange`,`champion_history`.`hpregen` AS `hpregen`,`champion_history`.`hpregenperlevel` AS `hpregenperlevel`,`champion_history`.`mpregen` AS `mpregen`,`champion_history`.`mpregenperlevel` AS `mpregenperlevel`,`champion_history`.`crit` AS `crit`,`champion_history`.`critperlevel` AS `critperlevel`,`champion_history`.`attackdamage` AS `attackdamage`,`champion_history`.`attackdamageperlevel` AS `attackdamageperlevel`,`champion_history`.`attackspeedperlevel` AS `attackspeedperlevel`,`champion_history`.`attackspeed` AS `attackspeed` from `champion_history`;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;

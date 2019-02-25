@@ -23,7 +23,7 @@ const staticTarballURL: string = "https://ddragon.leagueoflegends.com/cdn/dragon
 const updateStaticData = async () => {
     // Find latest version number
     const versions = await Kayn.DDragon.Version.list();
-    latestVersion = versions[0];
+    latestVersion = "9.1.1"; // versions[0];
     debug("Latest version: " + latestVersion);
 
     // Download and extract tarball to temp directory
@@ -69,9 +69,9 @@ const parseAndLoad = async (version: string) => {
 
     await Promise.all([
         Champion.parse(tempFilePath + "champion.json"),
-        Item.parse(tempFilePath + "item.json"),
-        RunesReforged.parse(tempFilePath + "runesReforged.json"),
-        SummonerSpell.parse(tempFilePath + "summoner.json"),
+        // Item.parse(tempFilePath + "item.json"),
+        // RunesReforged.parse(tempFilePath + "runesReforged.json"),
+        // SummonerSpell.parse(tempFilePath + "summoner.json"),
     ]);
 
     // Clean up

@@ -36,28 +36,28 @@ app.listen(port, () => {
 });
 
 const run = async () => {
-    // await client.submitJob("updateStaticData", "ThisIsNecessaryButNotUsed");
-    // debug("updateStaticData queued");
-    const summonerName = "Raitono";
+    await client.submitJob("updateStaticData", "ThisIsNecessaryButNotUsed");
+    debug("updateStaticData queued");
+    // const summonerName = "Raitono";
 
-    let dbSummoner;
-    try {
-        dbSummoner = JSON.parse(await client.submitJob("getSummonerByName", summonerName));
-    } catch (error) {
-        debug("Unable to update summoner");
-        debug(error);
-    }
+    // let dbSummoner;
+    // try {
+    //     dbSummoner = JSON.parse(await client.submitJob("getSummonerByName", summonerName));
+    // } catch (error) {
+    //     debug("Unable to update summoner");
+    //     debug(error);
+    // }
 
-    const updateSummonerResult = JSON.parse(await client.submitJob("determineUpdates", JSON.stringify(dbSummoner)));
-    debug("Updated summoner: " + summonerName);
+    // const updateSummonerResult = JSON.parse(await client.submitJob("determineUpdates", JSON.stringify(dbSummoner)));
+    // debug("Updated summoner: " + summonerName);
 
-    if (updateSummonerResult.shouldUpdateMatches) {
-        try {
-            await client.submitJob("updateMatchList", JSON.stringify(updateSummonerResult.summoner));
-            debug("Updated match list for " + summonerName);
-            client.submitJob("updateSummonerLastUpdated", JSON.stringify(updateSummonerResult.summoner));
-        } catch (error) {
-            debug(error);
-        }
-    }
+    // if (updateSummonerResult.shouldUpdateMatches) {
+    //     try {
+    //         await client.submitJob("updateMatchList", JSON.stringify(updateSummonerResult.summoner));
+    //         debug("Updated match list for " + summonerName);
+    //         client.submitJob("updateSummonerLastUpdated", JSON.stringify(updateSummonerResult.summoner));
+    //     } catch (error) {
+    //         debug(error);
+    //     }
+    // }
 };
