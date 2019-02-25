@@ -1,4 +1,7 @@
 // 3rd party imports
+import * as fs from "fs";
+import https = require("https");
+import tar = require("tar");
 import Kayn = require("../kayn");
 
 // my imports
@@ -19,7 +22,7 @@ const staticTarballURL: string = "https://ddragon.leagueoflegends.com/cdn/dragon
 const updateStaticData = async () => {
     // Find latest version number
     const versions = await Kayn.DDragon.Version.list();
-    latestVersion = "9.1.1"; // versions[0];
+    latestVersion = versions[0];
     debug("Latest version: " + latestVersion);
 
     // Download and extract tarball to temp directory
@@ -28,7 +31,36 @@ const updateStaticData = async () => {
 
     const tempTarballPath = "./temp/" + latestVersion + ".tgz";
     const tarballPathRoot = "./" + latestVersion + "/data/en_US/";
-    parseAndLoad(latestVersion);
+
+    // For some reason, the Request package gives an Array Buffer error when trying to do this.
+    // Guess we do it the old fashioned way.
+    const file = fs.createWriteStream(tempTarballPath);
+    https.get(tarballURL, (response) => {
+        response.pipe(file);
+        response.on("end", () => {
+            debug("tarball saved");
+
+            tar.extract({
+                cwd: "./temp",
+                file: tempTarballPath,
+                gzip: true,
+            },
+            [
+                tarballPathRoot + "champion.json",
+                tarballPathRoot + "item.json",
+                tarballPathRoot + "runesReforged.json",
+                tarballPathRoot + "summoner.json",
+            ],
+            () => {
+                debug("tarball extracted");
+                parseAndLoad(latestVersion);
+            },
+            ).catch((err) => {
+                debug("Oops");
+                debug(err);
+            });
+        });
+    });
 };
 
 const parseAndLoad = async (version: string) => {
