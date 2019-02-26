@@ -4,7 +4,7 @@ import * as util from "util";
 import Kayn = require("../kayn");
 
 // my imports
-import { readFileAsync, request } from "../util/common";
+import { batchRequest, request } from "../util/common";
 import * as WebServer from "../util/web-server";
 
 // globals
@@ -21,7 +21,9 @@ const updateMatchList = async (summonerJSON: string) => {
     try {
         summoner = JSON.parse(summonerJSON);
     } catch (e) {
+        debug("Unable to parse summoner");
         debug(e);
+        return;
     }
 
     await getMatchList(summoner, {});
@@ -30,6 +32,8 @@ const updateMatchList = async (summonerJSON: string) => {
         debug("No matchList");
         return;
     }
+
+    debug("Gathered " + summoner.matchList.length + " matches");
 
     // We have all the matches. Extract the gameIds.
     let matchBatch = [];
@@ -50,6 +54,7 @@ const updateMatchList = async (summonerJSON: string) => {
     }
 
     // Get the matches from RIOT
+    debug("Getting matches from Riot API");
     const matches: any[] = await Promise.all(matchBatch.map(Kayn.MatchV4.get));
     const deltaTypes = JSON.parse(await request({uri: serverURLs.DeltaType.getAll()}));
     const matchInsertBatch = [];
@@ -162,8 +167,11 @@ const updateMatchList = async (summonerJSON: string) => {
 
     try {
         // This has to be done separate because of the foreign keys.
+        debug("Inserting " + matchInsertBatch.length + " matches");
         await Promise.all(matchInsertBatch.map(request));
         debug("Match Insert Done");
+        debug("Inserting " + matchListBatch.length + " match lists");
+        debug("Inserting " + participantBatch.length + " participants");
         await Promise.all([matchListBatch.map(request), participantBatch.map(request)]);
         debug("Match List Insert Done");
         debug("Participant Insert Done");
@@ -171,16 +179,26 @@ const updateMatchList = async (summonerJSON: string) => {
         await transformParticipantDependants(matches, deltaTypes,
             timelineDeltaBatch, statBatch, itemBatch, perkBatch);
 
-        await Promise.all(timelineDeltaBatch.map(request));
+        debug("Inserting " + timelineDeltaBatch.length + " timeline deltas");
+        await batchRequest(timelineDeltaBatch);
         debug("timelineDeltaBatch Insert Done");
 
-        await Promise.all([
-            teamStatBatch.map(request),
-            teamBanBatch.map(request),
-            statBatch.map(request),
-            itemBatch.map(request),
-            perkBatch.map(request),
-        ]);
+        // Break these up to avoid overloading server and getting ECONNRESET error
+        // debug("Inserting " + teamStatBatch.length + " team stats");
+        // await Promise.all([teamStatBatch.map(request)]);
+        // debug("teamStatBatch Insert Done");
+        // debug("Inserting " + teamBanBatch.length + " team bans");
+        // await Promise.all([teamBanBatch.map(request)]);
+        // debug("teamBanBatch Insert Done");
+        // debug("Inserting " + statBatch.length + " participant stats");
+        // await Promise.all([statBatch.map(request)]);
+        // debug("statBatch Insert Done");
+        // debug("Inserting " + itemBatch.length + " participant items");
+        // await Promise.all([itemBatch.map(request)]);
+        // debug("itemBatch Insert Done");
+        // debug("Inserting " + perkBatch.length + " participant perks");
+        // await Promise.all([perkBatch.map(request)]);
+        // debug("perkBatch Insert Done");
     } catch (err) {
         debug(err);
     }
@@ -194,11 +212,14 @@ const updateMatchList = async (summonerJSON: string) => {
  * @return {Object} MatchList object from RIOT API
  */
 const getMatchList = async (summoner, options: IMatchOptions) => {
+    debug("Getting match list");
     if (!util.isObject(summoner)) {
         try {
             summoner = JSON.parse(summoner);
         } catch (e) {
+            debug("Unable to parse summoner");
             debug(e);
+            return;
         }
     }
 
@@ -213,6 +234,10 @@ const getMatchList = async (summoner, options: IMatchOptions) => {
     options = await getMatchDates(options.beginTime || summoner.lastUpdated,
         options.endTime || summoner.revisionDate);
 
+    debug("Using these dates:");
+    debug(new Date(options.beginTime));
+    debug(new Date(options.endTime));
+
     let riotMatchList = null;
     try {
         // Send request to RIOT API
@@ -221,11 +246,10 @@ const getMatchList = async (summoner, options: IMatchOptions) => {
         if (err.statusCode === 404) {
             // This just means they don't have any matches during the time period
             // so return the options and a null list
+            debug("No matches found");
             riotMatchList = null;
         } else if (err.statusCode === 400) {
             debug("Bad dates");
-            debug("BeginTime: " + options.beginTime);
-            debug("EndTime:   " + options.endTime);
         } else {
             debug("Problem calling Kayn");
             debug(err);
@@ -257,9 +281,9 @@ const getMatchList = async (summoner, options: IMatchOptions) => {
 /**
  * @param {number} beginTime UNIX milliseconds representing the last time the Summoner was updated
  * @param {number} endTime UNIX milliseconds representing the last time the Summoner was updated according to RIOT
- * @return {Object} JSON object containing beginTime and endTime to be used with a match method
+ * @return {Promise<IMatchOptions>} JSON object containing beginTime and endTime to be used with a match method
  */
-const getMatchDates = async (beginTime: number, endTime: number) => {
+const getMatchDates = async (beginTime: number, endTime: number): Promise<IMatchOptions> => {
     let dates: IMatchOptions;
     if (util.isNullOrUndefined(beginTime)) {
         let dbSeason = await request({uri: serverURLs.Season.getWhere("{\"isCurrent\":1}")});
@@ -295,6 +319,7 @@ const getMatchDates = async (beginTime: number, endTime: number) => {
  */
 const transformParticipantDependants = async (matches, deltaTypes,
                                               timelineDeltaBatch, statBatch, itemBatch, perkBatch) => {
+    debug("Transforming perticipant dependants");
     await Promise.all(matches.map(async (match) => {
         const dbParticipants = await request({
             json: true,
@@ -450,6 +475,7 @@ const transformParticipantDependants = async (matches, deltaTypes,
             }
         });
     }));
+    debug("Transformation done");
 };
 
 export function registerWorkers(worker) {
