@@ -83,10 +83,10 @@ const parseAndLoad = async (version: string) => {
     const tempFilePath = "./temp/" + version + "/data/en_US/";
 
     await Promise.all([
-        // Champion.parse(tempFilePath + "champion.json"),
+        Champion.parse(tempFilePath + "champion.json"),
         Item.parse(tempFilePath + "item.json"),
-        // RunesReforged.parse(tempFilePath + "runesReforged.json"),
-        // SummonerSpell.parse(tempFilePath + "summoner.json"),
+        RunesReforged.parse(tempFilePath + "runesReforged.json"),
+        SummonerSpell.parse(tempFilePath + "summoner.json"),
     ]);
 
     // Clean up
