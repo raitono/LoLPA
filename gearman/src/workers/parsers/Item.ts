@@ -165,6 +165,7 @@ export async function parse(filePath: string): Promise<void> {
                 body: {
                     itemId: itemTag.itemId,
                     tagId: tag.id,
+                    version: itemDataWrapper.version,
                 },
                 json: true,
                 method: "POST",
@@ -189,6 +190,7 @@ export async function parse(filePath: string): Promise<void> {
                     enabled: itemMap.enabled,
                     itemId: itemMap.itemId,
                     mapId: itemMap.mapId,
+                    version: itemDataWrapper.version,
                 },
                 json: true,
                 method: "PUT",
