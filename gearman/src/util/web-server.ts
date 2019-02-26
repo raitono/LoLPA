@@ -78,6 +78,14 @@ export class URLs {
             return process.env.WEB_SERVER + "/match-lists/" + matchListId;
         },
     };
+    public MetaData = {
+        getWhere: (whereClause: string) => {
+            return process.env.WEB_SERVER + "/metadata?filter={\"where\":" + whereClause + "}";
+        },
+        put: (metadataId: number) => {
+            return process.env.WEB_SERVER + "/metadata/" + metadataId;
+        },
+    };
     public Participant = {
         getWhere: (whereClause: string) => {
             return process.env.WEB_SERVER + "/participants?filter={\"where\":" + whereClause + "}";

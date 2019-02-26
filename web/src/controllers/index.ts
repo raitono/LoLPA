@@ -22,3 +22,4 @@ export * from './item-tag.controller';
 export * from './xref-item-tag.controller';
 export * from './xref-item-map.controller';
 export * from './item-stat.controller';
+export * from './metadata.controller';

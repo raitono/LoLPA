@@ -21,3 +21,4 @@ export * from './item-tag.model';
 export * from './xref-item-tag.model';
 export * from './xref-item-map.model';
 export * from './item-stat.model';
+export * from './metadata.model';

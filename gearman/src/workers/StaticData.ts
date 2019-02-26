@@ -6,6 +6,8 @@ import tar = require("tar");
 import Kayn = require("../kayn");
 
 // my imports
+import { request } from "../util/common";
+import * as WebServer from "../util/web-server";
 import Champion = require("./parsers/Champion");
 import Item = require("./parsers/Item");
 import RunesReforged = require("./parsers/RunesReforged");
@@ -14,7 +16,8 @@ import SummonerSpell = require("./parsers/SummonerSpell");
 // globals
 // tslint:disable-next-line:no-var-requires
 const debug: any = require("debug")("lolpa-gearman:StaticData");
-let latestVersion: string = "";
+const serverURLs = new WebServer.URLs();
+let patchNumber: string = "";
 const staticTarballURL: string = "https://ddragon.leagueoflegends.com/cdn/dragontail-{version}.tgz";
 
 /**
@@ -23,15 +26,27 @@ const staticTarballURL: string = "https://ddragon.leagueoflegends.com/cdn/dragon
 const updateStaticData = async () => {
     // Find latest version number
     const versions = await Kayn.DDragon.Version.list();
-    latestVersion = "9.1.1"; // versions[0];
-    debug("Latest version: " + latestVersion);
+    patchNumber = versions[0];
+
+    await request({
+        body: {
+            id: 1,
+            name: "current_patch",
+            value: patchNumber,
+        },
+        json: true,
+        method: "PUT",
+        uri: serverURLs.MetaData.put(1),
+    });
+
+    debug("Updating to patch: " + patchNumber);
 
     // Download and extract tarball to temp directory
-    const tarballURL = staticTarballURL.replace("{version}", latestVersion);
+    const tarballURL = staticTarballURL.replace("{version}", patchNumber);
     debug("terball link: " + tarballURL);
 
-    const tempTarballPath = "./temp/" + latestVersion + ".tgz";
-    const tarballPathRoot = "./" + latestVersion + "/data/en_US/";
+    const tempTarballPath = "./temp/" + patchNumber + ".tgz";
+    const tarballPathRoot = "./" + patchNumber + "/data/en_US/";
 
     // For some reason, the Request package gives an Array Buffer error when trying to do this.
     // Guess we do it the old fashioned way.
@@ -54,7 +69,7 @@ const updateStaticData = async () => {
             ],
             () => {
                 debug("tarball extracted");
-                parseAndLoad(latestVersion);
+                parseAndLoad(patchNumber);
             },
             ).catch((err) => {
                 debug("Oops");
@@ -68,8 +83,8 @@ const parseAndLoad = async (version: string) => {
     const tempFilePath = "./temp/" + version + "/data/en_US/";
 
     await Promise.all([
-        Champion.parse(tempFilePath + "champion.json"),
-        // Item.parse(tempFilePath + "item.json"),
+        // Champion.parse(tempFilePath + "champion.json"),
+        Item.parse(tempFilePath + "item.json"),
         // RunesReforged.parse(tempFilePath + "runesReforged.json"),
         // SummonerSpell.parse(tempFilePath + "summoner.json"),
     ]);

@@ -21,3 +21,4 @@ export * from './item-tag.repository';
 export * from './xref-item-tag.repository';
 export * from './xref-item-map.repository';
 export * from './item-stat.repository';
+export * from './metadata.repository';
