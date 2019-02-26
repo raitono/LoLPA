@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS `champion` (
   PRIMARY KEY (`championId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.champion: ~143 rows (approximately)
+-- Dumping data for table riot.champion: ~144 rows (approximately)
 /*!40000 ALTER TABLE `champion` DISABLE KEYS */;
 /*!40000 ALTER TABLE `champion` ENABLE KEYS */;
 
@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS `champion_history` (
   PRIMARY KEY (`historyId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table riot.champion_history: ~143 rows (approximately)
+-- Dumping data for table riot.champion_history: ~158 rows (approximately)
 /*!40000 ALTER TABLE `champion_history` DISABLE KEYS */;
 /*!40000 ALTER TABLE `champion_history` ENABLE KEYS */;
 
@@ -152,7 +152,7 @@ CREATE TABLE IF NOT EXISTS `item` (
   PRIMARY KEY (`itemId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.item: ~0 rows (approximately)
+-- Dumping data for table riot.item: ~322 rows (approximately)
 /*!40000 ALTER TABLE `item` DISABLE KEYS */;
 /*!40000 ALTER TABLE `item` ENABLE KEYS */;
 
@@ -185,7 +185,7 @@ CREATE TABLE IF NOT EXISTS `item_history` (
   PRIMARY KEY (`historyId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table riot.item_history: ~0 rows (approximately)
+-- Dumping data for table riot.item_history: ~369 rows (approximately)
 /*!40000 ALTER TABLE `item_history` DISABLE KEYS */;
 /*!40000 ALTER TABLE `item_history` ENABLE KEYS */;
 
@@ -201,7 +201,7 @@ CREATE TABLE IF NOT EXISTS `item_stat` (
   CONSTRAINT `FK_item_stat_item` FOREIGN KEY (`itemId`) REFERENCES `item` (`itemId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.item_stat: ~0 rows (approximately)
+-- Dumping data for table riot.item_stat: ~392 rows (approximately)
 /*!40000 ALTER TABLE `item_stat` DISABLE KEYS */;
 /*!40000 ALTER TABLE `item_stat` ENABLE KEYS */;
 
@@ -217,7 +217,7 @@ CREATE TABLE IF NOT EXISTS `item_stat_history` (
   PRIMARY KEY (`historyId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table riot.item_stat_history: ~0 rows (approximately)
+-- Dumping data for table riot.item_stat_history: ~412 rows (approximately)
 /*!40000 ALTER TABLE `item_stat_history` DISABLE KEYS */;
 /*!40000 ALTER TABLE `item_stat_history` ENABLE KEYS */;
 
@@ -307,7 +307,7 @@ CREATE TABLE IF NOT EXISTS `match` (
   CONSTRAINT `FK_match_seasonId` FOREIGN KEY (`seasonId`) REFERENCES `season` (`seasonId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.match: ~0 rows (approximately)
+-- Dumping data for table riot.match: ~15 rows (approximately)
 /*!40000 ALTER TABLE `match` DISABLE KEYS */;
 /*!40000 ALTER TABLE `match` ENABLE KEYS */;
 
@@ -329,7 +329,7 @@ CREATE TABLE IF NOT EXISTS `match_list` (
   CONSTRAINT `FK_match_list_summonerPUUID` FOREIGN KEY (`summonerPUUID`) REFERENCES `summoner` (`puuid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.match_list: ~0 rows (approximately)
+-- Dumping data for table riot.match_list: ~15 rows (approximately)
 /*!40000 ALTER TABLE `match_list` DISABLE KEYS */;
 /*!40000 ALTER TABLE `match_list` ENABLE KEYS */;
 
@@ -359,7 +359,7 @@ CREATE TABLE IF NOT EXISTS `participant` (
   `teamId` int(11) NOT NULL,
   `lane` varchar(6) NOT NULL,
   `role` varchar(11) NOT NULL,
-  `highestAchievedSeasonTier` varchar(50) NOT NULL,
+  `highestAchievedSeasonTier` varchar(50) NOT NULL DEFAULT 'UNRANKED',
   PRIMARY KEY (`id`),
   UNIQUE KEY `gameId_participantId` (`gameId`,`participantId`),
   KEY `IX_participants_participantId` (`participantId`),
@@ -372,7 +372,7 @@ CREATE TABLE IF NOT EXISTS `participant` (
   CONSTRAINT `FK_participants_spell2Id` FOREIGN KEY (`spell2Id`) REFERENCES `spell` (`spellId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.participant: ~0 rows (approximately)
+-- Dumping data for table riot.participant: ~112 rows (approximately)
 /*!40000 ALTER TABLE `participant` DISABLE KEYS */;
 /*!40000 ALTER TABLE `participant` ENABLE KEYS */;
 
@@ -450,7 +450,7 @@ CREATE TABLE IF NOT EXISTS `participant_stat` (
   CONSTRAINT `FK_participant_stats_participantId` FOREIGN KEY (`participantId`) REFERENCES `participant` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.participant_stat: ~0 rows (approximately)
+-- Dumping data for table riot.participant_stat: ~111 rows (approximately)
 /*!40000 ALTER TABLE `participant_stat` DISABLE KEYS */;
 /*!40000 ALTER TABLE `participant_stat` ENABLE KEYS */;
 
@@ -465,7 +465,7 @@ CREATE TABLE IF NOT EXISTS `participant_timeline_delta` (
   UNIQUE KEY `participantId_deltaTypeId_increment` (`participantId`,`deltaTypeId`,`increment`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.participant_timeline_delta: ~0 rows (approximately)
+-- Dumping data for table riot.participant_timeline_delta: ~876 rows (approximately)
 /*!40000 ALTER TABLE `participant_timeline_delta` DISABLE KEYS */;
 /*!40000 ALTER TABLE `participant_timeline_delta` ENABLE KEYS */;
 
@@ -641,7 +641,7 @@ INSERT INTO `season` (`seasonId`, `number`, `name`, `startDate`, `endDate`, `isC
 	(11, 8, 'Season 2018', '2018-01-16 00:00:00', '2018-11-12 23:59:59', 0),
 	(12, 9, 'Preseason 2019', '2018-11-13 00:00:00', '2019-01-22 23:59:59', 0),
 	(13, 9, 'Season 2019', '2019-01-23 00:00:00', NULL, 0),
-	(14, 9, 'Test Season', '2019-02-25 00:00:00', NULL, 1);
+	(14, 9, 'Test Season', '2019-02-23 00:00:00', NULL, 1);
 /*!40000 ALTER TABLE `season` ENABLE KEYS */;
 
 -- Dumping structure for table riot.spell
@@ -692,7 +692,7 @@ CREATE TABLE IF NOT EXISTS `summoner` (
   KEY `IX_summonerId_name_puuid` (`puuid`,`summonerId`,`accountId`,`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.summoner: ~0 rows (approximately)
+-- Dumping data for table riot.summoner: ~1 rows (approximately)
 /*!40000 ALTER TABLE `summoner` DISABLE KEYS */;
 /*!40000 ALTER TABLE `summoner` ENABLE KEYS */;
 
@@ -737,7 +737,7 @@ CREATE TABLE IF NOT EXISTS `team_stat` (
   CONSTRAINT `FK_team_stats_gameId` FOREIGN KEY (`gameId`) REFERENCES `match` (`gameId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.team_stat: ~0 rows (approximately)
+-- Dumping data for table riot.team_stat: ~30 rows (approximately)
 /*!40000 ALTER TABLE `team_stat` DISABLE KEYS */;
 /*!40000 ALTER TABLE `team_stat` ENABLE KEYS */;
 
@@ -753,7 +753,7 @@ CREATE TABLE IF NOT EXISTS `xref_champion_tag` (
   CONSTRAINT `FK_xref_champion_tags_tagId` FOREIGN KEY (`tagId`) REFERENCES `champion_tag` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.xref_champion_tag: ~255 rows (approximately)
+-- Dumping data for table riot.xref_champion_tag: ~257 rows (approximately)
 /*!40000 ALTER TABLE `xref_champion_tag` DISABLE KEYS */;
 /*!40000 ALTER TABLE `xref_champion_tag` ENABLE KEYS */;
 
@@ -771,7 +771,7 @@ CREATE TABLE IF NOT EXISTS `xref_item_map` (
   CONSTRAINT `FK_xref_item_map_map` FOREIGN KEY (`mapId`) REFERENCES `map` (`mapId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.xref_item_map: ~0 rows (approximately)
+-- Dumping data for table riot.xref_item_map: ~963 rows (approximately)
 /*!40000 ALTER TABLE `xref_item_map` DISABLE KEYS */;
 /*!40000 ALTER TABLE `xref_item_map` ENABLE KEYS */;
 
@@ -787,7 +787,7 @@ CREATE TABLE IF NOT EXISTS `xref_item_map_history` (
   PRIMARY KEY (`historyId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table riot.xref_item_map_history: ~0 rows (approximately)
+-- Dumping data for table riot.xref_item_map_history: ~1,604 rows (approximately)
 /*!40000 ALTER TABLE `xref_item_map_history` DISABLE KEYS */;
 /*!40000 ALTER TABLE `xref_item_map_history` ENABLE KEYS */;
 
@@ -804,7 +804,7 @@ CREATE TABLE IF NOT EXISTS `xref_item_tag` (
   CONSTRAINT `FK_xref_item_tag_tag` FOREIGN KEY (`tagId`) REFERENCES `item_tag` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.xref_item_tag: ~0 rows (approximately)
+-- Dumping data for table riot.xref_item_tag: ~915 rows (approximately)
 /*!40000 ALTER TABLE `xref_item_tag` DISABLE KEYS */;
 /*!40000 ALTER TABLE `xref_item_tag` ENABLE KEYS */;
 
@@ -819,7 +819,7 @@ CREATE TABLE IF NOT EXISTS `xref_item_tag_history` (
   PRIMARY KEY (`historyId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
--- Dumping data for table riot.xref_item_tag_history: ~0 rows (approximately)
+-- Dumping data for table riot.xref_item_tag_history: ~921 rows (approximately)
 /*!40000 ALTER TABLE `xref_item_tag_history` DISABLE KEYS */;
 /*!40000 ALTER TABLE `xref_item_tag_history` ENABLE KEYS */;
 
@@ -835,7 +835,7 @@ CREATE TABLE IF NOT EXISTS `xref_participant_item` (
   CONSTRAINT `FK_xref_participant_item_participantId` FOREIGN KEY (`participantId`) REFERENCES `participant` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Might not be strictly needed, just as with bans, but it breaks from the normalized structure if I leave them part of the participants_stats table.\r\n\r\nThinking about it deeper, it really is a many-many relationship, so deserves its own table.';
 
--- Dumping data for table riot.xref_participant_item: ~0 rows (approximately)
+-- Dumping data for table riot.xref_participant_item: ~777 rows (approximately)
 /*!40000 ALTER TABLE `xref_participant_item` DISABLE KEYS */;
 /*!40000 ALTER TABLE `xref_participant_item` ENABLE KEYS */;
 
@@ -855,7 +855,7 @@ CREATE TABLE IF NOT EXISTS `xref_participant_perk` (
   CONSTRAINT `FK_perkId` FOREIGN KEY (`perkId`) REFERENCES `perk` (`perkId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.xref_participant_perk: ~0 rows (approximately)
+-- Dumping data for table riot.xref_participant_perk: ~1,998 rows (approximately)
 /*!40000 ALTER TABLE `xref_participant_perk` DISABLE KEYS */;
 /*!40000 ALTER TABLE `xref_participant_perk` ENABLE KEYS */;
 
