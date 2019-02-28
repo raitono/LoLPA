@@ -18,7 +18,8 @@ export function readFileAsync(filepath: string) {
 export async function batchRequest(requests: requestPromiseNative.OptionsWithUri[]) {
     const k: number = parseInt(process.env.MAX_REQUEST_BATCH_SIZE);
     const result: Array<requestPromiseNative.RequestPromise<any>> = [];
-    let n = 0;
+
+    debug(requests.length + " requests batched");
     for (let n = 0; n * k < requests.length; n++) {
         const b = n * k;
         let e = (n + 1) * k;
@@ -27,11 +28,9 @@ export async function batchRequest(requests: requestPromiseNative.OptionsWithUri
             e = requests.length;
         }
 
-        debug("B: " + b);
-        debug("E: " + e);
-
         const t = requests.slice(b, e);
         result.concat(await Promise.all(t.map(request)));
+        debug(e + " done");
     }
     return result;
 }
