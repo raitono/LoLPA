@@ -57,15 +57,15 @@ const updateMatchList = async (summonerJSON: string) => {
     debug("Getting matches from Riot API");
     const matches: any[] = await Promise.all(matchBatch.map(Kayn.MatchV4.get));
     const deltaTypes = JSON.parse(await request({uri: serverURLs.DeltaType.getAll()}));
-    const matchInsertBatch = [];
-    const matchListBatch = [];
-    const teamStatBatch = [];
-    const teamBanBatch = [];
-    const participantBatch = [];
-    const statBatch = [];
-    const timelineDeltaBatch = [];
-    const itemBatch = [];
-    const perkBatch = [];
+    const matchInsertBatch: requestPromiseNative.OptionsWithUri[] = [];
+    const matchListBatch: requestPromiseNative.OptionsWithUri[] = [];
+    const teamStatBatch: requestPromiseNative.OptionsWithUri[] = [];
+    const teamBanBatch: requestPromiseNative.OptionsWithUri[] = [];
+    const participantBatch: requestPromiseNative.OptionsWithUri[] = [];
+    const statBatch: requestPromiseNative.OptionsWithUri[] = [];
+    const timelineDeltaBatch: requestPromiseNative.OptionsWithUri[] = [];
+    const itemBatch: requestPromiseNative.OptionsWithUri[] = [];
+    const perkBatch: requestPromiseNative.OptionsWithUri[] = [];
 
     // Batch up the insert options
     matches.forEach((match) => {
@@ -167,38 +167,24 @@ const updateMatchList = async (summonerJSON: string) => {
 
     try {
         // This has to be done separate because of the foreign keys.
-        debug("Inserting " + matchInsertBatch.length + " matches");
         await Promise.all(matchInsertBatch.map(request));
-        debug("Match Insert Done");
-        debug("Inserting " + matchListBatch.length + " match lists");
-        debug("Inserting " + participantBatch.length + " participants");
-        await Promise.all([matchListBatch.map(request), participantBatch.map(request)]);
-        debug("Match List Insert Done");
-        debug("Participant Insert Done");
+        await batchRequest(matchListBatch.concat(participantBatch));
 
         await transformParticipantDependants(matches, deltaTypes,
             timelineDeltaBatch, statBatch, itemBatch, perkBatch);
 
-        debug("Inserting " + timelineDeltaBatch.length + " timeline deltas");
-        await batchRequest(timelineDeltaBatch);
-        debug("timelineDeltaBatch Insert Done");
-
-        // Break these up to avoid overloading server and getting ECONNRESET error
-        // debug("Inserting " + teamStatBatch.length + " team stats");
-        // await Promise.all([teamStatBatch.map(request)]);
-        // debug("teamStatBatch Insert Done");
-        // debug("Inserting " + teamBanBatch.length + " team bans");
-        // await Promise.all([teamBanBatch.map(request)]);
-        // debug("teamBanBatch Insert Done");
-        // debug("Inserting " + statBatch.length + " participant stats");
-        // await Promise.all([statBatch.map(request)]);
-        // debug("statBatch Insert Done");
-        // debug("Inserting " + itemBatch.length + " participant items");
-        // await Promise.all([itemBatch.map(request)]);
-        // debug("itemBatch Insert Done");
-        // debug("Inserting " + perkBatch.length + " participant perks");
-        // await Promise.all([perkBatch.map(request)]);
-        // debug("perkBatch Insert Done");
+        // debug("timelineDeltaBatch");
+        // await batchRequest(timelineDeltaBatch);
+        // debug("teamStatBatch");
+        // await batchRequest(teamStatBatch);
+        // debug("teamBanBatch");
+        // await batchRequest(teamBanBatch);
+        // debug("statBatch");
+        // await batchRequest(statBatch);
+        debug("itemBatch");
+        await batchRequest(itemBatch);
+        debug("perkBatch");
+        await batchRequest(perkBatch);
     } catch (err) {
         debug(err);
     }
@@ -312,10 +298,10 @@ const getMatchDates = async (beginTime: number, endTime: number): Promise<IMatch
  * Iterate over matches again to load deltas. Need Participants loaded first so that we can get their IDs.
  * @param {Array} matches
  * @param {Array} deltaTypes
- * @param {Array} timelineDeltaBatch
- * @param {Array} statBatch
- * @param {Array} itemBatch
- * @param {Array} perkBatch
+ * @param {requestPromiseNative.OptionsWithUri[]} timelineDeltaBatch
+ * @param {requestPromiseNative.OptionsWithUri[]} statBatch
+ * @param {requestPromiseNative.OptionsWithUri[]} itemBatch
+ * @param {requestPromiseNative.OptionsWithUri[]} perkBatch
  */
 const transformParticipantDependants = async (matches, deltaTypes,
                                               timelineDeltaBatch, statBatch, itemBatch, perkBatch) => {
@@ -347,13 +333,12 @@ const transformParticipantDependants = async (matches, deltaTypes,
                 }
 
                 timelineKeys.forEach((increment) => {
-                    const value = dataParticipant.timeline[deltaType.name][increment];
                     timelineDeltaBatch.push({
                         body: {
                             deltaTypeId: deltaType.id,
                             increment,
                             participantId: dbParticipant.id,
-                            value,
+                            value: parseFloat(dataParticipant.timeline[deltaType.name][increment].toFixed(2)),
                         },
                         json: true,
                         method: "POST",
