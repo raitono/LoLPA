@@ -106,6 +106,9 @@ export class URLs {
         },
     };
     public ParticipantTimelineDelta = {
+        get: () => {
+            return process.env.WEB_SERVER + "/participant-timeline-deltas";
+        },
         getWhere: (whereClause: string) => {
             return process.env.WEB_SERVER + "/participant-timeline-deltas?filter={\"where\":" + whereClause + "}";
         },
