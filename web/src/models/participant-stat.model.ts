@@ -404,6 +404,24 @@ export class ParticipantStat extends Entity {
   })
   perkSubStyle: number;
 
+  @property({
+    type: 'number',
+    required: true,
+  })
+  perkStat0: number;
+
+  @property({
+    type: 'number',
+    required: true,
+  })
+  perkStat1: number;
+
+  @property({
+    type: 'number',
+    required: true,
+  })
+  perkStat2: number;
+
   constructor(data?: Partial<ParticipantStat>) {
     super(data);
   }
