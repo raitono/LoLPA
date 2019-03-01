@@ -408,19 +408,19 @@ export class ParticipantStat extends Entity {
     type: 'number',
     required: true,
   })
-  perkStat0: number;
+  statPerk0: number;
 
   @property({
     type: 'number',
     required: true,
   })
-  perkStat1: number;
+  statPerk1: number;
 
   @property({
     type: 'number',
     required: true,
   })
-  perkStat2: number;
+  statPerk2: number;
 
   constructor(data?: Partial<ParticipantStat>) {
     super(data);
