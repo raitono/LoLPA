@@ -68,15 +68,14 @@ const determineUpdates = async (summoner: string): Promise<string> => {
  * @return {Promise<string>} JSON string representing the summoner stored in the database
  */
 const getSummonerByName = async (summonerName: string): Promise<string> => {
-    let summoner = "";
     const summonerDBRequestOptions = {
         json: true,
         method: "GET",
         uri: serverURLs.Summoner.getByName(summonerName),
     };
 
-    summoner = await request(summonerDBRequestOptions);
-    summoner = summoner[0];
+    let summonerSearchResults: IDBSummoner[] = await request(summonerDBRequestOptions);
+    let summoner: IDBSummoner = summonerSearchResults[0];
 
     if (summoner) {
         debug("Retrieved Summoner");
@@ -101,8 +100,8 @@ const getSummonerByName = async (summonerName: string): Promise<string> => {
 
             debug(rawSummoner.name + " inserted");
 
-            summoner = await request(summonerDBRequestOptions);
-            summoner = summoner[0];
+            summonerSearchResults = await request(summonerDBRequestOptions);
+            summoner = summonerSearchResults[0];
         } catch (kaynError) {
             if (kaynError.statusCode === 404) {
                 debug("Summoner does not exist: " + summonerName);
@@ -119,7 +118,7 @@ const getSummonerByName = async (summonerName: string): Promise<string> => {
  * @param {string} summonerJSON Json representation of a Summoner
  */
 const updateLastUpdated = async (summonerJSON: string) => {
-    const summoner = JSON.parse(summonerJSON);
+    const summoner: IDBSummoner = JSON.parse(summonerJSON);
     request({
         body: {
             accountId: summoner.accountId,
