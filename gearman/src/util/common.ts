@@ -1,11 +1,32 @@
 import * as fs from "fs";
+import { Kayn, LRUCache, REGIONS } from "kayn";
 import requestPromiseNative = require("request-promise-native");
 import * as util from "util";
 
 // tslint:disable-next-line:no-var-requires
 const debug: any = require("debug")("lolpa-gearman:Common");
-
 const rfa = util.promisify(fs.readFile);
+const kaynCache = new LRUCache({max: 1000});
+
+const kayn: any = Kayn(process.env.RIOT_API_KEY)({
+        cacheOptions: {
+            cache: kaynCache,
+            timeToLives: {
+                useDefault: true,
+            },
+        },
+        debugOptions: {
+            isEnabled: true,
+            showKey: false,
+        },
+        region: REGIONS.NORTH_AMERICA,
+        requestOptions: {
+            delayBeforeRetry: 3000,
+            numberOfRetriesBeforeAbort: 3,
+        },
+    });
+
+export { kayn };
 
 export function request(value: requestPromiseNative.OptionsWithUri) {
     return requestPromiseNative(value);

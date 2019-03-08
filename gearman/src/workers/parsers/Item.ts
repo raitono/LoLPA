@@ -3,7 +3,7 @@ import requestPromiseNative = require("request-promise-native");
 
 // my imports
 import { readFileAsync, request } from "../../util/common";
-import { IItem, IItemFileWrapper, IItemStats } from "../../util/interfaces";
+import { IAPIItem, IItemFileWrapper } from "../../util/interfaces";
 import * as WebServer from "../../util/web-server";
 
 // globals
@@ -18,10 +18,10 @@ const serverURLs = new WebServer.URLs();
 export async function parse(filePath: string): Promise<void> {
     const itemDataFile: Buffer = await readFileAsync(filePath);
     const itemDataWrapper: IItemFileWrapper = JSON.parse(itemDataFile.toString());
-    const itemData: IItem[] = Object.keys(itemDataWrapper.data).map((key) => {
+    const itemData: IAPIItem[] = Object.keys(itemDataWrapper.data).map((key) => {
             // The item JSON doesn't include the id in the data like the champion one does
             itemDataWrapper.data[key].id = parseInt(key);
-            return itemDataWrapper.data[key] as IItem;
+            return itemDataWrapper.data[key] as IAPIItem;
         });
     const itemBatch: requestPromiseNative.OptionsWithUri[] = [];
     const itemRemovalBatch: requestPromiseNative.OptionsWithUri[] = [];

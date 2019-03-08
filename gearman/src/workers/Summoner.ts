@@ -1,10 +1,10 @@
 // 3rd party imports
 import requestPromiseNative = require("request-promise-native");
-import Kayn = require("../kayn");
 
 // my imports
-import { readFileAsync, request } from "../util/common";
-import { IAPISummoner, IDBSummoner } from "../util/interfaces";
+import { SummonerV4SummonerDTO } from "kayn/typings/dtos";
+import { kayn, request } from "../util/common";
+import { IDBSummoner } from "../util/interfaces";
 import * as WebServer from "../util/web-server";
 
 // globals
@@ -29,7 +29,7 @@ const determineUpdates = async (summoner: string): Promise<string> => {
         ret.shouldUpdateMatches = true;
         return JSON.stringify(ret);
     } else if (Date.now() - Date.parse(ret.summoner.lastUpdated) >= 600000) {
-        const rawSummoner: IAPISummoner = await Kayn.SummonerV4.by.name(ret.summoner.name);
+        const rawSummoner: SummonerV4SummonerDTO = await kayn.SummonerV4.by.name(ret.summoner.name);
         if ((rawSummoner.revisionDate - Date.parse(ret.summoner.revisionDate)) !== 0) {
             await request({
                 body: {
@@ -82,7 +82,7 @@ const getSummonerByName = async (summonerName: string): Promise<string> => {
     } else {
         debug("Summoner not found in db");
         try {
-            const rawSummoner: IAPISummoner = await Kayn.SummonerV4.by.name(summonerName);
+            const rawSummoner: SummonerV4SummonerDTO = await kayn.SummonerV4.by.name(summonerName);
             await request({
                 body: {
                     accountId: rawSummoner.accountId,

@@ -1,10 +1,12 @@
 // 3rd party imports
 import requestPromiseNative = require("request-promise-native");
 import * as util from "util";
-import Kayn = require("../kayn");
 
 // my imports
-import { batchRequest, request } from "../util/common";
+import { MatchV4MatchDto } from "kayn/typings/dtos";
+import { batchRequest, kayn, request } from "../util/common";
+import { IAPIMatchList, IDBItem, IDBMatch, IDBMatchList, IDBParticipant, IDBParticipantStats,
+    IDBParticipantTimelineDelta, IDBTeamBan, IDBTeamStat, IDBXrefParticipantPerk } from "../util/interfaces";
 import * as WebServer from "../util/web-server";
 
 // globals
@@ -35,156 +37,171 @@ const updateMatchList = async (summonerJSON: string) => {
 
     debug("Gathered " + summoner.matchList.length + " matches");
 
-    // We have all the matches. Extract the gameIds.
-    let matchBatch = [];
-    summoner.matchList.forEach((matchList) => {
-        matchBatch.push(matchList.gameId);
-    });
-
+    // Filter out the ones we already have
     const existingMatches = await request({
         json: true,
         method: "GET",
-        uri: serverURLs.Match.getWhere("{\"gameId\": {\"inq\": " + JSON.stringify(matchBatch) + "}}"),
+        uri: serverURLs.Match.get(),
     });
-    matchBatch = matchBatch.filter((m) => existingMatches.findIndex((e) => e.gameId === m) === -1);
+    summoner.matchList = summoner.matchList.filter(
+        (ml: IAPIMatchList) => existingMatches.findIndex((e: IDBMatch) => e.gameId === ml.gameId) === -1);
 
-    if (util.isNullOrUndefined(matchBatch[0])) {
+    if (util.isNullOrUndefined(summoner.matchList[0])) {
         debug("All matches already exist");
         return;
     }
 
-    // Get the matches from RIOT
-    debug("Getting matches from Riot API");
-    const matches: any[] = await Promise.all(matchBatch.map(Kayn.MatchV4.get));
     const deltaTypes = JSON.parse(await request({uri: serverURLs.DeltaType.getAll()}));
-    const matchInsertBatch: requestPromiseNative.OptionsWithUri[] = [];
-    const matchListBatch: requestPromiseNative.OptionsWithUri[] = [];
-    const teamStatBatch: requestPromiseNative.OptionsWithUri[] = [];
-    const teamBanBatch: requestPromiseNative.OptionsWithUri[] = [];
-    const participantBatch: requestPromiseNative.OptionsWithUri[] = [];
-    const statBatch: requestPromiseNative.OptionsWithUri[] = [];
-    const timelineDeltaBatch: requestPromiseNative.OptionsWithUri[] = [];
-    const itemBatch: requestPromiseNative.OptionsWithUri[] = [];
-    const perkBatch: requestPromiseNative.OptionsWithUri[] = [];
+    const matchInsertBatch: IDBMatch[] = [];
+    const matchListBatch: IDBMatchList[] = [];
+    const participantBatch: IDBParticipant[] = [];
+    const teamStatBatch: IDBTeamStat[] = [];
+    const teamBanBatch: IDBTeamBan[] = [];
+    const statBatch: IDBParticipantStats[] = [];
+    const timelineDeltaBatch: IDBParticipantTimelineDelta[] = [];
+    const itemBatch: IDBItem[] = [];
+    const perkBatch: IDBXrefParticipantPerk[] = [];
+
+    debug("Getting matches from Riot API");
+    const matches: MatchV4MatchDto[] = await Promise.all(summoner.matchList.map(
+        async (matchList: IAPIMatchList) => {
+            matchListBatch.push({
+                championId: matchList.champion,
+                gameId: matchList.gameId,
+                lane: matchList.lane,
+                role: matchList.role,
+                summonerPUUID: summoner.puuid,
+                timestamp: new Date(matchList.timestamp),
+            });
+            return kayn.MatchV4.get(matchList.gameId);
+        }));
+    debug("Retrieved matches");
 
     // Batch up the insert options
     matches.forEach((match) => {
-        const gameId = parseInt(match.gameId);
         matchInsertBatch.push({
-            body: {
-                gameCreation: new Date(match.gameCreation),
-                gameDuration: match.gameDuration,
-                gameId,
-                gameMode: match.gameMode,
-                gameType: match.gameType,
-                gameVersion: match.gameVersion,
-                mapId: match.mapId,
-                platformId: match.platformId,
-                queueId: match.queueId,
-                seasonId: match.seasonId,
-            },
-            json: true,
-            method: "PUT",
-            uri: serverURLs.Match.put(gameId),
+            gameCreation: new Date(match.gameCreation),
+            gameDuration: match.gameDuration,
+            gameId: match.gameId,
+            gameMode: match.gameMode,
+            gameType: match.gameType,
+            gameVersion: match.gameVersion,
+            mapId: match.mapId,
+            platformId: match.platformId,
+            queueId: match.queueId,
+            seasonId: match.seasonId,
         });
 
         match.teams.forEach((team) => {
             teamStatBatch.push({
-                body: {
-                    baronKills: team.baronKills,
-                    dominionVictoryScore: team.dominionVictoryScore,
-                    dragonKills: team.dragonKills,
-                    firstBlood: team.firstBlood,
-                    firstDragon: team.firstDragon,
-                    firstInhibitor: team.firstInhibitor,
-                    firstRiftHerald: team.firstRiftHerald,
-                    firstTower: team.firstTower,
-                    gameId,
-                    inhibitorKills: team.inhibitorKills,
-                    riftHeraldKills: team.riftHeraldKills,
-                    teamId: team.teamId,
-                    towerKills: team.towerKills,
-                    vilemawKills: team.vilemawKills,
-                    win: team.win,
-                },
-                json: true,
-                method: "POST",
-                uri: serverURLs.TeamStat.post(),
+                baronKills: team.baronKills,
+                dominionVictoryScore: team.dominionVictoryScore,
+                dragonKills: team.dragonKills,
+                firstBlood: team.firstBlood,
+                firstDragon: team.firstDragon,
+                firstInhibitor: team.firstInhibitor,
+                firstRiftHerald: team.firstRiftHerald,
+                firstTower: team.firstTower,
+                gameId: match.gameId,
+                inhibitorKills: team.inhibitorKills,
+                riftHeraldKills: team.riftHeraldKills,
+                teamId: team.teamId,
+                towerKills: team.towerKills,
+                vilemawKills: team.vilemawKills,
+                win: team.win,
             });
 
             team.bans.forEach((ban) => {
                 teamBanBatch.push({
-                    body: {
-                        championId: ban.championId,
-                        gameId: match.gameId,
-                        pickTurn: ban.pickTurn,
-                        teamId: team.teamId,
-                    },
-                    json: true,
-                    method: "POST",
-                    uri: serverURLs.TeamBan.post(),
+                    championId: ban.championId,
+                    gameId: match.gameId,
+                    pickTurn: ban.pickTurn,
+                    teamId: team.teamId,
                 });
             });
         });
 
         match.participants.forEach((participant) => {
             participantBatch.push({
-                body: {
-                    accountId: match.participantIdentities.filter(
-                        (i) => i.participantId === participant.participantId)[0].player.accountId,
-                    championId: participant.championId,
-                    gameId,
-                    highestAchievedSeasonTier: participant.highestAchievedSeasonTier,
-                    lane: participant.timeline.lane,
-                    participantId: participant.participantId,
-                    role: participant.timeline.role,
-                    spell1Id: participant.spell1Id,
-                    spell2Id: participant.spell2Id,
-                    teamId: participant.teamId,
-                },
-                json: true,
-                method: "POST",
-                uri: serverURLs.Participant.post(),
+                accountId: match.participantIdentities.filter(
+                    (i) => i.participantId === participant.participantId)[0].player.accountId,
+                championId: participant.championId,
+                gameId: match.gameId,
+                highestAchievedSeasonTier: participant.highestAchievedSeasonTier,
+                lane: participant.timeline.lane,
+                participantId: participant.participantId,
+                role: participant.timeline.role,
+                spell1Id: participant.spell1Id,
+                spell2Id: participant.spell2Id,
+                teamId: participant.teamId,
             });
-        });
-    });
-
-    summoner.matchList.forEach((matchList) => {
-        matchListBatch.push({
-            body: {
-                championId: matchList.champion,
-                gameId: parseInt(matchList.gameId),
-                lane: matchList.lane,
-                role: matchList.role,
-                summonerPUUID: summoner.puuid,
-                timestamp: new Date(matchList.timestamp),
-            },
-            json: true,
-            method: "POST",
-            uri: serverURLs.MatchList.post(),
         });
     });
 
     try {
         // This has to be done separate because of the foreign keys.
-        await Promise.all(matchInsertBatch.map(request));
-        await batchRequest(matchListBatch.concat(participantBatch));
+        await request({
+            body: matchInsertBatch,
+            json: true,
+            method: "POST",
+            uri: serverURLs.Match.batch(),
+        });
+        await Promise.all([
+            request({
+                body: matchListBatch,
+                json: true,
+                method: "POST",
+                uri: serverURLs.MatchList.batch(),
+            }),
+            request({
+                body: participantBatch,
+                json: true,
+                method: "POST",
+                uri: serverURLs.Participant.batch(),
+            }),
+        ]);
 
         await transformParticipantDependants(matches, deltaTypes,
             timelineDeltaBatch, statBatch, itemBatch, perkBatch);
 
-        // debug("timelineDeltaBatch");
-        // await batchRequest(timelineDeltaBatch);
-        // debug("teamStatBatch");
-        // await batchRequest(teamStatBatch);
-        // debug("teamBanBatch");
-        // await batchRequest(teamBanBatch);
-        // debug("statBatch");
-        // await batchRequest(statBatch);
-        debug("itemBatch");
-        await batchRequest(itemBatch);
-        debug("perkBatch");
-        await batchRequest(perkBatch);
+        await Promise.all([
+            request({
+                body: timelineDeltaBatch,
+                json: true,
+                method: "POST",
+                uri: serverURLs.ParticipantTimelineDelta.batch(),
+            }),
+            request({
+                body: teamStatBatch,
+                json: true,
+                method: "POST",
+                uri: serverURLs.TeamStat.batch(),
+            }),
+            request({
+                body: teamBanBatch,
+                json: true,
+                method: "POST",
+                uri: serverURLs.TeamBan.batch(),
+            }),
+            request({
+                body: statBatch,
+                json: true,
+                method: "POST",
+                uri: serverURLs.ParticipantStat.batch(),
+            }),
+            request({
+                body: itemBatch,
+                json: true,
+                method: "POST",
+                uri: serverURLs.Item.batch(),
+            }),
+            request({
+                body: perkBatch,
+                json: true,
+                method: "POST",
+                uri: serverURLs.XrefParticipantPerk.batch(),
+            }),
+        ]);
     } catch (err) {
         debug(err);
     }
@@ -227,7 +244,7 @@ const getMatchList = async (summoner, options: IMatchOptions) => {
     let riotMatchList = null;
     try {
         // Send request to RIOT API
-        riotMatchList = await Kayn.MatchlistV4.by.accountID(summoner.accountId).query(options);
+        riotMatchList = await kayn.MatchlistV4.by.accountID(summoner.accountId).query(options);
     } catch (err) {
         if (err.statusCode === 404) {
             // This just means they don't have any matches during the time period
@@ -298,7 +315,7 @@ const getMatchDates = async (beginTime: number, endTime: number): Promise<IMatch
  * Iterate over matches again to load deltas. Need Participants loaded first so that we can get their IDs.
  * @param {Array} matches
  * @param {Array} deltaTypes
- * @param {requestPromiseNative.OptionsWithUri[]} timelineDeltaBatch
+ * @param {IDBParticipantTimelineDelta[]} timelineDeltaBatch
  * @param {requestPromiseNative.OptionsWithUri[]} statBatch
  * @param {requestPromiseNative.OptionsWithUri[]} itemBatch
  * @param {requestPromiseNative.OptionsWithUri[]} perkBatch
@@ -334,15 +351,10 @@ const transformParticipantDependants = async (matches, deltaTypes,
 
                 timelineKeys.forEach((increment) => {
                     timelineDeltaBatch.push({
-                        body: {
-                            deltaTypeId: deltaType.id,
-                            increment,
-                            participantId: dbParticipant.id,
-                            value: parseFloat(dataParticipant.timeline[deltaType.name][increment].toFixed(2)),
-                        },
-                        json: true,
-                        method: "POST",
-                        uri: serverURLs.ParticipantTimelineDelta.post(),
+                        deltaTypeId: deltaType.id,
+                        increment,
+                        participantId: dbParticipant.id,
+                        value: parseFloat(dataParticipant.timeline[deltaType.name][increment].toFixed(2)),
                     });
                 });
             });

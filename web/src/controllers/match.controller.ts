@@ -37,6 +37,35 @@ export class MatchController {
     return await this.matchRepository.create(match);
   }
 
+  @post('/matches/batch', {
+    responses: {
+      '204': {
+        description: 'Array of Match model instances',
+        content: {'application/json': {schema: {
+          type: 'array',
+          items: {
+            'x-ts-type': Match,
+          },
+        }}},
+      },
+    },
+  })
+  async createBatch(@requestBody() matches: Match[]): Promise<void> {
+    let sql: string = 'INSERT INTO `match`(gameId, seasonId, queueId, mapId, platformId, gameVersion, gameMode, gameType, gameDuration, gameCreation)VALUES';
+
+    matches.forEach((m, i) => {
+      sql = sql+'(' + m.gameId + ',' + m.seasonId + ',' + m.queueId + ',' + m.mapId + ',\'' + m.platformId + '\',\'' +
+              m.gameVersion + '\',\'' + m.gameMode + '\',\'' + m.gameType + '\',' + m.gameDuration + ',\'' + m.gameCreation.replace('T', ' ').replace('Z', '') + '\')';
+      if (i !== matches.length - 1){
+        sql = sql + ',';
+      }
+    });
+
+    sql = sql+'ON DUPLICATE KEY UPDATE seasonId = VALUES(seasonId)';
+
+    await this.matchRepository.dataSource.execute(sql);
+  }
+
   @get('/matches/count', {
     responses: {
       '200': {

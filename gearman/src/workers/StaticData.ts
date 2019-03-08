@@ -3,10 +3,9 @@ import del = require("del");
 import * as fs from "fs";
 import https = require("https");
 import tar = require("tar");
-import Kayn = require("../kayn");
 
 // my imports
-import { request } from "../util/common";
+import { kayn, request } from "../util/common";
 import * as WebServer from "../util/web-server";
 import Champion = require("./parsers/Champion");
 import Item = require("./parsers/Item");
@@ -25,7 +24,7 @@ const staticTarballURL: string = "https://ddragon.leagueoflegends.com/cdn/dragon
  */
 const updateStaticData = async () => {
     // Find latest version number
-    const versions = await Kayn.DDragon.Version.list();
+    const versions = await kayn.DDragon.Version.list();
     patchNumber = versions[0];
 
     await request({

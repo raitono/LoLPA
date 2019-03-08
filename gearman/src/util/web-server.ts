@@ -27,6 +27,9 @@ export class URLs {
         },
     };
     public Item = {
+        batch: () => {
+            return process.env.WEB_SERVER + "/items/batch";
+        },
         delete: (itemId: number) => {
             return process.env.WEB_SERVER + "/items/" + itemId;
         },
@@ -63,6 +66,12 @@ export class URLs {
         },
     };
     public Match = {
+        batch: () => {
+            return process.env.WEB_SERVER + "/matches/batch";
+        },
+        get: () => {
+            return process.env.WEB_SERVER + "/matches";
+        },
         getWhere: (whereClause: string) => {
             return process.env.WEB_SERVER + "/matches?filter={\"where\":" + whereClause + "}";
         },
@@ -71,6 +80,9 @@ export class URLs {
         },
     };
     public MatchList = {
+        batch: () => {
+            return process.env.WEB_SERVER + "/match-lists/batch";
+        },
         post: () => {
             return process.env.WEB_SERVER + "/match-lists";
         },
@@ -87,6 +99,9 @@ export class URLs {
         },
     };
     public Participant = {
+        batch: () => {
+            return process.env.WEB_SERVER + "/participants/batch";
+        },
         getWhere: (whereClause: string) => {
             return process.env.WEB_SERVER + "/participants?filter={\"where\":" + whereClause + "}";
         },
@@ -98,6 +113,9 @@ export class URLs {
         },
     };
     public ParticipantStat = {
+        batch: () => {
+            return process.env.WEB_SERVER + "/participant-timeline-deltas/batch";
+        },
         post: () => {
             return process.env.WEB_SERVER + "/participant-stats";
         },
@@ -106,6 +124,9 @@ export class URLs {
         },
     };
     public ParticipantTimelineDelta = {
+        batch: () => {
+            return process.env.WEB_SERVER + "/participant-timeline-deltas/batch";
+        },
         get: () => {
             return process.env.WEB_SERVER + "/participant-timeline-deltas";
         },
@@ -155,11 +176,17 @@ export class URLs {
         },
     };
     public TeamBan = {
+        batch: () => {
+            return process.env.WEB_SERVER + "/team-bans/batch";
+        },
         post: () => {
             return process.env.WEB_SERVER + "/team-bans";
         },
     };
     public TeamStat = {
+        batch: () => {
+            return process.env.WEB_SERVER + "/team-stats/batch";
+        },
         post: () => {
             return process.env.WEB_SERVER + "/team-stats";
         },
@@ -212,6 +239,9 @@ export class URLs {
         },
     };
     public XrefParticipantPerk = {
+        batch: () => {
+            return process.env.WEB_SERVER + "/xref-participant-perks/batch";
+        },
         post: () => {
             return process.env.WEB_SERVER + "/xref-participant-perks";
         },

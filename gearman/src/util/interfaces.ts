@@ -60,12 +60,12 @@ export interface IChampionStats {
 export interface IItemFileWrapper {
     type: string;
     version: string;
-    basic: IItem;
+    basic: IAPIItem;
     data: any;
     groups: Array<{ id: string; MaxGroupOwnable: string; }>;
     tree: Array<{ header: string; tags: string[]; }>;
 }
-export interface IItem {
+export interface IAPIItem {
     id?: number;
     name: string;
     rune?: {
@@ -94,7 +94,7 @@ export interface IItem {
     hideFromAll?: boolean;
     requiredChampion?: string;
     requiredAlly?: string;
-    stats: IItemStats;
+    stats: IAPIItemStats;
     tags: string[];
     maps: {
         10?: boolean;
@@ -103,7 +103,30 @@ export interface IItem {
         21?: boolean;
     };
 }
-export interface IItemStats {
+export interface IDBItem {
+    itemId: number;
+    name: string;
+    version: string;
+    description: string;
+    colloq: string;
+    plaintext: string;
+    goldBase: number;
+    purchasable: boolean;
+    goldTotal: number;
+    goldSellsFor: number;
+    depth: number;
+    from: string;
+    into: string;
+    hideFromAll: boolean;
+    consumed: boolean;
+    consumeOnFull: boolean;
+    requiredAlly: string;
+    requireChampion: string;
+    specialRecipe: number;
+    stacks: number;
+    inStore: boolean;
+}
+export interface IAPIItemStats {
     FlatHPPoolMod: number;
     rFlatHPModPerLevel: number;
     FlatMPPoolMod: number;
@@ -239,20 +262,6 @@ export interface IDBSummoner {
     summonerLevel: number;
 }
 
-/**
- * Summoner object received from the Riot API.
- * revisionDate is type long and represents a UNIX timestamp in milliseconds
- */
-export interface IAPISummoner {
-    accountId: string;
-    id: string;
-    name: string;
-    profileIconId: number;
-    puuid: string;
-    revisionDate: number;
-    summonerLevel: number;
-}
-
 // Match Interfaces
 export interface IMatchOptions {
     beginTime?: number;
@@ -274,42 +283,34 @@ export interface IAPIMatchList {
     role: string;
     lane: string;
 }
+export interface IDBMatchList {
+    id?: number;
+    summonerPUUID: string;
+    gameId: number;
+    championId: number;
+    lane: string;
+    role: string;
+    timestamp: Date;
+}
 export interface IDBDeltaTypes {
     id: number;
     name: string;
 }
-export interface IAPIMatch {
+export interface IDBMatch {
+    gameId: number;
     seasonId: number;
     queueId: number;
-    gameId: number;
-    participantIdentities: IParticipantIdentity[];
-    gameVersion: string;
-    platformId: string;
-    gameMode: string;
     mapId: number;
-    gameType: string;
-    teams: ITeam[];
-    participants: IAPIParticipant[];
-    gameDuration: number;
-    gameCreation: number;
-}
-export interface IParticipantIdentity {
-    player: IPlayer;
-    participantId: number;
-}
-export interface IPlayer {
-    currentPlatformId: string;
-    summonerName: string;
-    matchHistoryUri: string;
     platformId: string;
-    currentAccountId: string;
-    profileIcon: number;
-    summonerId: string;
-    accountId: string;
+    gameVersion: string;
+    gameMode: string;
+    gameType: string;
+    gameDuration: number;
+    gameCreation: Date;
 }
 export interface ITeam {
     firstDragon: boolean;
-    bans: IBan[];
+    bans: IAPIBan[];
     firstInhibitor: boolean;
     win: string;
     firstRiftHerald: boolean;
@@ -325,49 +326,56 @@ export interface ITeam {
     dominionVictoryScore: number;
     dragonKills: number;
 }
-export interface IBan {
-    pickTurn: number;
+export interface IAPIBan {
     championId: number;
+    pickTurn: number;
 }
 export interface IAPIParticipant {
-    spell1Id: number;
-    participantId: number;
-    timeline: IParticipantTimeline;
-    spell2Id: number;
-    teamId: number;
-    stats: IParticipantStats;
     championId: number;
     highestAchievedSeasonTier?: string;
+    participantId: number;
+    spell1Id: number;
+    spell2Id: number;
+    stats: IAPIParticipantStats;
+    teamId: number;
+    timeline: IParticipantTimeline;
 }
 export interface IDBParticipant {
-    id: number;
-    gameId: number;
-    participantId: number;
     accountId: string;
     championId: number;
+    gameId: number;
+    highestAchievedSeasonTier: string;
+    id?: number;
+    lane: string;
+    participantId: number;
+    role: string;
     spell1Id: number;
     spell2Id: number;
     teamId: number;
-    lane: string;
-    role: string;
-    highestAchievedSeasonTier: string;
 }
 export interface IParticipantTimeline {
     lane: string;
     participantId: number;
-    goldPerMinDeltas: IParticipantTimeLineDelta;
-    creepsPerMinDeltas: IParticipantTimeLineDelta;
-    xpPerMinDeltas: IParticipantTimeLineDelta;
+    goldPerMinDeltas: IParticipantTimelineDelta;
+    creepsPerMinDeltas: IParticipantTimelineDelta;
+    xpPerMinDeltas: IParticipantTimelineDelta;
     role: string;
-    damagePerMinDeltas: IParticipantTimeLineDelta;
+    damagePerMinDeltas: IParticipantTimelineDelta;
 }
-export interface IParticipantTimeLineDelta {
+export interface IParticipantTimelineDelta {
     "0-10"?: number;
     "10-20"?: number;
     "20-30"?: number;
     "30-end"?: number;
 }
-export interface IParticipantStats {
+export interface IDBParticipantTimelineDelta {
+    id: number;
+    participantId: number;
+    deltaTypeId: number;
+    incrememnt: string;
+    value: number;
+}
+export interface IAPIParticipantStats {
     neutralMinionsKilledTeamJungle: number;
     visionScore: number;
     magicDamageDealtToChampions: number;
@@ -479,4 +487,38 @@ export interface IParticipantStats {
     nodeNeutralize: number;
     nodeNeutralizeAssists: number;
     teamObjective: number;
+}
+export interface IDBTeamStat {
+    id?: number;
+    gameId: number;
+    teamId: number;
+    win: string;
+    baronKills: number;
+    riftHeraldKills: number;
+    vilemawKills: number;
+    inhibitorKills: number;
+    towerKills: number;
+    dragonKills: number;
+    dominionVictoryScore: number;
+    firstDragon: boolean;
+    firstInhibitor: boolean;
+    firstRiftHerald: boolean;
+    firstBlood: boolean;
+    firstTower: boolean;
+}
+export interface IDBTeamBan extends IAPIBan {
+    gameId: number;
+    id?: number;
+    teamId: number;
+}
+export interface IDBParticipantStats extends IAPIParticipantStats {
+    id?: number;
+}
+export interface IDBXrefParticipantPerk {
+    id?: number;
+    participantId: number;
+    perkId: string;
+    varId: number;
+    description: string;
+    value: number;
 }
