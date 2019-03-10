@@ -448,6 +448,7 @@ CREATE TABLE IF NOT EXISTS `participant_stat` (
   `statPerk0` int(11) NOT NULL,
   `statPerk1` int(11) NOT NULL,
   `statPerk2` int(11) NOT NULL,
+  `damageSelfMitigated` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_participant_stats_participantId` (`participantId`),
   CONSTRAINT `FK_participant_stats_participantId` FOREIGN KEY (`participantId`) REFERENCES `participant` (`id`)
