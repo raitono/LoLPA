@@ -37,6 +37,32 @@ export class TeamBanController {
     return await this.teamBanRepository.create(teamBan);
   }
 
+  @post('/team-bans/batch', {
+    responses: {
+      '200': {
+        description: 'Array of TeamBan model instances',
+        content: {'application/json': {schema: {
+          type: 'array',
+          items: {
+            'x-ts-type': TeamBan,
+          },
+        }}},
+      },
+    },
+  })
+  async createBatch(@requestBody() teamBans: TeamBan[]): Promise<void> {
+    let sql: string = 'INSERT INTO team_ban(gameId,teamId,championId,pickTurn)VALUES';
+
+    teamBans.forEach((b, i) => {
+      sql = sql+'(' + b.gameId + ',' + b.teamId + ',' + b.championId + ',' + b.pickTurn + ')';
+      if (i !== teamBans.length - 1){
+        sql = sql + ',';
+      }
+    });
+
+    await this.teamBanRepository.dataSource.execute(sql);
+  }
+
   @get('/team-bans/count', {
     responses: {
       '200': {

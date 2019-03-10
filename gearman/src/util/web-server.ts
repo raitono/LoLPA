@@ -114,7 +114,7 @@ export class URLs {
     };
     public ParticipantStat = {
         batch: () => {
-            return process.env.WEB_SERVER + "/participant-timeline-deltas/batch";
+            return process.env.WEB_SERVER + "/participant-stats/batch";
         },
         post: () => {
             return process.env.WEB_SERVER + "/participant-stats";
@@ -231,6 +231,9 @@ export class URLs {
         },
     };
     public XrefParticipantItem = {
+        batch: () => {
+            return process.env.WEB_SERVER + "/xref-participant-items/batch";
+        },
         post: () => {
             return process.env.WEB_SERVER + "/xref-participant-items";
         },

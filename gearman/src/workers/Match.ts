@@ -4,9 +4,10 @@ import * as util from "util";
 
 // my imports
 import { MatchV4MatchDto } from "kayn/typings/dtos";
-import { batchRequest, kayn, request } from "../util/common";
-import { IAPIMatchList, IDBItem, IDBMatch, IDBMatchList, IDBParticipant, IDBParticipantStats,
-    IDBParticipantTimelineDelta, IDBTeamBan, IDBTeamStat, IDBXrefParticipantPerk } from "../util/interfaces";
+import { kayn, request } from "../util/common";
+import { IAPIMatchList, IDBDeltaTypes, IDBItem, IDBMatch, IDBMatchList, IDBParticipant,
+    IDBParticipantStats, IDBParticipantTimelineDelta, IDBTeamBan, IDBTeamStat,
+    IDBXrefParticipantItem, IDBXrefParticipantPerk, IMatchOptions} from "../util/interfaces";
 import * as WebServer from "../util/web-server";
 
 // globals
@@ -51,7 +52,7 @@ const updateMatchList = async (summonerJSON: string) => {
         return;
     }
 
-    const deltaTypes = JSON.parse(await request({uri: serverURLs.DeltaType.getAll()}));
+    const deltaTypes: IDBDeltaTypes[] = JSON.parse(await request({uri: serverURLs.DeltaType.getAll()}));
     const matchInsertBatch: IDBMatch[] = [];
     const matchListBatch: IDBMatchList[] = [];
     const participantBatch: IDBParticipant[] = [];
@@ -59,7 +60,7 @@ const updateMatchList = async (summonerJSON: string) => {
     const teamBanBatch: IDBTeamBan[] = [];
     const statBatch: IDBParticipantStats[] = [];
     const timelineDeltaBatch: IDBParticipantTimelineDelta[] = [];
-    const itemBatch: IDBItem[] = [];
+    const itemBatch: IDBXrefParticipantItem[] = [];
     const perkBatch: IDBXrefParticipantPerk[] = [];
 
     debug("Getting matches from Riot API");
@@ -193,7 +194,7 @@ const updateMatchList = async (summonerJSON: string) => {
                 body: itemBatch,
                 json: true,
                 method: "POST",
-                uri: serverURLs.Item.batch(),
+                uri: serverURLs.XrefParticipantItem.batch(),
             }),
             request({
                 body: perkBatch,
@@ -313,15 +314,17 @@ const getMatchDates = async (beginTime: number, endTime: number): Promise<IMatch
 
 /**
  * Iterate over matches again to load deltas. Need Participants loaded first so that we can get their IDs.
- * @param {Array} matches
- * @param {Array} deltaTypes
+ * @param {MatchV4MatchDto[]} matches
+ * @param {IDBDeltaTypes[]} deltaTypes
  * @param {IDBParticipantTimelineDelta[]} timelineDeltaBatch
- * @param {requestPromiseNative.OptionsWithUri[]} statBatch
- * @param {requestPromiseNative.OptionsWithUri[]} itemBatch
- * @param {requestPromiseNative.OptionsWithUri[]} perkBatch
+ * @param {IDBParticipantStats[]} statBatch
+ * @param {IDBXrefParticipantItem[]} itemBatch
+ * @param {IDBXrefParticipantPerk[]} perkBatch
  */
-const transformParticipantDependants = async (matches, deltaTypes,
-                                              timelineDeltaBatch, statBatch, itemBatch, perkBatch) => {
+const transformParticipantDependants = async (matches: MatchV4MatchDto[], deltaTypes: IDBDeltaTypes[],
+                                              timelineDeltaBatch: IDBParticipantTimelineDelta[],
+                                              statBatch: IDBParticipantStats[], itemBatch: IDBXrefParticipantItem[],
+                                              perkBatch: IDBXrefParticipantPerk[]) => {
     debug("Transforming perticipant dependants");
     await Promise.all(matches.map(async (match) => {
         const dbParticipants = await request({
@@ -331,7 +334,8 @@ const transformParticipantDependants = async (matches, deltaTypes,
         });
 
         dbParticipants.forEach((dbParticipant) => {
-            const dataParticipant = match.participants.filter(
+            // TODO - Remove Any type after Kayn typings are updated
+            const dataParticipant: any = match.participants.filter(
                 (p) => p.participantId === dbParticipant.participantId)[0];
 
             deltaTypes.forEach(async (deltaType) => {
@@ -349,7 +353,7 @@ const transformParticipantDependants = async (matches, deltaTypes,
                     }
                 }
 
-                timelineKeys.forEach((increment) => {
+                timelineKeys.forEach((increment: string) => {
                     timelineDeltaBatch.push({
                         deltaTypeId: deltaType.id,
                         increment,
@@ -360,90 +364,84 @@ const transformParticipantDependants = async (matches, deltaTypes,
             });
 
             statBatch.push({
-                body: {
-                    altarsCaptured: dataParticipant.stats.altarsCaptured || 0,
-                    altarsNeutralized: dataParticipant.stats.altarsNeutralized || 0,
-                    assists: dataParticipant.stats.assists,
-                    champLevel: dataParticipant.stats.champLevel,
-                    combatPlayerScore: dataParticipant.stats.combatPlayerScore,
-                    damageDealtToObjectives: dataParticipant.stats.damageDealtToObjectives,
-                    damageDealtToTurrets: dataParticipant.stats.damageDealtToTurrets,
-                    deaths: dataParticipant.stats.deaths,
-                    doubleKills: dataParticipant.stats.doubleKills,
-                    firstBloodAssist: dataParticipant.stats.firstBloodAssist || false,
-                    firstBloodKill: dataParticipant.stats.firstBloodKill || false,
-                    firstInhibitorAssist: dataParticipant.stats.firstInhibitorAssist || false,
-                    firstInhibitorKill: dataParticipant.stats.firstInhibitorKill || false,
-                    firstTowerAssist: dataParticipant.stats.firstTowerAssist || false,
-                    firstTowerKill: dataParticipant.stats.firstTowerKill || false,
-                    goldEarned: dataParticipant.stats.goldEarned,
-                    goldSpent: dataParticipant.stats.goldSpent || 0,
-                    inhibitorKills: dataParticipant.stats.inhibitorKills,
-                    killingSprees: dataParticipant.stats.killingSprees,
-                    kills: dataParticipant.stats.kills,
-                    largestCriticalStrike: dataParticipant.stats.largestCriticalStrike,
-                    largestKillingSpree: dataParticipant.stats.largestKillingSpree,
-                    largestMultiKill: dataParticipant.stats.largestMultiKill,
-                    longestTimeSpentLiving: dataParticipant.stats.longestTimeSpentLiving,
-                    magicDamageDealt: dataParticipant.stats.magicDamageDealt,
-                    magicDamageDealtToChampions: dataParticipant.stats.magicDamageDealtToChampions,
-                    magicalDamageTaken: dataParticipant.stats.magicalDamageTaken,
-                    neutralMinionsKilled: dataParticipant.stats.neutralMinionsKilled,
-                    // These could be undefined if neutralMinions is 0
-                    neutralMinionsKilledEnemyJungle: dataParticipant.stats.neutralMinionsKilledEnemyJungle || 0,
-                    neutralMinionsKilledTeamJungle: dataParticipant.stats.neutralMinionsKilledTeamJungle || 0,
-                    nodeCapture: dataParticipant.stats.nodeCapture || 0,
-                    nodeCaptureAssist: dataParticipant.stats.nodeCaptureAssist || 0,
-                    nodeNeutralize: dataParticipant.stats.nodeNeutralize || 0,
-                    nodeNeutralizeAssist: dataParticipant.stats.nodeNeutralizeAssists || 0,
-                    objectivePlayerScore: dataParticipant.stats.objectivePlayerScore,
-                    participantId: dbParticipant.id,
-                    pentaKills: dataParticipant.stats.pentaKills,
-                    perkPrimaryStyle: dataParticipant.stats.perkPrimaryStyle,
-                    perkSubStyle: dataParticipant.stats.perkSubStyle,
-                    physicalDamageDealt: dataParticipant.stats.physicalDamageDealt,
-                    physicalDamageDealtToChampions: dataParticipant.stats.physicalDamageDealtToChampions,
-                    physicalDamageTaken: dataParticipant.stats.physicalDamageTaken,
-                    quadraKills: dataParticipant.stats.quadraKills,
-                    sightWardsBoughtInGame: dataParticipant.stats.sightWardsBoughtInGame,
-                    teamObjective: dataParticipant.stats.teamObjective || 0,
-                    timeCCingOthers: dataParticipant.stats.timeCCingOthers,
-                    totalDamageDealt: dataParticipant.stats.totalDamageDealt,
-                    totalDamageDealtToChampions: dataParticipant.stats.totalDamageDealtToChampions,
-                    totalDamageTaken: dataParticipant.stats.totalDamageTaken,
-                    totalHeal: dataParticipant.stats.totalHeal,
-                    totalMinionsKilled: dataParticipant.stats.totalMinionsKilled,
-                    totalPlayerScore: dataParticipant.stats.totalPlayerScore,
-                    totalScoreRank: dataParticipant.stats.totalScoreRank,
-                    totalTimeCrowdControlDealt: dataParticipant.stats.totalTimeCrowdControlDealt,
-                    totalUnitsHealed: dataParticipant.stats.totalUnitsHealed,
-                    tripleKills: dataParticipant.stats.tripleKills,
-                    trueDamageDealt: dataParticipant.stats.trueDamageDealt,
-                    trueDamageDealtToChampions: dataParticipant.stats.trueDamageDealtToChampions,
-                    trueDamageTaken: dataParticipant.stats.trueDamageTaken,
-                    turretKills: dataParticipant.stats.turretKills,
-                    unrealKills: dataParticipant.stats.unrealKills,
-                    visionScore: dataParticipant.stats.visionScore,
-                    visionWardsBoughtInGame: dataParticipant.stats.visionWardsBoughtInGame,
-                    wardsKilled: dataParticipant.stats.wardsKilled || 0,
-                    wardsPlaced: dataParticipant.stats.wardsPlaced || 0,
-                    win: dataParticipant.stats.win,
-                },
-                json: true,
-                method: "POST",
-                uri: serverURLs.ParticipantStat.post(),
+                altarsCaptured: dataParticipant.stats.altarsCaptured || 0,
+                altarsNeutralized: dataParticipant.stats.altarsNeutralized || 0,
+                assists: dataParticipant.stats.assists,
+                champLevel: dataParticipant.stats.champLevel,
+                combatPlayerScore: dataParticipant.stats.combatPlayerScore,
+                damageDealtToObjectives: dataParticipant.stats.damageDealtToObjectives,
+                damageDealtToTurrets: dataParticipant.stats.damageDealtToTurrets,
+                damageSelfMitigated: dataParticipant.stats.damageSelfMitigated,
+                deaths: dataParticipant.stats.deaths,
+                doubleKills: dataParticipant.stats.doubleKills,
+                firstBloodAssist: dataParticipant.stats.firstBloodAssist || false,
+                firstBloodKill: dataParticipant.stats.firstBloodKill || false,
+                firstInhibitorAssist: dataParticipant.stats.firstInhibitorAssist || false,
+                firstInhibitorKill: dataParticipant.stats.firstInhibitorKill || false,
+                firstTowerAssist: dataParticipant.stats.firstTowerAssist || false,
+                firstTowerKill: dataParticipant.stats.firstTowerKill || false,
+                goldEarned: dataParticipant.stats.goldEarned,
+                goldSpent: dataParticipant.stats.goldSpent || 0,
+                inhibitorKills: dataParticipant.stats.inhibitorKills,
+                killingSprees: dataParticipant.stats.killingSprees,
+                kills: dataParticipant.stats.kills,
+                largestCriticalStrike: dataParticipant.stats.largestCriticalStrike,
+                largestKillingSpree: dataParticipant.stats.largestKillingSpree,
+                largestMultiKill: dataParticipant.stats.largestMultiKill,
+                longestTimeSpentLiving: dataParticipant.stats.longestTimeSpentLiving,
+                magicDamageDealt: dataParticipant.stats.magicDamageDealt,
+                magicDamageDealtToChampions: dataParticipant.stats.magicDamageDealtToChampions,
+                magicalDamageTaken: dataParticipant.stats.magicalDamageTaken,
+                neutralMinionsKilled: dataParticipant.stats.neutralMinionsKilled,
+                // These could be undefined if neutralMinions is 0
+                neutralMinionsKilledEnemyJungle: dataParticipant.stats.neutralMinionsKilledEnemyJungle || 0,
+                neutralMinionsKilledTeamJungle: dataParticipant.stats.neutralMinionsKilledTeamJungle || 0,
+                nodeCapture: dataParticipant.stats.nodeCapture || 0,
+                nodeCaptureAssist: dataParticipant.stats.nodeCaptureAssist || 0,
+                nodeNeutralize: dataParticipant.stats.nodeNeutralize || 0,
+                nodeNeutralizeAssist: dataParticipant.stats.nodeNeutralizeAssist || 0,
+                objectivePlayerScore: dataParticipant.stats.objectivePlayerScore,
+                participantId: dbParticipant.id,
+                pentaKills: dataParticipant.stats.pentaKills,
+                perkPrimaryStyle: dataParticipant.stats.perkPrimaryStyle,
+                perkSubStyle: dataParticipant.stats.perkSubStyle,
+                physicalDamageDealt: dataParticipant.stats.physicalDamageDealt,
+                physicalDamageDealtToChampions: dataParticipant.stats.physicalDamageDealtToChampions,
+                physicalDamageTaken: dataParticipant.stats.physicalDamageTaken,
+                quadraKills: dataParticipant.stats.quadraKills,
+                sightWardsBoughtInGame: dataParticipant.stats.sightWardsBoughtInGame,
+                statPerk0: dataParticipant.stats.statPerk0,
+                statPerk1: dataParticipant.stats.statPerk1,
+                statPerk2: dataParticipant.stats.statPerk2,
+                teamObjective: dataParticipant.stats.teamObjective || 0,
+                timeCCingOthers: dataParticipant.stats.timeCCingOthers,
+                totalDamageDealt: dataParticipant.stats.totalDamageDealt,
+                totalDamageDealtToChampions: dataParticipant.stats.totalDamageDealtToChampions,
+                totalDamageTaken: dataParticipant.stats.totalDamageTaken,
+                totalHeal: dataParticipant.stats.totalHeal,
+                totalMinionsKilled: dataParticipant.stats.totalMinionsKilled,
+                totalPlayerScore: dataParticipant.stats.totalPlayerScore,
+                totalScoreRank: dataParticipant.stats.totalScoreRank,
+                totalTimeCrowdControlDealt: dataParticipant.stats.totalTimeCrowdControlDealt,
+                totalUnitsHealed: dataParticipant.stats.totalUnitsHealed,
+                tripleKills: dataParticipant.stats.tripleKills,
+                trueDamageDealt: dataParticipant.stats.trueDamageDealt,
+                trueDamageDealtToChampions: dataParticipant.stats.trueDamageDealtToChampions,
+                trueDamageTaken: dataParticipant.stats.trueDamageTaken,
+                turretKills: dataParticipant.stats.turretKills,
+                unrealKills: dataParticipant.stats.unrealKills,
+                visionScore: dataParticipant.stats.visionScore,
+                visionWardsBoughtInGame: dataParticipant.stats.visionWardsBoughtInGame,
+                wardsKilled: dataParticipant.stats.wardsKilled || 0,
+                wardsPlaced: dataParticipant.stats.wardsPlaced || 0,
+                win: dataParticipant.stats.win,
             });
 
             let itemCount = 0;
             while (!util.isNullOrUndefined(dataParticipant.stats["item" + itemCount])) {
                 itemBatch.push({
-                    body: {
-                        itemId: dataParticipant.stats["item" + itemCount],
-                        participantId: dbParticipant.id,
-                    },
-                    json: true,
-                    method: "POST",
-                    uri: serverURLs.XrefParticipantItem.post(),
+                    itemId: dataParticipant.stats["item" + itemCount],
+                    participantId: dbParticipant.id,
                 });
 
                 itemCount = itemCount + 1;
@@ -455,15 +453,10 @@ const transformParticipantDependants = async (matches, deltaTypes,
 
                 while (!util.isNullOrUndefined(dataParticipant.stats["perk" + perkCount + "Var" + perkVarCount])) {
                     perkBatch.push({
-                        body: {
-                            participantId: dbParticipant.id,
-                            perkId: dataParticipant.stats["perk" + perkCount].toString(),
-                            value: dataParticipant.stats["perk" + perkCount + "Var" + perkVarCount],
-                            varId: perkVarCount,
-                        },
-                        json: true,
-                        method: "POST",
-                        uri: serverURLs.XrefParticipantPerk.post(),
+                        participantId: dbParticipant.id,
+                        perkId: dataParticipant.stats["perk" + perkCount].toString(),
+                        value: dataParticipant.stats["perk" + perkCount + "Var" + perkVarCount],
+                        varId: perkVarCount,
                     });
                     perkVarCount = perkVarCount + 1;
                 }
@@ -483,9 +476,4 @@ export function registerWorkers(worker) {
     });
 
     debug("Workers registered");
-}
-
-interface IMatchOptions {
-    beginTime?: number;
-    endTime?: number;
 }

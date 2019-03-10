@@ -369,10 +369,10 @@ export interface IParticipantTimelineDelta {
     "30-end"?: number;
 }
 export interface IDBParticipantTimelineDelta {
-    id: number;
+    id?: number;
     participantId: number;
     deltaTypeId: number;
-    incrememnt: string;
+    increment: string;
     value: number;
 }
 export interface IAPIParticipantStats {
@@ -404,8 +404,6 @@ export interface IAPIParticipantStats {
     perk5Var2: number;
     totalScoreRank: number;
     neutralMinionsKilled: number;
-    statPerk1: number;
-    statPerk0: number;
     damageDealtToTurrets: number;
     physicalDamageDealtToChampions: number;
     damageDealtToObjectives: number;
@@ -460,7 +458,7 @@ export interface IAPIParticipantStats {
     perkPrimaryStyle: number;
     perkSubStyle: number;
     turretKills: number;
-    firstBloodKill: number;
+    firstBloodKill: boolean;
     trueDamageDealtToChampions: number;
     goldEarned: number;
     killingSprees: number;
@@ -479,14 +477,16 @@ export interface IAPIParticipantStats {
     totalHeal: number;
     totalMinionsKilled: number;
     timeCCingOthers: number;
-    statPerk2: number;
     altarsCaptured: number;
     altarsNeutralized: number;
     nodeCapture: number;
     nodeCaptureAssist: number;
     nodeNeutralize: number;
-    nodeNeutralizeAssists: number;
+    nodeNeutralizeAssist: number;
     teamObjective: number;
+    statPerk0: number;
+    statPerk1: number;
+    statPerk2: number;
 }
 export interface IDBTeamStat {
     id?: number;
@@ -511,14 +511,89 @@ export interface IDBTeamBan extends IAPIBan {
     id?: number;
     teamId: number;
 }
-export interface IDBParticipantStats extends IAPIParticipantStats {
+export interface IDBParticipantStats {
     id?: number;
+    neutralMinionsKilledTeamJungle: number;
+    visionScore: number;
+    magicDamageDealtToChampions: number;
+    largestMultiKill: number;
+    totalTimeCrowdControlDealt: number;
+    longestTimeSpentLiving: number;
+    tripleKills: number;
+    kills: number;
+    totalScoreRank: number;
+    neutralMinionsKilled: number;
+    damageDealtToTurrets: number;
+    physicalDamageDealtToChampions: number;
+    damageDealtToObjectives: number;
+    totalUnitsHealed: number;
+    totalDamageTaken: number;
+    wardsKilled: number;
+    largestCriticalStrike: number;
+    largestKillingSpree: number;
+    quadraKills: number;
+    magicDamageDealt: number;
+    firstBloodAssist: boolean;
+    damageSelfMitigated: number;
+    magicalDamageTaken: number;
+    firstInhibitorKill: boolean;
+    trueDamageTaken: number;
+    assists: number;
+    goldSpent: number;
+    trueDamageDealt: number;
+    participantId: number;
+    physicalDamageDealt: number;
+    sightWardsBoughtInGame: number;
+    totalDamageDealtToChampions: number;
+    physicalDamageTaken: number;
+    totalPlayerScore: number;
+    win: boolean;
+    objectivePlayerScore: number;
+    totalDamageDealt: number;
+    neutralMinionsKilledEnemyJungle: number;
+    deaths: number;
+    wardsPlaced: number;
+    perkPrimaryStyle: number;
+    perkSubStyle: number;
+    turretKills: number;
+    firstBloodKill: boolean;
+    trueDamageDealtToChampions: number;
+    goldEarned: number;
+    killingSprees: number;
+    unrealKills: number;
+    firstTowerAssist: boolean;
+    firstTowerKill: boolean;
+    champLevel: number;
+    doubleKills: number;
+    inhibitorKills: number;
+    firstInhibitorAssist: boolean;
+    combatPlayerScore: number;
+    visionWardsBoughtInGame: number;
+    pentaKills: number;
+    totalHeal: number;
+    totalMinionsKilled: number;
+    timeCCingOthers: number;
+    altarsCaptured: number;
+    altarsNeutralized: number;
+    nodeCapture: number;
+    nodeCaptureAssist: number;
+    nodeNeutralize: number;
+    nodeNeutralizeAssist: number;
+    teamObjective: number;
+    statPerk0: number;
+    statPerk1: number;
+    statPerk2: number;
 }
 export interface IDBXrefParticipantPerk {
     id?: number;
     participantId: number;
     perkId: string;
     varId: number;
-    description: string;
+    description?: string;
     value: number;
+}
+export interface IDBXrefParticipantItem {
+    id?: number;
+    participantId: number;
+    itemId: number;
 }

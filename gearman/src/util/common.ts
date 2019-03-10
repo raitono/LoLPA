@@ -7,7 +7,10 @@ import * as util from "util";
 const debug: any = require("debug")("lolpa-gearman:Common");
 const rfa = util.promisify(fs.readFile);
 const kaynCache = new LRUCache({max: 1000});
+// tslint:disable-next-line:no-var-requires
+import errors = require("request-promise/errors");
 
+// TODO - Remove Any type after Kayn typings are updated
 const kayn: any = Kayn(process.env.RIOT_API_KEY)({
         cacheOptions: {
             cache: kaynCache,
@@ -28,8 +31,30 @@ const kayn: any = Kayn(process.env.RIOT_API_KEY)({
 
 export { kayn };
 
-export function request(value: requestPromiseNative.OptionsWithUri) {
-    return requestPromiseNative(value);
+export async function request(value: requestPromiseNative.OptionsWithUri)
+: Promise<requestPromiseNative.RequestPromise<any>> {
+    return requestPromiseNative(value).catch((error) => {
+        if (error.error.error && error.error.error.statusCode === 413 && Array.isArray(value.body)) {
+            debug("Too big, splitting");
+            debug(value.uri.toString());
+
+            return Promise.all([this.request({
+                body: value.body.splice(0, Math.ceil((value.body.length - 1) / 2)),
+                json: value.json,
+                method: value.method,
+                uri: value.uri,
+            }),
+            this.request({
+                body: value.body,
+                json: value.json,
+                method: value.method,
+                uri: value.uri,
+            })]);
+        } else {
+            debug(value);
+            throw error;
+        }
+    });
 }
 
 export function readFileAsync(filepath: string) {
