@@ -32,7 +32,7 @@ const kayn: any = Kayn(process.env.RIOT_API_KEY)({
 export { kayn };
 
 export async function request(value: requestPromiseNative.OptionsWithUri)
-: Promise<requestPromiseNative.RequestPromise<any>> {
+: Promise<any> {
     return requestPromiseNative(value).catch((error) => {
         if (error.error.error && error.error.error.statusCode === 413 && Array.isArray(value.body)) {
             debug("Too big, splitting");
