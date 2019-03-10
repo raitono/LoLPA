@@ -245,7 +245,11 @@ const getMatchList = async (summoner, options: IMatchOptions) => {
     let riotMatchList = null;
     try {
         // Send request to RIOT API
-        riotMatchList = await kayn.MatchlistV4.by.accountID(summoner.accountId).query(options);
+        if (options.beginTime < new Date().getTime()) {
+            riotMatchList = await kayn.MatchlistV4.by.accountID(summoner.accountId).query(options);
+        } else {
+            throw { statusCode: 404 };
+        }
     } catch (err) {
         if (err.statusCode === 404) {
             // This just means they don't have any matches during the time period
@@ -257,6 +261,7 @@ const getMatchList = async (summoner, options: IMatchOptions) => {
         } else {
             debug("Problem calling Kayn");
             debug(err);
+            throw err;
         }
     }
 
