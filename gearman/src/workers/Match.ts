@@ -339,8 +339,7 @@ const transformParticipantDependants = async (matches: MatchV4MatchDto[], deltaT
         });
 
         dbParticipants.forEach((dbParticipant) => {
-            // TODO - Remove Any type after Kayn typings are updated
-            const dataParticipant: any = match.participants.filter(
+            const dataParticipant = match.participants.filter(
                 (p) => p.participantId === dbParticipant.participantId)[0];
 
             deltaTypes.forEach(async (deltaType) => {

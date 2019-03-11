@@ -8,7 +8,6 @@ const debug: any = require("debug")("lolpa-gearman:Common");
 const rfa = util.promisify(fs.readFile);
 const kaynCache = new LRUCache({max: 1000});
 
-// TODO - Remove Any type after Kayn typings are updated
 const kayn: KaynClass = Kayn(process.env.RIOT_API_KEY)({
         cacheOptions: {
             cache: kaynCache,
