@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import { Kayn, LRUCache, REGIONS } from "kayn";
+import { Kayn, KaynClass, LRUCache, REGIONS } from "kayn";
 import requestPromiseNative = require("request-promise-native");
 import * as util from "util";
 
@@ -7,11 +7,9 @@ import * as util from "util";
 const debug: any = require("debug")("lolpa-gearman:Common");
 const rfa = util.promisify(fs.readFile);
 const kaynCache = new LRUCache({max: 1000});
-// tslint:disable-next-line:no-var-requires
-import errors = require("request-promise/errors");
 
 // TODO - Remove Any type after Kayn typings are updated
-const kayn: any = Kayn(process.env.RIOT_API_KEY)({
+const kayn: KaynClass = Kayn(process.env.RIOT_API_KEY)({
         cacheOptions: {
             cache: kaynCache,
             timeToLives: {
