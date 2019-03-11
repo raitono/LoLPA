@@ -6,7 +6,7 @@ import * as WebServer from "../util/web-server";
 
 // globals
 // tslint:disable-next-line:no-var-requires
-const debug: any = require("debug")("lolpa-gearman:Summoner");
+const debug: any = require("debug")("lolpa-gearman:Summoner*");
 const serverURLs = new WebServer.URLs();
 
 /**

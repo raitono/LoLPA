@@ -37,6 +37,41 @@ export class ItemController {
     return await this.itemRepository.create(item);
   }
 
+  @post('/items/batch', {
+    responses: {
+      '204': {
+        description: 'Array of Item model instances',
+        content: {'application/json': {schema: {
+          type: 'array',
+          items: {
+            'x-ts-type': Item,
+          },
+        }}},
+      },
+    },
+  })
+  async createBatch(@requestBody() items: Item[]): Promise<void> {
+    let sql: string = 'INSERT INTO `item`(itemId, `name`, `version`, description, colloq, plaintext, goldBase, purchasable, goldTotal, goldSellsFor, depth, `from`, `into`, hideFromAll, consumed, consumeOnFull, requiredAlly, requiredChampion, specialRecipe, stacks, inStore)VALUES';
+
+    items.forEach((o, i) => {
+      sql = sql+'(' + o.itemId + ',\'' + o.name.replace('\'', '\\\'') + '\',\'' + o.version + '\',' + (o.description ? '\'' + o.description.replace('\'', '\\\'').replace('\'>', '\\\'>') + '\'' : 'NULL')
+      + ',' + (o.colloq ? '\'' + o.colloq + '\'' : 'NULL') + ',' + (o.plaintext ? '\'' + o.plaintext.replace('\'', '\\\'') + '\'' : 'NULL') + ','
+      + o.goldBase + ',' + o.purchasable + ',' + o.goldTotal + ',' + o.goldSellsFor + ',' + o.depth + ','
+      + (o.from ? '\'' + o.from + '\'' : 'NULL') + ',' + (o.into ? '\'' + o.into + '\'' : 'NULL') + ','
+      + (o.hideFromAll ? o.hideFromAll : 'NULL') + ',' + (o.consumed ? o.consumed : 'NULL') + ','
+      + (o.consumeOnFull ? o.consumeOnFull : 'NULL') + ',' + (o.requiredAlly ? '\'' + o.requiredAlly + '\'' : 'NULL') + ','
+      + (o.requiredChampion ? '\'' + o.requiredChampion + '\'' : 'NULL') + ',' + (o.specialRecipe ? o.specialRecipe : 'NULL') + ','
+      + (o.stacks ? o.stacks : 'NULL') + ',' + (o.inStore ? o.inStore : 'NULL') + ')';
+      if (i !== items.length - 1){
+        sql = sql + ',';
+      }
+    });
+
+    sql = sql+'ON DUPLICATE KEY UPDATE version = VALUES(version)';
+console.log(sql);
+    await this.itemRepository.dataSource.execute(sql);
+  }
+
   @get('/items/count', {
     responses: {
       '200': {

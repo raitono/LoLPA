@@ -56,16 +56,21 @@
     "@loopback/rest": "^1.5.1",
     "@loopback/rest-explorer": "^1.1.4",
     "@loopback/service-proxy": "^1.0.5",
+    "abraxas": "^2.1.10",
     "debug": "^4.1.0",
+    "del": "^4.0.0",
     "dotenv-safe": "^6.1.0",
     "kayn": "^0.9.8",
     "loopback-connector-mysql": "^5.3.1",
-    "supports-color": "^6.0.0"
+    "request-promise-native": "^1.0.7",
+    "supports-color": "^6.0.0",
+    "tar": "^4.4.8"
   },
   "devDependencies": {
     "@loopback/build": "^1.1.0",
     "@loopback/testlab": "^1.0.3",
     "@types/dotenv-safe": "^5.0.2",
-    "@types/node": "^11.11.0"
+    "@types/node": "^11.11.0",
+    "@types/request-promise-native": "^1.0.15"
   }
 }

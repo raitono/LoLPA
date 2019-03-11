@@ -37,6 +37,32 @@ export class XrefItemTagController {
     return await this.xrefItemTagRepository.create(xrefItemTag);
   }
 
+  @post('/xref-item-tags/batch', {
+    responses: {
+      '200': {
+        description: 'Array of XrefItemTag model instances',
+        content: {'application/json': {schema: {
+          type: 'array',
+          items: {
+            'x-ts-type': XrefItemTag,
+          },
+        }}},
+      },
+    },
+  })
+  async createBatch(@requestBody() xrefItemTags: XrefItemTag[]): Promise<void> {
+    let sql: string = 'INSERT INTO xref_item_tag(version,itemId,tagId)VALUES';
+
+    xrefItemTags.forEach((x, i) => {
+      sql = sql+'(\'' + x.version + '\',' + x.itemId + ',' + x.tagId + ')';
+      if (i !== xrefItemTags.length - 1){
+        sql = sql + ',';
+      }
+    });
+
+    await this.xrefItemTagRepository.dataSource.execute(sql);
+  }
+
   @get('/xref-item-tags/count', {
     responses: {
       '200': {
