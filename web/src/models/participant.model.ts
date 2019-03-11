@@ -64,7 +64,8 @@ export class Participant extends Entity {
 
   @property({
     type: 'string',
-    required: true,
+    required: false,
+    default: 'UNRANKED'
   })
   highestAchievedSeasonTier: string;
 

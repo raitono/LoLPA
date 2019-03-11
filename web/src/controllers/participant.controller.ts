@@ -37,6 +37,32 @@ export class ParticipantController {
     return await this.participantRepository.create(participant);
   }
 
+  @post('/participants/batch', {
+    responses: {
+      '204': {
+        description: 'Array of Participant model instances',
+        content: {'application/json': {schema: {
+          type: 'array',
+          items: {
+            'x-ts-type': Participant,
+          },
+        }}},
+      },
+    },
+  })
+  async createBatch(@requestBody() participants: Participant[]): Promise<void> {
+    let sql: string = 'INSERT INTO `participant`(gameId,participantId,accountId,championId,spell1Id,spell2Id,teamId,lane,role,highestAchievedSeasonTier)VALUES';
+
+    participants.forEach((p, i) => {
+      sql = sql+'(' + p.gameId + ',' + p.participantId + ',\'' + p.accountId + '\',' + p.championId + ',' + p.spell1Id + ',' + p.spell2Id + ',' + p.teamId + ',\'' + p.lane + '\',\'' + p.role + '\',\'' + p.highestAchievedSeasonTier + '\')';
+      if (i !== participants.length - 1){
+        sql = sql + ',';
+      }
+    });
+
+    await this.participantRepository.dataSource.execute(sql);
+  }
+
   @get('/participants/count', {
     responses: {
       '200': {

@@ -37,6 +37,32 @@ export class XrefParticipantItemController {
     return await this.xrefParticipantItemRepository.create(xrefParticipantItem);
   }
 
+  @post('/xref-participant-items/batch', {
+    responses: {
+      '204': {
+        description: 'Array of XrefParticipantItem model instances',
+        content: {'application/json': {schema: {
+          type: 'array',
+          items: {
+            'x-ts-type': XrefParticipantItem,
+          },
+        }}},
+      },
+    },
+  })
+  async createBatch(@requestBody() xrefParticipantItems: XrefParticipantItem[]): Promise<void> {
+    let sql: string = 'INSERT INTO `xref_participant_item`(participantId,itemId)VALUES';
+
+    xrefParticipantItems.forEach((p, i) => {
+      sql = sql+'(' + p.participantId + ',' + p.itemId +')';
+      if (i !== xrefParticipantItems.length - 1){
+        sql = sql + ',';
+      }
+    });
+
+    await this.xrefParticipantItemRepository.dataSource.execute(sql);
+  }
+
   @get('/xref-participant-items/count', {
     responses: {
       '200': {

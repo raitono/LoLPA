@@ -354,6 +354,3 @@ ASALocalRun/
 
 # Angular IDE
 .settings/
-
-# custom
-gearman/temp/

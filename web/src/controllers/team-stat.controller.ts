@@ -37,6 +37,34 @@ export class TeamStatController {
     return await this.teamStatRepository.create(teamStat);
   }
 
+  @post('/team-stats/batch', {
+    responses: {
+      '200': {
+        description: 'Array of TeamStat model instances',
+        content: {'application/json': {schema: {
+          type: 'array',
+          items: {
+            'x-ts-type': TeamStat,
+          },
+        }}},
+      },
+    },
+  })
+  async createBatch(@requestBody() teamStats: TeamStat[]): Promise<void> {
+    let sql: string = 'INSERT INTO team_stat(gameId, teamId, win, baronKills, riftHeraldKills, vilemawKills, inhibitorKills, towerKills, dragonKills, dominionVictoryScore, firstDragon, firstInhibitor, firstRiftHerald, firstBlood, firstTower)VALUES';
+
+    teamStats.forEach((s, i) => {
+      sql = sql+'(' + s.gameId + ',' + s.teamId + ',\'' + s.win + '\',' + s.baronKills + ',' + s.riftHeraldKills + ',' +
+      s.vilemawKills + ',' + s.inhibitorKills + ',' + s.towerKills + ',' + s.dragonKills + ',' + s.dominionVictoryScore +
+      ',' + s.firstDragon + ',' + s.firstInhibitor + ',' + s.firstRiftHerald + ',' + s.firstBlood + ',' + s.firstTower + ')';
+      if (i !== teamStats.length - 1){
+        sql = sql + ',';
+      }
+    });
+
+    await this.teamStatRepository.dataSource.execute(sql);
+  }
+
   @get('/team-stats/count', {
     responses: {
       '200': {

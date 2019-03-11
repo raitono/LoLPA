@@ -37,6 +37,32 @@ export class XrefParticipantPerkController {
     return await this.xrefParticipantPerkRepository.create(xrefParticipantPerk);
   }
 
+  @post('/xref-participant-perks/batch', {
+    responses: {
+      '204': {
+        description: 'Array of XrefParticipantPerk model instances',
+        content: {'application/json': {schema: {
+          type: 'array',
+          items: {
+            'x-ts-type': XrefParticipantPerk,
+          },
+        }}},
+      },
+    },
+  })
+  async createBatch(@requestBody() xrefParticipantPerks: XrefParticipantPerk[]): Promise<void> {
+    let sql: string = 'INSERT INTO `xref_participant_perk`(participantId,perkId,varId,description,value)VALUES';
+
+    xrefParticipantPerks.forEach((p, i) => {
+      sql = sql+'(' + p.participantId + ',\'' + p.perkId + '\',' + p.varId + ',' + (p.description ? '\'' + p.description + '\'' : 'NULL') + ',' + p.value +')';
+      if (i !== xrefParticipantPerks.length - 1){
+        sql = sql + ',';
+      }
+    });
+
+    await this.xrefParticipantPerkRepository.dataSource.execute(sql);
+  }
+
   @get('/xref-participant-perks/count', {
     responses: {
       '200': {

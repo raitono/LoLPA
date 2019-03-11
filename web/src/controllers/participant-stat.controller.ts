@@ -37,6 +37,32 @@ export class ParticipantStatController {
     return await this.participantStatRepository.create(participantStat);
   }
 
+  @post('/participant-stats/batch', {
+    responses: {
+      '204': {
+        description: 'Array of ParticipantStat model instances',
+        content: {'application/json': {schema: {
+          type: 'array',
+          items: {
+            'x-ts-type': ParticipantStat,
+          },
+        }}},
+      },
+    },
+  })
+  async createBatch(@requestBody() participantStats: ParticipantStat[]): Promise<void> {
+    let sql: string = 'INSERT INTO `participant_stat`(participantId,win,kills,deaths,assists,largestKillingSpree,killingSprees,largestMultiKill,doubleKills,tripleKills,quadraKills,pentaKills,unrealKills,physicalDamageDealt,physicalDamageDealtToChampions,magicDamageDealt,magicDamageDealtToChampions,trueDamageDealt,trueDamageDealtToChampions,totalDamageDealtToChampions,damageDealtToObjectives,totalDamageDealt,totalUnitsHealed,totalHeal,largestCriticalStrike,totalMinionsKilled,neutralMinionsKilled,neutralMinionsKilledTeamJungle,neutralMinionsKilledEnemyJungle,sightWardsBoughtInGame,visionWardsBoughtInGame,wardsKilled,wardsPlaced,visionScore,objectivePlayerScore,combatPlayerScore,totalPlayerScore,totalScoreRank,altarsCaptured,teamObjective,totalTimeCrowdControlDealt,timeCCingOthers,longestTimeSpentLiving,turretKills,damageDealtToTurrets,inhibitorKills,firstTowerAssist,firstTowerKill,firstBloodAssist,firstInhibitorKill,firstInhibitorAssist,firstBloodKill,champLevel,nodeNeutralize,nodeNeutralizeAssist,nodeCapture,nodeCaptureAssist,altarsNeutralized,goldEarned,goldSpent,physicalDamageTaken,magicalDamageTaken,trueDamageTaken,totalDamageTaken,perkPrimaryStyle,perkSubStyle,statPerk0,statPerk1,statPerk2,damageSelfMitigated)VALUES';
+
+    participantStats.forEach((p, i) => {
+      sql = sql+'(' + p.participantId + ',' + p.win + ',' + p.kills + ',' + p.deaths + ',' + p.assists + ',' + p.largestKillingSpree + ',' + p.killingSprees + ',' + p.largestMultiKill + ',' + p.doubleKills + ',' + p.tripleKills + ',' + p.quadraKills + ',' + p.pentaKills + ',' + p.unrealKills + ',' + p.physicalDamageDealt + ',' + p.physicalDamageDealtToChampions + ',' + p.magicDamageDealt + ',' + p.magicDamageDealtToChampions + ',' + p.trueDamageDealt + ',' + p.trueDamageDealtToChampions + ',' + p.totalDamageDealtToChampions + ',' + p.damageDealtToObjectives + ',' + p.totalDamageDealt + ',' + p.totalUnitsHealed + ',' + p.totalHeal + ',' + p.largestCriticalStrike + ',' + p.totalMinionsKilled + ',' + p.neutralMinionsKilled + ',' + p.neutralMinionsKilledTeamJungle + ',' + p.neutralMinionsKilledEnemyJungle + ',' + p.sightWardsBoughtInGame + ',' + p.visionWardsBoughtInGame + ',' + p.wardsKilled + ',' + p.wardsPlaced + ',' + p.visionScore + ',' + p.objectivePlayerScore + ',' + p.combatPlayerScore + ',' + p.totalPlayerScore + ',' + p.totalScoreRank + ',' + p.altarsCaptured + ',' + p.teamObjective + ',' + p.totalTimeCrowdControlDealt + ',' + p.timeCCingOthers + ',' + p.longestTimeSpentLiving + ',' + p.turretKills + ',' + p.damageDealtToTurrets + ',' + p.inhibitorKills + ',' + p.firstTowerAssist + ',' + p.firstTowerKill + ',' + p.firstBloodAssist + ',' + p.firstInhibitorKill + ',' + p.firstInhibitorAssist + ',' + p.firstBloodKill + ',' + p.champLevel + ',' + p.nodeNeutralize + ',' + p.nodeNeutralizeAssist + ',' + p.nodeCapture + ',' + p.nodeCaptureAssist + ',' + p.altarsNeutralized + ',' + p.goldEarned + ',' + p.goldSpent + ',' + p.physicalDamageTaken + ',' + p.magicalDamageTaken + ',' + p.trueDamageTaken + ',' + p.totalDamageTaken + ',' + p.perkPrimaryStyle + ',' + p.perkSubStyle + ',' + p.statPerk0 + ',' + p.statPerk1 + ',' + p.statPerk2 + ',' + p.damageSelfMitigated +')';
+      if (i !== participantStats.length - 1){
+        sql = sql + ',';
+      }
+    });
+
+    await this.participantStatRepository.dataSource.execute(sql);
+  }
+
   @get('/participant-stats/count', {
     responses: {
       '200': {

@@ -37,6 +37,32 @@ export class ParticipantTimelineDeltaController {
     return await this.participantTimelineDeltaRepository.create(participantTimelineDelta);
   }
 
+  @post('/participant-timeline-deltas/batch', {
+    responses: {
+      '200': {
+        description: 'Array of ParticipantTimelineDelta model instances',
+        content: {'application/json': {schema: {
+          type: 'array',
+          items: {
+            'x-ts-type': ParticipantTimelineDelta,
+          },
+        }}},
+      },
+    },
+  })
+  async createBatch(@requestBody() participantTimelineDeltas: ParticipantTimelineDelta[]): Promise<void> {
+    let sql: string = 'INSERT INTO participant_timeline_delta(participantId, deltaTypeId, increment, `value`)VALUES';
+
+    participantTimelineDeltas.forEach((d, i) => {
+      sql = sql+'(' + d.participantId + ',' + d.deltaTypeId + ',\'' + d.increment + '\',' + d.value + ')';
+      if (i !== participantTimelineDeltas.length - 1){
+        sql = sql + ',';
+      }
+    });
+
+    await this.participantTimelineDeltaRepository.dataSource.execute(sql);
+  }
+
   @get('/participant-timeline-deltas/count', {
     responses: {
       '200': {
