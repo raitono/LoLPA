@@ -27,10 +27,10 @@ export class ItemStat extends Entity {
   value: number;
 
   @property({
-    type: 'boolean',
-    default: false,
+    type: 'string',
+    required: true,
   })
-  exists: boolean;
+  version: string;
 
   constructor(data?: Partial<ItemStat>) {
     super(data);

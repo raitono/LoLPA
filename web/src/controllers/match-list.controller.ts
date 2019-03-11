@@ -37,6 +37,32 @@ export class MatchListController {
     return await this.matchListRepository.create(matchList);
   }
 
+  @post('/match-lists/batch', {
+    responses: {
+      '204': {
+        description: 'Array of MatchList model instances',
+        content: {'application/json': {schema: {
+          type: 'array',
+          items: {
+            'x-ts-type': MatchList,
+          },
+        }}},
+      },
+    },
+  })
+  async createBatch(@requestBody() matchLists: MatchList[]): Promise<void> {
+    let sql: string = 'INSERT INTO `match_list`(summonerPUUID,gameId,championId,lane,role,`timestamp`)VALUES';
+
+    matchLists.forEach((m, i) => {
+      sql = sql+'(\'' + m.summonerPUUID + '\',' + m.gameId + ',' + m.championId + ',\'' + m.lane + '\',\'' + m.role + '\',\'' + m.timestamp.replace('T', ' ').replace('Z', '') + '\')';
+      if (i !== matchLists.length - 1){
+        sql = sql + ',';
+      }
+    });
+
+    await this.matchListRepository.dataSource.execute(sql);
+  }
+
   @get('/match-lists/count', {
     responses: {
       '200': {

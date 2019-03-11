@@ -9,6 +9,12 @@ export class XrefItemTag extends Entity {
   id?: number;
 
   @property({
+    type: 'string',
+    required: true,
+  })
+  version: string;
+
+  @property({
     type: 'number',
     required: true,
   })

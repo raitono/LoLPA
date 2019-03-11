@@ -133,6 +133,26 @@ export class XrefItemMapController {
     }
   }
 
+  @put('/xref-item-maps/{itemId}/{mapId}', {
+    responses: {
+      '204': {
+        description: 'XrefItemMap PUT success',
+      },
+    },
+  })
+  async replaceByCompositeId(
+    @param.path.number('itemId') itemId: number,
+    @param.path.number('mapId') mapId: number,
+    @requestBody() xrefItemMap: XrefItemMap,
+  ): Promise<void> {
+    const xrefs = await this.xrefItemMapRepository.find({where: {itemId: itemId, mapId: mapId}});
+    if (xrefs[0]) {
+      await this.xrefItemMapRepository.replaceById(xrefs[0].id, xrefItemMap);
+    } else {
+      await this.xrefItemMapRepository.create(xrefItemMap);
+    }
+  }
+
   @del('/xref-item-maps/{id}', {
     responses: {
       '204': {

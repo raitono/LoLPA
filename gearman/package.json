@@ -10,7 +10,10 @@
     "node": ">=8.9"
   },
   "scripts": {
-    "start": "nodemon app.js"
+    "prestart": "npm run build",
+    "start": "nodemon dist",
+    "build": "tsc",
+    "build:watch": "tsc -w"
   },
   "dependencies": {
     "abraxas": "^2.1.10",
@@ -25,9 +28,14 @@
     "tar": "^4.4.8"
   },
   "devDependencies": {
-    "eslint": "^5.0.0",
-    "eslint-config-google": "^0.11.0",
-    "nodemon": "^1.18.6"
+    "@types/debug": "^4.1.0",
+    "@types/express": "^4.16.1",
+    "@types/node": "^10.12.23",
+    "@types/request-promise-native": "^1.0.15",
+    "nodemon": "^1.18.10",
+    "tslint": "^5.12.1",
+    "tslint-eslint-rules": "^5.4.0",
+    "typescript": "^3.3.3"
   },
   "repository": {
     "type": "git",
