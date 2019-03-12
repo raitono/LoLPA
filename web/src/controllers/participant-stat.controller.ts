@@ -51,6 +51,9 @@ export class ParticipantStatController {
     },
   })
   async createBatch(@requestBody() participantStats: ParticipantStat[]): Promise<void> {
+    if(participantStats.length === 0){
+      return;
+    }
     let sql: string = 'INSERT INTO `participant_stat`(participantId,win,kills,deaths,assists,largestKillingSpree,killingSprees,largestMultiKill,doubleKills,tripleKills,quadraKills,pentaKills,unrealKills,physicalDamageDealt,physicalDamageDealtToChampions,magicDamageDealt,magicDamageDealtToChampions,trueDamageDealt,trueDamageDealtToChampions,totalDamageDealtToChampions,damageDealtToObjectives,totalDamageDealt,totalUnitsHealed,totalHeal,largestCriticalStrike,totalMinionsKilled,neutralMinionsKilled,neutralMinionsKilledTeamJungle,neutralMinionsKilledEnemyJungle,sightWardsBoughtInGame,visionWardsBoughtInGame,wardsKilled,wardsPlaced,visionScore,objectivePlayerScore,combatPlayerScore,totalPlayerScore,totalScoreRank,altarsCaptured,teamObjective,totalTimeCrowdControlDealt,timeCCingOthers,longestTimeSpentLiving,turretKills,damageDealtToTurrets,inhibitorKills,firstTowerAssist,firstTowerKill,firstBloodAssist,firstInhibitorKill,firstInhibitorAssist,firstBloodKill,champLevel,nodeNeutralize,nodeNeutralizeAssist,nodeCapture,nodeCaptureAssist,altarsNeutralized,goldEarned,goldSpent,physicalDamageTaken,magicalDamageTaken,trueDamageTaken,totalDamageTaken,perkPrimaryStyle,perkSubStyle,statPerk0,statPerk1,statPerk2,damageSelfMitigated)VALUES';
 
     participantStats.forEach((p, i) => {

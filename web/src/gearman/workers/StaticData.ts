@@ -5,8 +5,8 @@ import https = require("https");
 import tar = require("tar");
 
 // my imports
-import { kayn, request } from "../util/common";
-import * as WebServer from "../util/web-server";
+import { kayn, request } from "../../../util/common";
+import * as WebServer from "../../../util/web-server";
 import Champion = require("./parsers/Champion");
 import Item = require("./parsers/Item");
 import RunesReforged = require("./parsers/RunesReforged");
@@ -55,7 +55,19 @@ const updateStaticData = async (version: string) => {
     // Guess we do it the old fashioned way.
     const file = fs.createWriteStream(tempTarballPath);
     https.get(tarballURL, (response) => {
+        let cur = 0;
+        let then = 0;
+        const len = parseInt(response.headers['content-length'], 10);
+        const total = len / 1048576; //1048576 - bytes in  1Megabyte
+        debug("Total size: " + total.toFixed(2) + " mb");
         response.pipe(file);
+        response.on("data", (chunk) =>{
+            cur += chunk.length;
+            if(new Date().getTime() - then > 5000){
+                debug("Downloading " + (100.0 * cur / len).toFixed(2) + "% " + (cur / 1048576).toFixed(2) + " mb");
+                then = new Date().getTime();
+            }
+        });
         response.on("end", () => {
             debug("tarball saved");
 

@@ -51,6 +51,9 @@ export class XrefParticipantItemController {
     },
   })
   async createBatch(@requestBody() xrefParticipantItems: XrefParticipantItem[]): Promise<void> {
+    if(xrefParticipantItems.length === 0){
+      return;
+    }
     let sql: string = 'INSERT INTO `xref_participant_item`(participantId,itemId)VALUES';
 
     xrefParticipantItems.forEach((p, i) => {

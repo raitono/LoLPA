@@ -1,8 +1,8 @@
 // my imports
 import { SummonerV4SummonerDTO } from "kayn/typings/dtos";
-import { kayn, request } from "../util/common";
-import { IDBSummoner } from "../util/interfaces";
-import * as WebServer from "../util/web-server";
+import { kayn, request } from "../../../util/common";
+import { IDBSummoner } from "../../../util/interfaces";
+import * as WebServer from "../../../util/web-server";
 
 // globals
 // tslint:disable-next-line:no-var-requires

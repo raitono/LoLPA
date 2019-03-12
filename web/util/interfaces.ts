@@ -193,6 +193,24 @@ export interface IAPIItemStats {
     PercentLifeStealMod: number;
     PercentSpellVampMod: number;
 }
+export interface IDBItemStat {
+    id?: number;
+    itemId: number;
+    type: string;
+    version: string;
+    value: number;
+}
+export interface IDBItemTag {
+    id?: number;
+    name: string;
+}
+export interface IDBXrefItemMap {
+    id?: number;
+    itemId: number;
+    mapId: number;
+    enabled: boolean;
+    version: string;
+}
 export interface IDBXrefItemTag {
     id?: number;
     version: string;

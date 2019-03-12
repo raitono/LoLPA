@@ -18,6 +18,8 @@ import {
 } from '@loopback/rest';
 import {Item} from '../models';
 import {ItemRepository} from '../repositories';
+import { mysql_real_escape_string } from '../../util/common';
+const fs = require('fs');
 
 export class ItemController {
   constructor(
@@ -51,12 +53,15 @@ export class ItemController {
     },
   })
   async createBatch(@requestBody() items: Item[]): Promise<void> {
+    if(items.length === 0){
+      return;
+    }
     let sql: string = 'INSERT INTO `item`(itemId, `name`, `version`, description, colloq, plaintext, goldBase, purchasable, goldTotal, goldSellsFor, depth, `from`, `into`, hideFromAll, consumed, consumeOnFull, requiredAlly, requiredChampion, specialRecipe, stacks, inStore)VALUES';
 
     items.forEach((o, i) => {
-      sql = sql+'(' + o.itemId + ',\'' + o.name.replace('\'', '\\\'') + '\',\'' + o.version + '\',' + (o.description ? '\'' + o.description.replace('\'', '\\\'').replace('\'>', '\\\'>') + '\'' : 'NULL')
-      + ',' + (o.colloq ? '\'' + o.colloq + '\'' : 'NULL') + ',' + (o.plaintext ? '\'' + o.plaintext.replace('\'', '\\\'') + '\'' : 'NULL') + ','
-      + o.goldBase + ',' + o.purchasable + ',' + o.goldTotal + ',' + o.goldSellsFor + ',' + o.depth + ','
+      sql = sql+'(' + o.itemId + ',\'' + mysql_real_escape_string(o.name) + '\',\'' + o.version + '\',' + (o.description ? '\'' + mysql_real_escape_string(o.description) + '\'' : 'NULL')
+      + ',' + (o.colloq ? '\'' + mysql_real_escape_string(o.colloq) + '\'' : 'NULL') + ',' + (o.plaintext ? '\'' + mysql_real_escape_string(o.plaintext) + '\'' : 'NULL') + ','
+      + o.goldBase + ',' + o.purchasable + ',' + o.goldTotal + ',' + o.goldSellsFor + ',' + (o.depth ? o.depth : 1) + ','
       + (o.from ? '\'' + o.from + '\'' : 'NULL') + ',' + (o.into ? '\'' + o.into + '\'' : 'NULL') + ','
       + (o.hideFromAll ? o.hideFromAll : 'NULL') + ',' + (o.consumed ? o.consumed : 'NULL') + ','
       + (o.consumeOnFull ? o.consumeOnFull : 'NULL') + ',' + (o.requiredAlly ? '\'' + o.requiredAlly + '\'' : 'NULL') + ','
@@ -68,7 +73,7 @@ export class ItemController {
     });
 
     sql = sql+'ON DUPLICATE KEY UPDATE version = VALUES(version)';
-console.log(sql);
+
     await this.itemRepository.dataSource.execute(sql);
   }
 

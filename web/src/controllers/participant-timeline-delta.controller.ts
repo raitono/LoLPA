@@ -51,6 +51,9 @@ export class ParticipantTimelineDeltaController {
     },
   })
   async createBatch(@requestBody() participantTimelineDeltas: ParticipantTimelineDelta[]): Promise<void> {
+    if(participantTimelineDeltas.length === 0){
+      return;
+    }
     let sql: string = 'INSERT INTO participant_timeline_delta(participantId, deltaTypeId, increment, `value`)VALUES';
 
     participantTimelineDeltas.forEach((d, i) => {

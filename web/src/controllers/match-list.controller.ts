@@ -51,6 +51,9 @@ export class MatchListController {
     },
   })
   async createBatch(@requestBody() matchLists: MatchList[]): Promise<void> {
+    if(matchLists.length === 0){
+      return;
+    }
     let sql: string = 'INSERT INTO `match_list`(summonerPUUID,gameId,championId,lane,role,`timestamp`)VALUES';
 
     matchLists.forEach((m, i) => {

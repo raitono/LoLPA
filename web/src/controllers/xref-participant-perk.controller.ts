@@ -51,6 +51,9 @@ export class XrefParticipantPerkController {
     },
   })
   async createBatch(@requestBody() xrefParticipantPerks: XrefParticipantPerk[]): Promise<void> {
+    if(xrefParticipantPerks.length === 0){
+      return;
+    }
     let sql: string = 'INSERT INTO `xref_participant_perk`(participantId,perkId,varId,description,value)VALUES';
 
     xrefParticipantPerks.forEach((p, i) => {

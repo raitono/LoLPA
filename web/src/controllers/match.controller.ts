@@ -51,6 +51,9 @@ export class MatchController {
     },
   })
   async createBatch(@requestBody() matches: Match[]): Promise<void> {
+    if(matches.length === 0){
+      return;
+    }
     let sql: string = 'INSERT INTO `match`(gameId, seasonId, queueId, mapId, platformId, gameVersion, gameMode, gameType, gameDuration, gameCreation)VALUES';
 
     matches.forEach((m, i) => {

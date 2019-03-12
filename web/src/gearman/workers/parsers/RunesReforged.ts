@@ -2,9 +2,9 @@
 import requestPromiseNative = require("request-promise-native");
 
 // my imports
-import { readFileAsync, request } from "../../util/common";
-import { IRuneStyle } from "../../util/interfaces";
-import * as WebServer from "../../util/web-server";
+import { readFileAsync, request } from "../../../../util/common";
+import { IRuneStyle } from "../../../../util/interfaces";
+import * as WebServer from "../../../../util/web-server";
 
 // globals
 // tslint:disable-next-line:no-var-requires

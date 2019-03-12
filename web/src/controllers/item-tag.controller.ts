@@ -18,6 +18,7 @@ import {
 } from '@loopback/rest';
 import {ItemTag} from '../models';
 import {ItemTagRepository} from '../repositories';
+import { mysql_real_escape_string } from '../../util/common';
 
 export class ItemTagController {
   constructor(
@@ -35,6 +36,36 @@ export class ItemTagController {
   })
   async create(@requestBody() itemTag: ItemTag): Promise<ItemTag> {
     return await this.itemTagRepository.create(itemTag);
+  }
+
+  @post('/item-tags/batch', {
+    responses: {
+      '204': {
+        description: 'Array of ItemTag model instances',
+        content: {'application/json': {schema: {
+          type: 'array',
+          items: {
+            'x-ts-type': ItemTag,
+          },
+        }}},
+      },
+    },
+  })
+  async createBatch(@requestBody() itemTags: ItemTag[]): Promise<void> {
+    if(itemTags.length === 0){
+      return;
+    }
+
+    let sql: string = 'INSERT INTO `item_tag`(`name`)VALUES';
+
+    itemTags.forEach((t, i) => {
+      sql = sql+'(\'' + mysql_real_escape_string(t.name) + '\')';
+      if (i !== itemTags.length - 1){
+        sql = sql + ',';
+      }
+    });
+
+    await this.itemTagRepository.dataSource.execute(sql);
   }
 
   @get('/item-tags/count', {

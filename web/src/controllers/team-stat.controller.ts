@@ -51,6 +51,9 @@ export class TeamStatController {
     },
   })
   async createBatch(@requestBody() teamStats: TeamStat[]): Promise<void> {
+    if(teamStats.length === 0){
+      return;
+    }
     let sql: string = 'INSERT INTO team_stat(gameId, teamId, win, baronKills, riftHeraldKills, vilemawKills, inhibitorKills, towerKills, dragonKills, dominionVictoryScore, firstDragon, firstInhibitor, firstRiftHerald, firstBlood, firstTower)VALUES';
 
     teamStats.forEach((s, i) => {

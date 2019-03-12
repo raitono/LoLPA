@@ -51,6 +51,9 @@ export class ParticipantController {
     },
   })
   async createBatch(@requestBody() participants: Participant[]): Promise<void> {
+    if(participants.length === 0){
+      return;
+    }
     let sql: string = 'INSERT INTO `participant`(gameId,participantId,accountId,championId,spell1Id,spell2Id,teamId,lane,role,highestAchievedSeasonTier)VALUES';
 
     participants.forEach((p, i) => {

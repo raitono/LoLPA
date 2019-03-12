@@ -51,6 +51,9 @@ export class XrefItemTagController {
     },
   })
   async createBatch(@requestBody() xrefItemTags: XrefItemTag[]): Promise<void> {
+    if(xrefItemTags.length === 0){
+      return;
+    }
     let sql: string = 'INSERT INTO xref_item_tag(version,itemId,tagId)VALUES';
 
     xrefItemTags.forEach((x, i) => {

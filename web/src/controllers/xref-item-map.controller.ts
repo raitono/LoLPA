@@ -37,6 +37,37 @@ export class XrefItemMapController {
     return await this.xrefItemMapRepository.create(xrefItemMap);
   }
 
+  @post('/xref-item-maps/batch', {
+    responses: {
+      '204': {
+        description: 'Array of XrefItemMap model instances',
+        content: {'application/json': {schema: {
+          type: 'array',
+          items: {
+            'x-ts-type': XrefItemMap,
+          },
+        }}},
+      },
+    },
+  })
+  async createBatch(@requestBody() xrefItemMaps: XrefItemMap[]): Promise<void> {
+    if(xrefItemMaps.length === 0){
+      return;
+    }
+    let sql: string = 'INSERT INTO `xref_item_map`(`version`, itemId, mapId, `enabled`)VALUES';
+
+    xrefItemMaps.forEach((m, i) => {
+      sql = sql+'(\'' + m.version + '\',' + m.itemId + ',' + m.mapId + ',' + m.enabled + ')';
+      if (i !== xrefItemMaps.length - 1){
+        sql = sql + ',';
+      }
+    });
+
+    sql = sql+'ON DUPLICATE KEY UPDATE version = VALUES(version)';
+
+    await this.xrefItemMapRepository.dataSource.execute(sql);
+  }
+
   @get('/xref-item-maps/count', {
     responses: {
       '200': {

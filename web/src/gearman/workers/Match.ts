@@ -3,11 +3,11 @@ import * as util from "util";
 
 // my imports
 import { MatchV4MatchDto } from "kayn/typings/dtos";
-import { kayn, request } from "../util/common";
+import { kayn, request } from "../../../util/common";
 import { IAPIMatchList, IDBDeltaTypes, IDBMatch, IDBMatchList, IDBParticipant,
     IDBParticipantStats, IDBParticipantTimelineDelta, IDBTeamBan, IDBTeamStat,
-    IDBXrefParticipantItem, IDBXrefParticipantPerk, IMatchOptions} from "../util/interfaces";
-import * as WebServer from "../util/web-server";
+    IDBXrefParticipantItem, IDBXrefParticipantPerk, IMatchOptions} from "../../../util/interfaces";
+import * as WebServer from "../../../util/web-server";
 
 // globals
 // tslint:disable-next-line:no-var-requires

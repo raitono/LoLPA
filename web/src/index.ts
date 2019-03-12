@@ -25,7 +25,30 @@ export async function main(options: ApplicationConfig = {}) {
     
     const client = initGearman();
 
-    client.submitJob("updateStaticData", "9.1.1").then();
+    // client.submitJob("updateStaticData", "9.5.1");
+
+    const summonerName = "Raitono";
+
+    let dbSummoner;
+    try {
+        dbSummoner = JSON.parse(await client.submitJob("getSummonerByName", summonerName));
+    } catch (error) {
+        debug("Unable to update summoner");
+        debug(error);
+    }
+
+    const updateSummonerResult = JSON.parse(await client.submitJob("determineUpdates", JSON.stringify(dbSummoner)));
+    debug("Updated summoner: " + summonerName);
+
+    if (updateSummonerResult.shouldUpdateMatches) {
+        try {
+            await client.submitJob("updateMatchList", JSON.stringify(updateSummonerResult.summoner));
+            debug("Updated match list for " + summonerName);
+            client.submitJob("updateSummonerLastUpdated", JSON.stringify(updateSummonerResult.summoner));
+        } catch (error) {
+            debug(error);
+        }
+    }
     
     return app;
 }

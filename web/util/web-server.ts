@@ -44,6 +44,9 @@ export class URLs {
         },
     };
     public ItemStat = {
+        batch: () => {
+            return process.env.WEB_SERVER + "/item-stats/batch";
+        },
         delete: (itemStatId: number) => {
             return process.env.WEB_SERVER + "/item-stats/" + itemStatId;
         },
@@ -55,6 +58,9 @@ export class URLs {
         },
     };
     public ItemTag = {
+        batch: () => {
+            return process.env.WEB_SERVER + "/item-tags/batch";
+        },
         get: () => {
             return process.env.WEB_SERVER + "/item-tags";
         },
@@ -203,6 +209,9 @@ export class URLs {
         },
     };
     public XrefItemMap = {
+        batch: () => {
+            return process.env.WEB_SERVER + "/xref-item-maps/batch";
+        },
         delete: (xrefId: number) => {
             return process.env.WEB_SERVER + "/xref-item-maps/" + xrefId;
         },

@@ -51,6 +51,9 @@ export class TeamBanController {
     },
   })
   async createBatch(@requestBody() teamBans: TeamBan[]): Promise<void> {
+    if(teamBans.length === 0){
+      return;
+    }
     let sql: string = 'INSERT INTO team_ban(gameId,teamId,championId,pickTurn)VALUES';
 
     teamBans.forEach((b, i) => {

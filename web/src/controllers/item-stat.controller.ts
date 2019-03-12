@@ -37,6 +37,37 @@ export class ItemStatController {
     return await this.itemStatRepository.create(itemStat);
   }
 
+  @post('/item-stats/batch', {
+    responses: {
+      '204': {
+        description: 'Array of ItemStat model instances',
+        content: {'application/json': {schema: {
+          type: 'array',
+          items: {
+            'x-ts-type': ItemStat,
+          },
+        }}},
+      },
+    },
+  })
+  async createBatch(@requestBody() itemStats: ItemStat[]): Promise<void> {
+    if(itemStats.length === 0){
+      return;
+    }
+    let sql: string = 'INSERT INTO `item_stat`(itemId, `type`, `version`, `value`)VALUES';
+
+    itemStats.forEach((s, i) => {
+      sql = sql+'(' + s.itemId + ',\'' + s.type + '\',\'' + s.version + '\',' + s.value + ')';
+      if (i !== itemStats.length - 1){
+        sql = sql + ',';
+      }
+    });
+
+    sql = sql+'ON DUPLICATE KEY UPDATE version = VALUES(version)';
+
+    await this.itemStatRepository.dataSource.execute(sql);
+  }
+
   @get('/item-stats/count', {
     responses: {
       '200': {
