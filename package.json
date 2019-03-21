@@ -56,7 +56,6 @@
     "@loopback/rest": "^1.5.1",
     "@loopback/rest-explorer": "^1.1.4",
     "@loopback/service-proxy": "^1.0.5",
-    "abraxas": "^2.1.10",
     "debug": "^4.1.0",
     "del": "^4.0.0",
     "dotenv-safe": "^6.1.0",
