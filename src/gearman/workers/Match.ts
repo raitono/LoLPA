@@ -73,7 +73,7 @@ const updateMatchList = async (summonerJSON: string) => {
                 summonerPUUID: summoner.puuid,
                 timestamp: new Date(matchList.timestamp),
             });
-            return kayn.MatchV4.get(matchList.gameId);
+            return kayn.Match.get(matchList.gameId);
         }));
     debug("Retrieved matches");
 
@@ -245,7 +245,7 @@ const getMatchList = async (summoner, options: IMatchOptions) => {
     try {
         // Send request to RIOT API
         if (options.beginTime < new Date().getTime()) {
-            riotMatchList = await kayn.MatchlistV4.by.accountID(summoner.accountId).query(options);
+            riotMatchList = await kayn.Matchlist.by.accountID(summoner.accountId).query(options);
         } else {
             throw { statusCode: 404 };
         }

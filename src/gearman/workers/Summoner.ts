@@ -26,7 +26,7 @@ const determineUpdates = async (summoner: string): Promise<string> => {
         ret.shouldUpdateMatches = true;
         return JSON.stringify(ret);
     } else if (Date.now() - Date.parse(ret.summoner.lastUpdated) >= 600000) {
-        const rawSummoner: SummonerV4SummonerDTO = await kayn.SummonerV4.by.name(ret.summoner.name);
+        const rawSummoner: SummonerV4SummonerDTO = await kayn.Summoner.by.name(ret.summoner.name);
         if ((rawSummoner.revisionDate - Date.parse(ret.summoner.revisionDate)) !== 0) {
             await request({
                 body: {
@@ -79,7 +79,7 @@ const getSummonerByName = async (summonerName: string): Promise<string> => {
     } else {
         debug("Summoner not found in db");
         try {
-            const rawSummoner: SummonerV4SummonerDTO = await kayn.SummonerV4.by.name(summonerName);
+            const rawSummoner: SummonerV4SummonerDTO = await kayn.Summoner.by.name(summonerName);
             await request({
                 body: {
                     accountId: rawSummoner.accountId,

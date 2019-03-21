@@ -4,7 +4,7 @@ import requestPromiseNative = require("request-promise-native");
 import * as util from "util";
 
 // tslint:disable-next-line:no-var-requires
-const debug: any = require("debug")("lolpa-gearman:Common");
+const debug = require("debug")("lolpa-gearman:Common");
 const rfa = util.promisify(fs.readFile);
 const kaynCache = new LRUCache({max: 1000});
 

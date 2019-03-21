@@ -8,7 +8,7 @@ import * as WebServer from "../../../../util/web-server";
 
 // globals
 // tslint:disable-next-line:no-var-requires
-const debug: any = require("debug")("lolpa-gearman:Item*");
+const debug = require("debug")("lolpa-gearman:Item*");
 const serverURLs = new WebServer.URLs();
 
 /**
