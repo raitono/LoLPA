@@ -9,10 +9,10 @@ import tar = require('tar');
 // my imports
 import { kayn, request } from '../../util/common';
 import * as WebServer from '../../util/web-server';
-import Champion = require('../gearman/workers/parsers/Champion');
-import Item = require('../gearman/workers/parsers/Item');
-import RunesReforged = require('../gearman/workers/parsers/RunesReforged');
-import SummonerSpell = require('../gearman/workers/parsers/SummonerSpell');
+import Champion = require('../parsers/Champion');
+import Item = require('../parsers/Item');
+import RunesReforged = require('../parsers/RunesReforged');
+import SummonerSpell = require('../parsers/SummonerSpell');
 
 // globals
 // tslint:disable-next-line:no-var-requires
