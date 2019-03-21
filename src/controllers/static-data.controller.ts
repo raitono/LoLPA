@@ -41,8 +41,7 @@ export class StaticDataController {
   })
   async updateStaticData(@requestBody() version: string): Promise<void> {
     const versionPattern = new RegExp('^(\\d+\\.)?(\\d+\\.)?(\\d+)$');
-    debug(version);
-    debug(versionPattern.test(version));
+
     if (version.toLowerCase() === 'latest') {
       // Find latest version number
       const versions = await kayn.DDragon.Version.list();
