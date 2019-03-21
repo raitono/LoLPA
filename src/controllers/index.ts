@@ -24,3 +24,4 @@ export * from './xref-item-map.controller';
 export * from './item-stat.controller';
 export * from './metadata.controller';
 export * from './match-data.controller';
+export * from './summoner-data.controller';
