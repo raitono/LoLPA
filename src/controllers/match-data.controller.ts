@@ -8,9 +8,9 @@ import { MatchV4MatchDto, MatchV4MatchlistDto, MatchV4MatchReferenceDto } from "
 import { kayn, request } from "../../util/common";
 import {IDBDeltaTypes, IDBMatch, IDBMatchList, IDBParticipant,
     IDBParticipantStats, IDBParticipantTimelineDelta, IDBTeamBan, IDBTeamStat,
-    IDBXrefParticipantItem, IDBXrefParticipantPerk, IMatchOptions, IDBSummoner
-} from "../../util/interfaces";
+    IDBXrefParticipantItem, IDBXrefParticipantPerk, IMatchOptions} from "../../util/interfaces";
 import * as WebServer from "../../util/web-server";
+import { Summoner } from '../models';
 
 // globals
 // tslint:disable-next-line:no-var-requires
@@ -31,7 +31,7 @@ export class MatchDataController {
             }
         },
     })
-    async updateMatchList(@requestBody() summoner: IDBSummoner): Promise<void> {
+    async updateMatchList(@requestBody() summoner: Summoner): Promise<void> {
         matchlist = await this.getMatchList(summoner, {});
 
         if (!matchlist) {
@@ -214,11 +214,11 @@ export class MatchDataController {
     /**
      * Gets a matchlist from RIOT based on the options passed. Uses the summoner's lastUpdated and
      * revisionDate if no options are passed.
-     * @param {IDBSummoner} summoner Summoner to get matches for
+     * @param {Summoner} summoner Summoner to get matches for
      * @param {IMatchOptions} options Object with beginTime and endTime to specify the dates to find matches
      * @return {MatchV4MatchReferenceDto[]} MatchList object from RIOT API
      */
-    async getMatchList(summoner: IDBSummoner, options: IMatchOptions): Promise<MatchV4MatchReferenceDto[]> {
+    async getMatchList(summoner: Summoner, options: IMatchOptions): Promise<MatchV4MatchReferenceDto[]> {
         debug("Getting match list");
 
         if (util.isNullOrUndefined(options)) {
