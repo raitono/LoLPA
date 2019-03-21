@@ -33,7 +33,6 @@ export async function parse(filePath: string): Promise<void> {
     const itemMapXrefRemovalBatch: requestPromiseNative.OptionsWithUri[] = [];
     const itemTagXrefRemovalBatch: requestPromiseNative.OptionsWithUri[] = [];
     const itemTags: Array<{ itemId: number; tagName: string; }> = [];
-    const itemStats: Array<{itemId: number, type: string, value: number}> = [];
     const itemMaps: Array<{ itemId: number; mapId: number; enabled: boolean; }> = [];
     const itemIds: number[] = [];
     let uniqueTags: string[] = [];
@@ -227,7 +226,7 @@ export async function parse(filePath: string): Promise<void> {
     });
 
     existingStats.filter((e) =>
-        itemStats.findIndex((s) => s.itemId === e.itemId && s.type === e.type && s.value === e.value) === -1)
+        itemStatBatch.findIndex((s) => s.itemId === e.itemId && s.type === e.type && s.value === e.value) === -1)
     .forEach((e) => {
         itemStatRemovalBatch.push({
             json: true,
