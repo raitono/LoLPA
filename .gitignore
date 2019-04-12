@@ -1,0 +1,6 @@
+.settings/
+.vscode/
+node_modules/
+out/
+
+.env
