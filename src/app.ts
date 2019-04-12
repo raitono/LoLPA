@@ -1,11 +1,26 @@
+// Global setup
 require('dotenv').config();
 const debug: any = require('debug')('app');
 
-import * as client from 'knex';
-const Knex: client = client(require('../knexfile')[process.env.NODE_ENV]);
+// Third party imports
+import Knex = require('knex');
+import { Model } from 'objection';
 
-async function run(): Promise<any> {
+// My imports
+import { Test } from './models/test';
+
+// Database setup
+const knex: Knex = Knex(require('../knexfile')[process.env.NODE_ENV]);
+Model.knex(knex);
+
+async function main(): Promise<any> {
   debug('Running!');
+  await Test.query().insert({test_value: 'h'});
 }
 
-run();
+main()
+  .then(() => knex.destroy())
+  .catch(err => {
+    console.error(err);
+    return knex.destroy();
+  });
