@@ -4,8 +4,6 @@ This is a non-functional piece of software that is just a side project for me. I
 # LoLPA
 League of Legends Performance Analyzer
 
-[![LoopBack](https://github.com/strongloop/loopback-next/raw/master/docs/site/imgs/branding/Powered-by-LoopBack-Badge-(blue)-@2x.png)](http://loopback.io/)
-
 ## What does this site offer?
 The site will offer in-depth analysis of match-by-match performance and track user growth over time.
 
