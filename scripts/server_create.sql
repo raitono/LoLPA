@@ -1,5 +1,5 @@
--- Dumping structure for table riot.champion
-CREATE TABLE IF NOT EXISTS `champion` (
+-- Dumping structure for table riot.champions
+CREATE TABLE IF NOT EXISTS `champions` (
   `championId` int(11) NOT NULL COMMENT 'Given by Riot API',
   `version` varchar(10) NOT NULL,
   `name` varchar(50) NOT NULL,
@@ -61,15 +61,15 @@ CREATE TABLE IF NOT EXISTS `champion_history` (
   PRIMARY KEY (`historyId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
--- Dumping structure for table riot.champion_tag
-CREATE TABLE IF NOT EXISTS `champion_tag` (
+-- Dumping structure for table riot.champion_tags
+CREATE TABLE IF NOT EXISTS `champion_tags` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.champion_tag: ~6 rows (approximately)
-INSERT INTO `champion_tag` (`id`, `name`) VALUES
+-- Dumping data for table riot.champion_tags: ~6 rows (approximately)
+INSERT INTO `champion_tags` (`id`, `name`) VALUES
 	(1, 'Fighter'),
 	(2, 'Mage'),
 	(3, 'Marksman'),
@@ -77,16 +77,16 @@ INSERT INTO `champion_tag` (`id`, `name`) VALUES
 	(5, 'Assassin'),
 	(6, 'Support');
 
--- Dumping structure for table riot.delta_type
-CREATE TABLE IF NOT EXISTS `delta_type` (
+-- Dumping structure for table riot.delta_types
+CREATE TABLE IF NOT EXISTS `delta_types` (
   `id` int(11) NOT NULL,
   `name` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UX_DeltaType_Name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.delta_type: ~7 rows (approximately)
-INSERT INTO `delta_type` (`id`, `name`) VALUES
+-- Dumping data for table riot.delta_types: ~7 rows (approximately)
+INSERT INTO `delta_types` (`id`, `name`) VALUES
 	(1, 'creepsPerMinDeltas'),
 	(4, 'csDiffPerMinDeltas'),
 	(7, 'damageTakenDiffPerMinDeltas'),
@@ -95,8 +95,8 @@ INSERT INTO `delta_type` (`id`, `name`) VALUES
 	(5, 'xpDiffPerMinDeltas'),
 	(2, 'xpPerMinDeltas');
 
--- Dumping structure for table riot.item
-CREATE TABLE IF NOT EXISTS `item` (
+-- Dumping structure for table riot.items
+CREATE TABLE IF NOT EXISTS `items` (
   `itemId` int(11) NOT NULL COMMENT 'Given by Riot API',
   `name` varchar(50) NOT NULL,
   `version` varchar(10) NOT NULL,
@@ -150,8 +150,8 @@ CREATE TABLE IF NOT EXISTS `item_history` (
   PRIMARY KEY (`historyId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
--- Dumping structure for table riot.item_stat
-CREATE TABLE IF NOT EXISTS `item_stat` (
+-- Dumping structure for table riot.item_stats
+CREATE TABLE IF NOT EXISTS `item_stats` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `itemId` int(11) NOT NULL,
   `type` varchar(50) NOT NULL,
@@ -159,7 +159,7 @@ CREATE TABLE IF NOT EXISTS `item_stat` (
   `value` float NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `itemId_type` (`itemId`,`type`),
-  CONSTRAINT `FK_item_stat_item` FOREIGN KEY (`itemId`) REFERENCES `item` (`itemId`)
+  CONSTRAINT `FK_item_stat_item` FOREIGN KEY (`itemId`) REFERENCES `items` (`itemId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Dumping structure for table riot.item_stat_history
@@ -175,14 +175,14 @@ CREATE TABLE IF NOT EXISTS `item_stat_history` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
 -- Dumping structure for table riot.item_tag
-CREATE TABLE IF NOT EXISTS `item_tag` (
+CREATE TABLE IF NOT EXISTS `item_tags` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=UTF8;
 
--- Dumping data for table riot.item_tag: ~30 rows (approximately)
-INSERT INTO `item_tag` (`id`, `name`) VALUES
+-- Dumping data for table riot.item_tags: ~30 rows (approximately)
+INSERT INTO `item_tags` (`id`, `name`) VALUES
 	(1, 'SpellBlock'),
 	(2, 'Health'),
 	(3, 'HealthRegen'),
@@ -214,16 +214,16 @@ INSERT INTO `item_tag` (`id`, `name`) VALUES
 	(29, 'CriticalStrike'),
 	(30, 'Trinket');
 
--- Dumping structure for table riot.map
-CREATE TABLE IF NOT EXISTS `map` (
+-- Dumping structure for table riot.maps
+CREATE TABLE IF NOT EXISTS `maps` (
   `mapId` int(11) NOT NULL,
   `name` varchar(50) NOT NULL,
   `notes` varchar(50) NOT NULL,
   PRIMARY KEY (`mapId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.map: ~14 rows (approximately)
-INSERT INTO `map` (`mapId`, `name`, `notes`) VALUES
+-- Dumping data for table riot.maps: ~14 rows (approximately)
+INSERT INTO `maps` (`mapId`, `name`, `notes`) VALUES
 	(1, 'Summoner\'s Rift', 'Original Summer variant'),
 	(2, 'Summoner\'s Rift', 'Original Autumn variant'),
 	(3, 'The Proving Grounds', 'Tutorial map'),
@@ -239,8 +239,8 @@ INSERT INTO `map` (`mapId`, `name`, `notes`) VALUES
 	(20, 'Crash Site', 'Odyssey: Extraction map'),
 	(21, 'Nexus Blitz', 'Nexus Blitz map');
 	
--- Dumping structure for table riot.season
-CREATE TABLE IF NOT EXISTS `season` (
+-- Dumping structure for table riot.seasons
+CREATE TABLE IF NOT EXISTS `seasons` (
   `seasonId` int(11) NOT NULL COMMENT 'Given by Riot API',
   `number` int(11) NOT NULL,
   `name` varchar(50) NOT NULL,
@@ -250,15 +250,15 @@ CREATE TABLE IF NOT EXISTS `season` (
   PRIMARY KEY (`seasonId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.season: ~4 rows (approximately)
-INSERT INTO `season` (`seasonId`, `number`, `name`, `startDate`, `endDate`, `isCurrent`) VALUES
+-- Dumping data for table riot.seasons: ~4 rows (approximately)
+INSERT INTO `seasons` (`seasonId`, `number`, `name`, `startDate`, `endDate`, `isCurrent`) VALUES
 	(11, 8, 'Season 2018', '2018-01-16 00:00:00', '2018-11-12 23:59:59', 0),
 	(12, 9, 'Preseason 2019', '2018-11-13 00:00:00', '2019-01-22 23:59:59', 0),
 	(13, 9, 'Season 2019', '2019-01-23 00:00:00', NULL, 0),
 	(14, 9, 'Test Season', '2019-01-23 00:00:00', NULL, 1);
 
--- Dumping structure for table riot.match
-CREATE TABLE IF NOT EXISTS `match` (
+-- Dumping structure for table riot.matches
+CREATE TABLE IF NOT EXISTS `matches` (
   `gameId` int(11) unsigned NOT NULL COMMENT 'Given by Riot API',
   `seasonId` int(11) NOT NULL COMMENT 'Given by Riot API',
   `queueId` int(11) NOT NULL COMMENT 'Given by Riot API',
@@ -271,11 +271,11 @@ CREATE TABLE IF NOT EXISTS `match` (
   `gameCreation` datetime NOT NULL,
   PRIMARY KEY (`gameId`),
   KEY `FK_matches_seasonId` (`seasonId`),
-  CONSTRAINT `FK_match_seasonId` FOREIGN KEY (`seasonId`) REFERENCES `season` (`seasonId`)
+  CONSTRAINT `FK_match_seasonId` FOREIGN KEY (`seasonId`) REFERENCES `seasons` (`seasonId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping structure for table riot.summoner
-CREATE TABLE IF NOT EXISTS `summoner` (
+-- Dumping structure for table riot.summoners
+CREATE TABLE IF NOT EXISTS `summoners` (
   `puuid` varchar(100) NOT NULL COMMENT 'Given by Riot API',
   `summonerId` varchar(100) NOT NULL COMMENT 'Given by Riot API',
   `accountId` varchar(100) NOT NULL COMMENT 'Given by Riot API',
@@ -289,11 +289,11 @@ CREATE TABLE IF NOT EXISTS `summoner` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Dumping data for table riot.summoner: ~1 rows (approximately)
-INSERT INTO `summoner` (`puuid`, `summonerId`, `accountId`, `profileIconId`, `summonerLevel`, `name`, `revisionDate`, `lastUpdated`) VALUES
+INSERT INTO `summoners` (`puuid`, `summonerId`, `accountId`, `profileIconId`, `summonerLevel`, `name`, `revisionDate`, `lastUpdated`) VALUES
 	('tIIKBBTZc3D6MxkYRVBpqcSCKB0DyjnnUpTK7MYOD4D4Iihn-yUm10a31i2ODO85oVVqoooaH-scdg', 'hn6fijTA1IzLeOS2f2FGqpqLewXIXWuFpSEJCIcI0tj6d8g', 'DYnXK8GUEx62B3PE7gvyyr9CuijhaEPKrLPffXjsyfmAMYc', 744, 144, 'Raitono', '2019-02-25 02:09:14', NULL);
 
--- Dumping structure for table riot.match_list
-CREATE TABLE IF NOT EXISTS `match_list` (
+-- Dumping structure for table riot.match_lists
+CREATE TABLE IF NOT EXISTS `match_lists` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `summonerPUUID` varchar(100) NOT NULL,
   `gameId` int(11) unsigned NOT NULL,
@@ -305,9 +305,9 @@ CREATE TABLE IF NOT EXISTS `match_list` (
   KEY `FK_matches_gameId` (`gameId`),
   KEY `FK_matches_championId` (`championId`),
   KEY `FK_matches_PUUID` (`summonerPUUID`),
-  CONSTRAINT `FK_match_list_championId` FOREIGN KEY (`championId`) REFERENCES `champion` (`championId`),
-  CONSTRAINT `FK_match_list_gameId` FOREIGN KEY (`gameId`) REFERENCES `match` (`gameId`),
-  CONSTRAINT `FK_match_list_summonerPUUID` FOREIGN KEY (`summonerPUUID`) REFERENCES `summoner` (`puuid`)
+  CONSTRAINT `FK_match_list_championId` FOREIGN KEY (`championId`) REFERENCES `champions` (`championId`),
+  CONSTRAINT `FK_match_list_gameId` FOREIGN KEY (`gameId`) REFERENCES `matches` (`gameId`),
+  CONSTRAINT `FK_match_list_summonerPUUID` FOREIGN KEY (`summonerPUUID`) REFERENCES `summoners` (`puuid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8;
 
 -- Dumping structure for table riot.metadata
@@ -322,16 +322,16 @@ CREATE TABLE IF NOT EXISTS `metadata` (
 INSERT INTO `metadata` (`id`, `name`, `value`) VALUES
 	(1, 'current_patch', '9.1.1');
 
--- Dumping structure for table riot.spell
-CREATE TABLE IF NOT EXISTS `spell` (
+-- Dumping structure for table riot.spells
+CREATE TABLE IF NOT EXISTS `spells` (
   `spellId` int(11) NOT NULL COMMENT 'Given by Riot API',
   `name` varchar(50) NOT NULL,
   `key` varchar(50) NOT NULL,
   PRIMARY KEY (`spellId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='summoner spells';
 
--- Dumping data for table riot.spell: ~21 rows (approximately)
-INSERT INTO `spell` (`spellId`, `name`, `key`) VALUES
+-- Dumping data for table riot.spells: ~21 rows (approximately)
+INSERT INTO `spells` (`spellId`, `name`, `key`) VALUES
 	(1, 'Cleanse', 'SummonerBoost'),
 	(3, 'Exhaust', 'SummonerExhaust'),
 	(4, 'Flash', 'SummonerFlash'),
@@ -354,8 +354,8 @@ INSERT INTO `spell` (`spellId`, `name`, `key`) VALUES
 	(51, 'Ghost', 'SummonerOdysseyGhost'),
 	(52, 'Warp', 'SummonerOdysseyFlash');
 
--- Dumping structure for table riot.participant
-CREATE TABLE IF NOT EXISTS `participant` (
+-- Dumping structure for table riot.participants
+CREATE TABLE IF NOT EXISTS `participants` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `gameId` int(11) unsigned NOT NULL,
   `participantId` int(11) NOT NULL,
@@ -373,14 +373,14 @@ CREATE TABLE IF NOT EXISTS `participant` (
   KEY `FK_participants_championId` (`championId`),
   KEY `FK_participants_spell1Id` (`spell1Id`),
   KEY `FK_participants_spell2Id` (`spell2Id`),
-  CONSTRAINT `FK_participants_championId` FOREIGN KEY (`championId`) REFERENCES `champion` (`championId`),
-  CONSTRAINT `FK_participants_gameId` FOREIGN KEY (`gameId`) REFERENCES `match` (`gameId`),
-  CONSTRAINT `FK_participants_spell1Id` FOREIGN KEY (`spell1Id`) REFERENCES `spell` (`spellId`),
-  CONSTRAINT `FK_participants_spell2Id` FOREIGN KEY (`spell2Id`) REFERENCES `spell` (`spellId`)
+  CONSTRAINT `FK_participants_championId` FOREIGN KEY (`championId`) REFERENCES `champions` (`championId`),
+  CONSTRAINT `FK_participants_gameId` FOREIGN KEY (`gameId`) REFERENCES `matches` (`gameId`),
+  CONSTRAINT `FK_participants_spell1Id` FOREIGN KEY (`spell1Id`) REFERENCES `spells` (`spellId`),
+  CONSTRAINT `FK_participants_spell2Id` FOREIGN KEY (`spell2Id`) REFERENCES `spells` (`spellId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping structure for table riot.participant_stat
-CREATE TABLE IF NOT EXISTS `participant_stat` (
+-- Dumping structure for table riot.participant_stats
+CREATE TABLE IF NOT EXISTS `participant_stats` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `participantId` int(11) NOT NULL,
   `win` bit(1) NOT NULL COMMENT 'For some reason, it''s a bit here.',
@@ -454,11 +454,11 @@ CREATE TABLE IF NOT EXISTS `participant_stat` (
   `damageSelfMitigated` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_participant_stats_participantId` (`participantId`),
-  CONSTRAINT `FK_participant_stats_participantId` FOREIGN KEY (`participantId`) REFERENCES `participant` (`id`)
+  CONSTRAINT `FK_participant_stats_participantId` FOREIGN KEY (`participantId`) REFERENCES `participants` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping structure for table riot.participant_timeline_delta
-CREATE TABLE IF NOT EXISTS `participant_timeline_delta` (
+-- Dumping structure for table riot.participant_timeline_deltas
+CREATE TABLE IF NOT EXISTS `participant_timeline_deltas` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `participantId` int(11) NOT NULL,
   `deltaTypeId` int(11) NOT NULL,
@@ -468,33 +468,33 @@ CREATE TABLE IF NOT EXISTS `participant_timeline_delta` (
   UNIQUE KEY `participantId_deltaTypeId_increment` (`participantId`,`deltaTypeId`,`increment`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping structure for table riot.perk_style
-CREATE TABLE IF NOT EXISTS `perk_style` (
+-- Dumping structure for table riot.perk_styles
+CREATE TABLE IF NOT EXISTS `perk_styles` (
   `styleId` varchar(4) NOT NULL COMMENT 'Given by Riot API',
   `name` varchar(50) NOT NULL,
   PRIMARY KEY (`styleId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='These are the major paths for the runes.';
 
--- Dumping data for table riot.perk_style: ~5 rows (approximately)
-INSERT INTO `perk_style` (`styleId`, `name`) VALUES
+-- Dumping data for table riot.perk_styles: ~5 rows (approximately)
+INSERT INTO `perk_styles` (`styleId`, `name`) VALUES
 	('8000', 'Precision'),
 	('8100', 'Domination'),
 	('8200', 'Sorcery'),
 	('8300', 'Inspiration'),
 	('8400', 'Resolve');
 
--- Dumping structure for table riot.perk
-CREATE TABLE IF NOT EXISTS `perk` (
+-- Dumping structure for table riot.perks
+CREATE TABLE IF NOT EXISTS `perks` (
   `perkId` varchar(4) NOT NULL COMMENT 'Given by Riot API. First 2 characters show style. 84XX is style 8400.',
   `styleId` varchar(4) NOT NULL,
   `name` varchar(50) NOT NULL,
   PRIMARY KEY (`perkId`),
   KEY `FK_perks_styleId` (`styleId`),
-  CONSTRAINT `FK_perk_styleId` FOREIGN KEY (`styleId`) REFERENCES `perk_style` (`styleId`)
+  CONSTRAINT `FK_perk_styleId` FOREIGN KEY (`styleId`) REFERENCES `perk_styles` (`styleId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Runes are called perks in the API and are a part of the participantDTO. They are not directly available from the API, so I am having to infer and figure them out on my own.';
 
--- Dumping data for table riot.perk: ~64 rows (approximately)
-INSERT INTO `perk` (`perkId`, `styleId`, `name`) VALUES
+-- Dumping data for table riot.perks: ~64 rows (approximately)
+INSERT INTO `perks` (`perkId`, `styleId`, `name`) VALUES
 	('8005', '8000', 'Press the Attack'),
 	('8008', '8000', 'Lethal Tempo'),
 	('8009', '8000', 'Presence of Mind'),
@@ -560,16 +560,16 @@ INSERT INTO `perk` (`perkId`, `styleId`, `name`) VALUES
 	('9111', '8000', 'Triumph'),
 	('9923', '8100', 'Hail of Blades');
 
--- Dumping structure for table riot.queue
-CREATE TABLE IF NOT EXISTS `queue` (
+-- Dumping structure for table riot.queues
+CREATE TABLE IF NOT EXISTS `queues` (
   `queueId` int(11) NOT NULL,
   `mapId` int(11) DEFAULT NULL,
   `map` varchar(50) NOT NULL,
   `description` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping data for table riot.queue: ~46 rows (approximately)
-INSERT INTO `queue` (`queueId`, `mapId`, `map`, `description`) VALUES
+-- Dumping data for table riot.queues: ~46 rows (approximately)
+INSERT INTO `queues` (`queueId`, `mapId`, `map`, `description`) VALUES
 	(0, NULL, 'Custom games', NULL),
 	(72, 12, 'Howling Abyss', '1v1 Snowdown Showdown games'),
 	(73, 12, 'Howling Abyss', '2v2 Snowdown Showdown games'),
@@ -617,8 +617,8 @@ INSERT INTO `queue` (`queueId`, `mapId`, `map`, `description`) VALUES
 	(1070, 20, 'Crash Site', 'Odyssey Extraction: Onslaught games'),
 	(1200, 21, 'Nexus Blitz', 'Nexus Blitz games');
 
--- Dumping structure for table riot.team_ban
-CREATE TABLE IF NOT EXISTS `team_ban` (
+-- Dumping structure for table riot.team_bans
+CREATE TABLE IF NOT EXISTS `team_bans` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `gameId` int(11) unsigned NOT NULL,
   `teamId` int(11) NOT NULL,
@@ -627,12 +627,12 @@ CREATE TABLE IF NOT EXISTS `team_ban` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `gameId_teamId_pickTurn` (`gameId`,`teamId`,`pickTurn`),
   KEY `FK_team_ban_championId` (`championId`),
-  CONSTRAINT `FK_team_ban_championId` FOREIGN KEY (`championId`) REFERENCES `champion` (`championId`),
-  CONSTRAINT `FK_team_ban_gameId` FOREIGN KEY (`gameId`) REFERENCES `match` (`gameId`)
+  CONSTRAINT `FK_team_ban_championId` FOREIGN KEY (`championId`) REFERENCES `champions` (`championId`),
+  CONSTRAINT `FK_team_ban_gameId` FOREIGN KEY (`gameId`) REFERENCES `matches` (`gameId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Probably don''t need this, but Riot probably thought the same.';
 
 -- Dumping structure for table riot.team_stat
-CREATE TABLE IF NOT EXISTS `team_stat` (
+CREATE TABLE IF NOT EXISTS `team_stats` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `gameId` int(11) unsigned NOT NULL,
   `teamId` int(11) NOT NULL COMMENT '100 = Blue and 200 = Red',
@@ -651,23 +651,23 @@ CREATE TABLE IF NOT EXISTS `team_stat` (
   `firstTower` bit(1) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `gameId_teamId` (`gameId`,`teamId`),
-  CONSTRAINT `FK_team_stats_gameId` FOREIGN KEY (`gameId`) REFERENCES `match` (`gameId`)
+  CONSTRAINT `FK_team_stats_gameId` FOREIGN KEY (`gameId`) REFERENCES `matches` (`gameId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Dumping structure for table riot.xref_champion_tag
-CREATE TABLE IF NOT EXISTS `xref_champion_tag` (
+CREATE TABLE IF NOT EXISTS `xref_champion_tags` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `championId` int(11) NOT NULL,
   `tagId` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UX_champion_tags_championId_tagId` (`championId`,`tagId`),
   KEY `FK_xref_champion_tags_tagId` (`tagId`),
-  CONSTRAINT `FK_xref_champion_tags_championId` FOREIGN KEY (`championId`) REFERENCES `champion` (`championId`),
-  CONSTRAINT `FK_xref_champion_tags_tagId` FOREIGN KEY (`tagId`) REFERENCES `champion_tag` (`id`)
+  CONSTRAINT `FK_xref_champion_tags_championId` FOREIGN KEY (`championId`) REFERENCES `champions` (`championId`),
+  CONSTRAINT `FK_xref_champion_tags_tagId` FOREIGN KEY (`tagId`) REFERENCES `champion_tags` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping structure for table riot.xref_item_map
-CREATE TABLE IF NOT EXISTS `xref_item_map` (
+-- Dumping structure for table riot.xref_items_maps
+CREATE TABLE IF NOT EXISTS `xref_items_maps` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `version` varchar(10) NOT NULL,
   `itemId` int(11) NOT NULL,
@@ -676,8 +676,8 @@ CREATE TABLE IF NOT EXISTS `xref_item_map` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `itemId_mapId` (`itemId`,`mapId`),
   KEY `FK_xref_item_map_map` (`mapId`),
-  CONSTRAINT `FK_xref_item_map_item` FOREIGN KEY (`itemId`) REFERENCES `item` (`itemId`),
-  CONSTRAINT `FK_xref_item_map_map` FOREIGN KEY (`mapId`) REFERENCES `map` (`mapId`)
+  CONSTRAINT `FK_xref_item_map_item` FOREIGN KEY (`itemId`) REFERENCES `items` (`itemId`),
+  CONSTRAINT `FK_xref_item_map_map` FOREIGN KEY (`mapId`) REFERENCES `maps` (`mapId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Dumping structure for table riot.xref_item_map_history
@@ -692,8 +692,8 @@ CREATE TABLE IF NOT EXISTS `xref_item_map_history` (
   PRIMARY KEY (`historyId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
--- Dumping structure for table riot.xref_item_tag
-CREATE TABLE IF NOT EXISTS `xref_item_tag` (
+-- Dumping structure for table riot.xref_items_tags
+CREATE TABLE IF NOT EXISTS `xref_items_tags` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `version` varchar(10) NOT NULL,
   `itemId` int(11) NOT NULL,
@@ -701,8 +701,8 @@ CREATE TABLE IF NOT EXISTS `xref_item_tag` (
   PRIMARY KEY (`id`),
   KEY `FK_xref_item_tag_item` (`itemId`),
   KEY `FK_xref_item_tag_tag` (`tagId`),
-  CONSTRAINT `FK_xref_item_tag_item` FOREIGN KEY (`itemId`) REFERENCES `item` (`itemId`),
-  CONSTRAINT `FK_xref_item_tag_tag` FOREIGN KEY (`tagId`) REFERENCES `item_tag` (`id`)
+  CONSTRAINT `FK_xref_item_tag_item` FOREIGN KEY (`itemId`) REFERENCES `items` (`itemId`),
+  CONSTRAINT `FK_xref_item_tag_tag` FOREIGN KEY (`tagId`) REFERENCES `item_tags` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Dumping structure for table riot.xref_item_tag_history
@@ -716,20 +716,20 @@ CREATE TABLE IF NOT EXISTS `xref_item_tag_history` (
   PRIMARY KEY (`historyId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=DYNAMIC;
 
--- Dumping structure for table riot.xref_participant_item
-CREATE TABLE IF NOT EXISTS `xref_participant_item` (
+-- Dumping structure for table riot.xref_participants_items
+CREATE TABLE IF NOT EXISTS `xref_participants_items` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `participantId` int(11) NOT NULL,
   `itemId` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_participant_items_participantId` (`participantId`),
   KEY `FK_xref_participant_item_itemId` (`itemId`),
-  CONSTRAINT `FK_xref_participant_item_itemId` FOREIGN KEY (`itemId`) REFERENCES `item` (`itemId`),
-  CONSTRAINT `FK_xref_participant_item_participantId` FOREIGN KEY (`participantId`) REFERENCES `participant` (`id`)
+  CONSTRAINT `FK_xref_participant_item_itemId` FOREIGN KEY (`itemId`) REFERENCES `items` (`itemId`),
+  CONSTRAINT `FK_xref_participant_item_participantId` FOREIGN KEY (`participantId`) REFERENCES `participants` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Might not be strictly needed, just as with bans, but it breaks from the normalized structure if I leave them part of the participants_stats table.\r\n\r\nThinking about it deeper, it really is a many-many relationship, so deserves its own table.';
 
--- Dumping structure for table riot.xref_participant_perk
-CREATE TABLE IF NOT EXISTS `xref_participant_perk` (
+-- Dumping structure for table riot.xref_participants_perks
+CREATE TABLE IF NOT EXISTS `xref_participants_perks` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `participantId` int(11) NOT NULL,
   `perkId` varchar(4) NOT NULL,
@@ -740,13 +740,13 @@ CREATE TABLE IF NOT EXISTS `xref_participant_perk` (
   UNIQUE KEY `gameId_participantId_perkId_varId` (`participantId`,`perkId`,`varId`),
   KEY `FK_perkId` (`perkId`),
   KEY `FK_participantId` (`participantId`),
-  CONSTRAINT `FK_participantId` FOREIGN KEY (`participantId`) REFERENCES `participant` (`id`),
-  CONSTRAINT `FK_perkId` FOREIGN KEY (`perkId`) REFERENCES `perk` (`perkId`)
+  CONSTRAINT `FK_participantId` FOREIGN KEY (`participantId`) REFERENCES `participants` (`id`),
+  CONSTRAINT `FK_perkId` FOREIGN KEY (`perkId`) REFERENCES `perks` (`perkId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Dumping structure for trigger riot.champion_after_insert
 SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
-CREATE TRIGGER `champion_after_insert` AFTER INSERT ON `champion` FOR EACH ROW BEGIN
+CREATE TRIGGER `champions_after_insert` AFTER INSERT ON `champions` FOR EACH ROW BEGIN
 	INSERT INTO champion_history(`version`, `action`, `championId`, `name`,
 	`title`, `partype`, `hp`, `hpperlevel`, `mp`, `mpperlevel`, `movespeed`,
 	`armor`, `armorperlevel`,`spellblock`, `spellblockperlevel`, `attackrange`,
@@ -765,7 +765,7 @@ SET SQL_MODE=@OLDTMP_SQL_MODE;
 
 -- Dumping structure for trigger riot.champion_after_update
 SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
-CREATE TRIGGER `champion_after_update` AFTER UPDATE ON `champion` FOR EACH ROW BEGIN
+CREATE TRIGGER `champions_after_update` AFTER UPDATE ON `champions` FOR EACH ROW BEGIN
 	IF(NEW.name <> OLD.name OR NEW.title <> OLD.title OR
 	NEW.partype <> OLD.partype OR NEW.hp <> OLD.hp OR
 	NEW.hpperlevel <> OLD.hpperlevel OR NEW.mp <> OLD.mp OR
@@ -800,7 +800,7 @@ SET SQL_MODE=@OLDTMP_SQL_MODE;
 
 -- Dumping structure for trigger riot.item_after_insert
 SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
-CREATE TRIGGER `item_after_insert` AFTER INSERT ON `item` FOR EACH ROW BEGIN
+CREATE TRIGGER `items_after_insert` AFTER INSERT ON `items` FOR EACH ROW BEGIN
 	INSERT INTO item_history(version, action, `itemId`, `name`, `description`,
 	`colloq`, `plaintext`, `goldBase`, `purchasable`, `goldTotal`, `goldSellsFor`,
 	`depth`, `from`, `into`, `hideFromAll`, `consumed`, `consumeOnFull`,
@@ -815,7 +815,7 @@ SET SQL_MODE=@OLDTMP_SQL_MODE;
 
 -- Dumping structure for trigger riot.item_after_update
 SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
-CREATE TRIGGER `item_after_update` AFTER UPDATE ON `item` FOR EACH ROW BEGIN
+CREATE TRIGGER `items_after_update` AFTER UPDATE ON `items` FOR EACH ROW BEGIN
 	IF(NEW.name <> OLD.name OR IFNULL(NEW.description, '') <> IFNULL(OLD.description, '') OR
 		IFNULL(NEW.colloq, '') <> IFNULL(OLD.colloq, '') OR IFNULL(NEW.plaintext, '') <> IFNULL(OLD.plaintext, '') OR
 		NEW.goldBase <> OLD.goldBase OR NEW.purchasable <> OLD.purchasable OR
@@ -843,7 +843,7 @@ SET SQL_MODE=@OLDTMP_SQL_MODE;
 
 -- Dumping structure for trigger riot.item_stat_after_delete
 SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
-CREATE TRIGGER `item_stat_after_delete` AFTER DELETE ON `item_stat` FOR EACH ROW BEGIN
+CREATE TRIGGER `item_stats_after_delete` AFTER DELETE ON `item_stats` FOR EACH ROW BEGIN
 	DECLARE patch varchar(10);
 	
 	SELECT value INTO patch FROM metadata WHERE name = 'current_patch';
@@ -855,7 +855,7 @@ SET SQL_MODE=@OLDTMP_SQL_MODE;
 
 -- Dumping structure for trigger riot.item_stat_after_insert
 SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
-CREATE TRIGGER `item_stat_after_insert` AFTER INSERT ON `item_stat` FOR EACH ROW BEGIN
+CREATE TRIGGER `item_stats_after_insert` AFTER INSERT ON `item_stats` FOR EACH ROW BEGIN
 	INSERT INTO item_stat_history(`version`, `action`, `itemId`, `type`, `value`)
 	VALUES(NEW.version, 'I', NEW.itemId, NEW.type, NEW.value);
 END;
@@ -863,7 +863,7 @@ SET SQL_MODE=@OLDTMP_SQL_MODE;
 
 -- Dumping structure for trigger riot.item_stat_after_update
 SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
-CREATE TRIGGER `item_stat_after_update` AFTER UPDATE ON `item_stat` FOR EACH ROW BEGIN
+CREATE TRIGGER `item_stats_after_update` AFTER UPDATE ON `item_stats` FOR EACH ROW BEGIN
 	IF(NEW.value <> OLD.value) THEN
 	INSERT INTO item_stat_history(`version`, `action`, `itemId`, `type`, `value`)
 	VALUES(NEW.version, 'U', NEW.itemId, NEW.type, NEW.value);
@@ -873,7 +873,7 @@ SET SQL_MODE=@OLDTMP_SQL_MODE;
 
 -- Dumping structure for trigger riot.xref_item_map_after_delete
 SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
-CREATE TRIGGER `xref_item_map_after_delete` AFTER DELETE ON `xref_item_map` FOR EACH ROW BEGIN
+CREATE TRIGGER `xref_items_maps_after_delete` AFTER DELETE ON `xref_items_maps` FOR EACH ROW BEGIN
 	DECLARE patch varchar(10);
 	
 	SELECT value INTO patch FROM metadata WHERE name = 'current_patch';
@@ -885,7 +885,7 @@ SET SQL_MODE=@OLDTMP_SQL_MODE;
 
 -- Dumping structure for trigger riot.xref_item_map_after_insert
 SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
-CREATE TRIGGER `xref_item_map_after_insert` AFTER INSERT ON `xref_item_map` FOR EACH ROW BEGIN
+CREATE TRIGGER `xref_items_maps_after_insert` AFTER INSERT ON `xref_items_maps` FOR EACH ROW BEGIN
 	INSERT INTO xref_item_map_history(`version`, `action`, `itemId`, `mapId`, `enabled`)
 	VALUES (NEW.`version`, 'I', NEW.`itemId`, NEW.`mapId`, NEW.`enabled`);
 END;
@@ -893,7 +893,7 @@ SET SQL_MODE=@OLDTMP_SQL_MODE;
 
 -- Dumping structure for trigger riot.xref_item_map_after_update
 SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
-CREATE TRIGGER `xref_item_map_after_update` AFTER UPDATE ON `xref_item_map` FOR EACH ROW BEGIN
+CREATE TRIGGER `xref_items_maps_after_update` AFTER UPDATE ON `xref_items_maps` FOR EACH ROW BEGIN
 	IF(NEW.enabled <> OLD.enabled) THEN
 	INSERT INTO xref_item_map_history(`version`, `action`, `itemId`, `mapId`, `enabled`)
 	VALUES (NEW.`version`, 'U', NEW.`itemId`, NEW.`mapId`, NEW.`enabled`);
@@ -903,7 +903,7 @@ SET SQL_MODE=@OLDTMP_SQL_MODE;
 
 -- Dumping structure for trigger riot.xref_item_tag_after_delete
 SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
-CREATE TRIGGER `xref_item_tag_after_delete` AFTER DELETE ON `xref_item_tag` FOR EACH ROW BEGIN
+CREATE TRIGGER `xref_items_tags_after_delete` AFTER DELETE ON `xref_items_tags` FOR EACH ROW BEGIN
 	DECLARE patch varchar(10);
 	
 	SELECT value INTO patch FROM metadata WHERE name = 'current_patch';
@@ -915,7 +915,7 @@ SET SQL_MODE=@OLDTMP_SQL_MODE;
 
 -- Dumping structure for trigger riot.xref_item_tag_after_insert
 SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
-CREATE TRIGGER `xref_item_tag_after_insert` AFTER INSERT ON `xref_item_tag` FOR EACH ROW BEGIN
+CREATE TRIGGER `xref_items_tags_after_insert` AFTER INSERT ON `xref_items_tags` FOR EACH ROW BEGIN
 	INSERT INTO xref_item_tag_history(`version`, `action`, `itemId`, `tagId`)
 	VALUES (NEW.version, 'I', NEW.itemId, NEW.tagId);
 END;
