@@ -1,9 +1,8 @@
 // Third party imports
 import { Model } from 'objection';
 
-export class Test extends Model {
+export class Summoner extends Model {
     static get tableName() {
-        return 'test';
+        return 'summoners';
     }
-    test_value: string;
 }
