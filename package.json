@@ -7,8 +7,9 @@
     "node": ">=10"
   },
   "scripts": {
-    "build": "tsc",
-    "build:watch": "tsc -w",
+    "prebuild": "rm -rf out/",
+    "build": "npm run prebuild && tsc",
+    "build:watch": "npm run prebuild && tsc -w",
     "start": "node out/app.js",
     "start:watch": "nodemon out/app.js",
     "dev": "npm run start:watch"
@@ -29,13 +30,11 @@
     "knex": "^0.16.5",
     "mysql2": "^1.6.5",
     "objection": "^1.6.7",
-    "request-promise-native": "^1.0.7",
     "supports-color": "^6.0.0"
   },
   "devDependencies": {
     "@types/dotenv-safe": "^5.0.2",
     "@types/node": "^10.11.2",
-    "@types/request-promise-native": "^1.0.15",
     "nodemon": "^1.18.11",
     "tslint": "^5.15.0",
     "typescript": "^3.4.3"
