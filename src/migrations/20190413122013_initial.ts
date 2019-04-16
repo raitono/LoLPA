@@ -17,7 +17,7 @@ const con = mysql.createConnection({
 });
 
 exports.up = async function(knex: Knex, upPromise: Promise<any>): Promise<any> {
-  const sql = await readFile('./scripts/server_create.sql', 'utf8');
+  const sql = await readFile('./scripts/server_init.sql', 'utf8');
 
   return new Promise((resolve,reject) => {
     con.query(sql,(err, results) => {
@@ -31,13 +31,17 @@ exports.up = async function(knex: Knex, upPromise: Promise<any>): Promise<any> {
 };
 
 exports.down = async function(knex: Knex, downPromise: Promise<any>): Promise<any> {
+  const sql = await readFile('./scripts/server_create.sql', 'utf8');
+
   return new Promise((resolve,reject) => {
-    con.query('DROP DATABASE riot;',(err, results) => {
+    con.query(sql,(err, results) => {
       if(err){
+        debug(err);
         reject(err);
       }
-      else
+      else{
         resolve();
+      }
     });
   });
 };
