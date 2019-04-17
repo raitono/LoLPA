@@ -257,6 +257,64 @@ INSERT INTO `seasons` (`seasonId`, `number`, `name`, `startDate`, `endDate`, `is
 	(13, 9, 'Season 2019', '2019-01-23 00:00:00', NULL, 0),
 	(14, 9, 'Test Season', '2019-01-23 00:00:00', NULL, 1);
 
+-- Dumping structure for table riot.queues
+CREATE TABLE IF NOT EXISTS `queues` (
+  `queueId` int(11) NOT NULL,
+  `mapId` int(11) DEFAULT NULL,
+  `map` varchar(50) NOT NULL,
+  `description` varchar(50) DEFAULT NULL,
+	PRIMARY KEY (`queueId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Dumping data for table riot.queues: ~46 rows (approximately)
+INSERT INTO `queues` (`queueId`, `mapId`, `map`, `description`) VALUES
+	(0, NULL, 'Custom games', NULL),
+	(72, 12, 'Howling Abyss', '1v1 Snowdown Showdown games'),
+	(73, 12, 'Howling Abyss', '2v2 Snowdown Showdown games'),
+	(75, 11, 'Summoner\'s Rift', '6v6 Hexakill games'),
+	(76, 11, 'Summoner\'s Rift', 'Ultra Rapid Fire games'),
+	(78, 12, 'Howling Abyss', 'One For All: Mirror Mode games'),
+	(83, 11, 'Summoner\'s Rift', 'Co-op vs AI Ultra Rapid Fire games'),
+	(98, 4, 'Twisted Treeline', '6v6 Hexakill games'),
+	(100, 14, 'Butcher\'s Bridge', '5v5 ARAM games'),
+	(310, 11, 'Summoner\'s Rift', 'Nemesis games'),
+	(313, 11, 'Summoner\'s Rift', 'Black Market Brawlers games'),
+	(317, 8, 'Crystal Scar', 'Definitely Not Dominion games'),
+	(325, 11, 'Summoner\'s Rift', 'All Random games'),
+	(400, 11, 'Summoner\'s Rift', '5v5 Draft Pick games'),
+	(420, 11, 'Summoner\'s Rift', '5v5 Ranked Solo games'),
+	(430, 11, 'Summoner\'s Rift', '5v5 Blind Pick games'),
+	(440, 11, 'Summoner\'s Rift', '5v5 Ranked Flex games'),
+	(450, 12, 'Howling Abyss', '5v5 ARAM games'),
+	(460, 4, 'Twisted Treeline', '3v3 Blind Pick games'),
+	(470, 4, 'Twisted Treeline', '3v3 Ranked Flex games'),
+	(600, 11, 'Summoner\'s Rift', 'Blood Hunt Assassin games'),
+	(610, 16, 'Cosmic Ruins', 'Dark Star: Singularity games'),
+	(700, 11, 'Summoner\'s Rift', 'Clash games'),
+	(800, 4, 'Twisted Treeline', 'Co-op vs. AI Intermediate Bot games'),
+	(810, 4, 'Twisted Treeline', 'Co-op vs. AI Intro Bot games'),
+	(820, 4, 'Twisted Treeline', 'Co-op vs. AI Beginner Bot games'),
+	(830, 11, 'Summoner\'s Rift', 'Co-op vs. AI Intro Bot games'),
+	(840, 11, 'Summoner\'s Rift', 'Co-op vs. AI Beginner Bot games'),
+	(850, 11, 'Summoner\'s Rift', 'Co-op vs. AI Intermediate Bot games'),
+	(900, 11, 'Summoner\'s Rift', 'ARURF games'),
+	(910, 8, 'Crystal Scar', 'Ascension games'),
+	(920, 12, 'Howling Abyss', 'Legend of the Poro King games'),
+	(940, 11, 'Summoner\'s Rift', 'Nexus Siege games'),
+	(950, 11, 'Summoner\'s Rift', 'Doom Bots Voting games'),
+	(960, 11, 'Summoner\'s Rift', 'Doom Bots Standard games'),
+	(980, 18, 'Valoran City Park', 'Star Guardian Invasion: Normal games'),
+	(990, 18, 'Valoran City Park', 'Star Guardian Invasion: Onslaught games'),
+	(1000, 19, 'Overcharge', 'PROJECT: Hunters games'),
+	(1010, 11, 'Summoner\'s Rift', 'Snow ARURF games'),
+	(1020, 11, 'Summoner\'s Rift', 'One for All games'),
+	(1030, 20, 'Crash Site', 'Odyssey Extraction: Intro games'),
+	(1040, 20, 'Crash Site', 'Odyssey Extraction: Cadet games'),
+	(1050, 20, 'Crash Site', 'Odyssey Extraction: Crewmember games'),
+	(1060, 20, 'Crash Site', 'Odyssey Extraction: Captain games'),
+	(1070, 20, 'Crash Site', 'Odyssey Extraction: Onslaught games'),
+	(1200, 21, 'Nexus Blitz', 'Nexus Blitz games');
+
 -- Dumping structure for table riot.matches
 CREATE TABLE IF NOT EXISTS `matches` (
   `gameId` int(11) unsigned NOT NULL COMMENT 'Given by Riot API',
@@ -270,7 +328,11 @@ CREATE TABLE IF NOT EXISTS `matches` (
   `gameDuration` int(11) NOT NULL,
   `gameCreation` datetime NOT NULL,
   PRIMARY KEY (`gameId`),
-  KEY `FK_matches_seasonId` (`seasonId`),
+  INDEX `FK_matches_seasonId` (`seasonId`),
+  INDEX `FK_match_queueId` (`queueId`),
+  INDEX `FK_match_mapId` (`mapId`),
+  CONSTRAINT `FK_match_mapId` FOREIGN KEY (`mapId`) REFERENCES `maps` (`mapId`),
+  CONSTRAINT `FK_match_queueId` FOREIGN KEY (`queueId`) REFERENCES `queues` (`queueId`),
   CONSTRAINT `FK_match_seasonId` FOREIGN KEY (`seasonId`) REFERENCES `seasons` (`seasonId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -559,63 +621,6 @@ INSERT INTO `perks` (`perkId`, `styleId`, `name`) VALUES
 	('9105', '8000', 'Legend: Tenacity'),
 	('9111', '8000', 'Triumph'),
 	('9923', '8100', 'Hail of Blades');
-
--- Dumping structure for table riot.queues
-CREATE TABLE IF NOT EXISTS `queues` (
-  `queueId` int(11) NOT NULL,
-  `mapId` int(11) DEFAULT NULL,
-  `map` varchar(50) NOT NULL,
-  `description` varchar(50) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- Dumping data for table riot.queues: ~46 rows (approximately)
-INSERT INTO `queues` (`queueId`, `mapId`, `map`, `description`) VALUES
-	(0, NULL, 'Custom games', NULL),
-	(72, 12, 'Howling Abyss', '1v1 Snowdown Showdown games'),
-	(73, 12, 'Howling Abyss', '2v2 Snowdown Showdown games'),
-	(75, 11, 'Summoner\'s Rift', '6v6 Hexakill games'),
-	(76, 11, 'Summoner\'s Rift', 'Ultra Rapid Fire games'),
-	(78, 12, 'Howling Abyss', 'One For All: Mirror Mode games'),
-	(83, 11, 'Summoner\'s Rift', 'Co-op vs AI Ultra Rapid Fire games'),
-	(98, 4, 'Twisted Treeline', '6v6 Hexakill games'),
-	(100, 14, 'Butcher\'s Bridge', '5v5 ARAM games'),
-	(310, 11, 'Summoner\'s Rift', 'Nemesis games'),
-	(313, 11, 'Summoner\'s Rift', 'Black Market Brawlers games'),
-	(317, 8, 'Crystal Scar', 'Definitely Not Dominion games'),
-	(325, 11, 'Summoner\'s Rift', 'All Random games'),
-	(400, 11, 'Summoner\'s Rift', '5v5 Draft Pick games'),
-	(420, 11, 'Summoner\'s Rift', '5v5 Ranked Solo games'),
-	(430, 11, 'Summoner\'s Rift', '5v5 Blind Pick games'),
-	(440, 11, 'Summoner\'s Rift', '5v5 Ranked Flex games'),
-	(450, 12, 'Howling Abyss', '5v5 ARAM games'),
-	(460, 4, 'Twisted Treeline', '3v3 Blind Pick games'),
-	(470, 4, 'Twisted Treeline', '3v3 Ranked Flex games'),
-	(600, 11, 'Summoner\'s Rift', 'Blood Hunt Assassin games'),
-	(610, 16, 'Cosmic Ruins', 'Dark Star: Singularity games'),
-	(700, 11, 'Summoner\'s Rift', 'Clash games'),
-	(800, 4, 'Twisted Treeline', 'Co-op vs. AI Intermediate Bot games'),
-	(810, 4, 'Twisted Treeline', 'Co-op vs. AI Intro Bot games'),
-	(820, 4, 'Twisted Treeline', 'Co-op vs. AI Beginner Bot games'),
-	(830, 11, 'Summoner\'s Rift', 'Co-op vs. AI Intro Bot games'),
-	(840, 11, 'Summoner\'s Rift', 'Co-op vs. AI Beginner Bot games'),
-	(850, 11, 'Summoner\'s Rift', 'Co-op vs. AI Intermediate Bot games'),
-	(900, 11, 'Summoner\'s Rift', 'ARURF games'),
-	(910, 8, 'Crystal Scar', 'Ascension games'),
-	(920, 12, 'Howling Abyss', 'Legend of the Poro King games'),
-	(940, 11, 'Summoner\'s Rift', 'Nexus Siege games'),
-	(950, 11, 'Summoner\'s Rift', 'Doom Bots Voting games'),
-	(960, 11, 'Summoner\'s Rift', 'Doom Bots Standard games'),
-	(980, 18, 'Valoran City Park', 'Star Guardian Invasion: Normal games'),
-	(990, 18, 'Valoran City Park', 'Star Guardian Invasion: Onslaught games'),
-	(1000, 19, 'Overcharge', 'PROJECT: Hunters games'),
-	(1010, 11, 'Summoner\'s Rift', 'Snow ARURF games'),
-	(1020, 11, 'Summoner\'s Rift', 'One for All games'),
-	(1030, 20, 'Crash Site', 'Odyssey Extraction: Intro games'),
-	(1040, 20, 'Crash Site', 'Odyssey Extraction: Cadet games'),
-	(1050, 20, 'Crash Site', 'Odyssey Extraction: Crewmember games'),
-	(1060, 20, 'Crash Site', 'Odyssey Extraction: Captain games'),
-	(1070, 20, 'Crash Site', 'Odyssey Extraction: Onslaught games'),
-	(1200, 21, 'Nexus Blitz', 'Nexus Blitz games');
 
 -- Dumping structure for table riot.team_bans
 CREATE TABLE IF NOT EXISTS `team_bans` (

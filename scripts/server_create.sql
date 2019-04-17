@@ -1,7 +1,7 @@
-DROP DATABASE riot;
-CREATE DATABASE riot;
+DROP DATABASE IF EXISTS riot;
+CREATE DATABASE IF NOT EXISTS riot;
 USE riot;
-CREATE TABLE `knex_migrations` (
+CREATE TABLE IF NOT EXISTS `knex_migrations` (
 	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`name` VARCHAR(255) NULL DEFAULT NULL,
 	`batch` INT(11) NULL DEFAULT NULL,
@@ -10,7 +10,7 @@ CREATE TABLE `knex_migrations` (
 )
 COLLATE='utf8_general_ci'
 ENGINE=INNODB;
-CREATE TABLE `knex_migrations_lock` (
+CREATE TABLE IF NOT EXISTS `knex_migrations_lock` (
 	`index` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`is_locked` INT(11) NULL DEFAULT NULL,
 	PRIMARY KEY (`index`)
