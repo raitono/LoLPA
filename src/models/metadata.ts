@@ -1,11 +1,11 @@
 // Third party imports
 import { Model } from 'objection';
 
-export class Summoner extends Model {
+export class Metadata extends Model {
     static get tableName() {
-        return 'summoners';
+        return 'metadata';
     }
     static get idColumn() {
-        return 'puuid';
+        return 'id';
     }
 }
