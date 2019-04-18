@@ -527,7 +527,8 @@ CREATE TABLE IF NOT EXISTS `participant_timeline_deltas` (
   `increment` varchar(7) NOT NULL COMMENT 'Values indicate minutes such as "0-10", "10-20". Length of 7 should cover anything that goes into the 100+ min range. God help anyone who plays more than 16.5 hours in one game.',
   `value` decimal(10,3) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `participantId_deltaTypeId_increment` (`participantId`,`deltaTypeId`,`increment`)
+  UNIQUE KEY `participantId_deltaTypeId_increment` (`participantId`,`deltaTypeId`,`increment`),
+  CONSTRAINT `FK_delta_participant` FOREIGN KEY (`participantId`) REFERENCES `participants` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Dumping structure for table riot.perk_styles
