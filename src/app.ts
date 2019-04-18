@@ -4,6 +4,8 @@ const debug: any = require('debug')('app');
 
 // Third party imports
 import * as HttpStatus from 'http-status-codes';
+import * as bodyParser from 'koa-bodyparser';
+import * as json from 'koa-json';
 import Knex = require('knex');
 import { Model } from 'objection';
 import * as Koa from 'koa';
@@ -27,7 +29,10 @@ app.use(async (ctx: Koa.Context, next: () => Promise<any>) => {
   }
 });
 
-app.use(async (ctx:Koa.Context) => (ctx.body = 'Hello Koa!'));
+app.use(bodyParser());
+app.use(json());
+
+app.use(async (ctx:Koa.Context) => (ctx.body = {msg: 'Hello Koa!'}));
 
 // Application error logging.
 app.on('error', console.error);
