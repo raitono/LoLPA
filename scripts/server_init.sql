@@ -661,16 +661,16 @@ CREATE TABLE IF NOT EXISTS `team_stats` (
   CONSTRAINT `FK_team_stats_gameId` FOREIGN KEY (`gameId`) REFERENCES `matches` (`gameId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- Dumping structure for table riot.xref_champion_tag
-CREATE TABLE IF NOT EXISTS `xref_champion_tags` (
+-- Dumping structure for table riot.xref_champions_tags
+CREATE TABLE IF NOT EXISTS `xref_champions_tags` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `championId` int(11) NOT NULL,
   `tagId` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UX_champion_tags_championId_tagId` (`championId`,`tagId`),
   KEY `FK_xref_champion_tags_tagId` (`tagId`),
-  CONSTRAINT `FK_xref_champion_tags_championId` FOREIGN KEY (`championId`) REFERENCES `champions` (`championId`),
-  CONSTRAINT `FK_xref_champion_tags_tagId` FOREIGN KEY (`tagId`) REFERENCES `champion_tags` (`id`)
+  CONSTRAINT `FK_xref_champions_tags_championId` FOREIGN KEY (`championId`) REFERENCES `champions` (`championId`),
+  CONSTRAINT `FK_xref_champions_tags_tagId` FOREIGN KEY (`tagId`) REFERENCES `champion_tags` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Dumping structure for table riot.xref_items_maps
