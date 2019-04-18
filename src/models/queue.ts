@@ -8,4 +8,19 @@ export class Queue extends Model {
     static get idColumn() {
         return 'queueId';
     }
+
+    static get relationMappings() {
+        const Map = require('./map');
+
+        return {
+            map: {
+                relation: Model.BelongsToOneRelation,
+                modelClass: Map,
+                join: {
+                    from: 'queues.mapId',
+                    to: 'maps.mapId'
+                }
+            }
+        };
+    }
 }

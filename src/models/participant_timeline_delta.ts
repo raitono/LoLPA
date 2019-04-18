@@ -8,4 +8,19 @@ export class ParticipantTimelineDelta extends Model {
     static get idColumn() {
         return 'id';
     }
+
+    static get relationMappings() {
+        const Participant = require('./participant');
+
+        return {
+            participant: {
+                relation: Model.BelongsToOneRelation,
+                modelClass: Participant,
+                join: {
+                    from: 'participant_timeline_deltas.participantId',
+                    to: 'participants.id'
+                }
+            }
+        };
+    }
 }
