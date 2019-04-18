@@ -10,6 +10,7 @@
     "prebuild": "rm -rf out/",
     "build": "npm run prebuild && tsc",
     "build:watch": "npm run prebuild && tsc -w",
+    "test": "ava",
     "start": "node out/server.js",
     "start:watch": "nodemon out/server.js",
     "dev": "npm run start:watch"
@@ -23,6 +24,9 @@
   },
   "author": "Ben Painter <bpaintx2@gmail.com>",
   "license": "MIT",
+  "eslintConfig": {
+    "extends": "plugin:ava/recommended"
+  },
   "dependencies": {
     "debug": "^4.1.0",
     "dotenv-safe": "^6.1.0",
@@ -45,6 +49,9 @@
     "@types/koa-json": "^2.0.18",
     "@types/koa-router": "^7.0.40",
     "@types/node": "^10.11.2",
+    "ava": "^1.4.1",
+    "eslint": "^5.16.0",
+    "eslint-plugin-ava": "^6.0.0",
     "nodemon": "^1.18.11",
     "tslint": "^5.15.0",
     "tslint-config-airbnb": "^5.11.1",
