@@ -263,7 +263,8 @@ CREATE TABLE IF NOT EXISTS `queues` (
   `mapId` int(11) DEFAULT NULL,
   `map` varchar(50) NOT NULL,
   `description` varchar(50) DEFAULT NULL,
-	PRIMARY KEY (`queueId`)
+	PRIMARY KEY (`queueId`),
+	CONSTRAINT `FK_queue_map` FOREIGN KEY (`mapId`) REFERENCES `maps` (`mapId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Dumping data for table riot.queues: ~46 rows (approximately)
