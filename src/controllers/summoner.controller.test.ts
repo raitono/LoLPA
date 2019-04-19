@@ -14,7 +14,7 @@ function makeApp() {
     app.use(summonerController.routes());
     app.use(summonerController.allowedMethods());
 
-    return app.listen(3001);
+    return app.listen();
 }
 
 test('ping', async t => {
