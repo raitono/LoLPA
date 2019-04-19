@@ -18,8 +18,6 @@ function makeApp() {
 }
 
 test('ping', async t => {
-    t.plan(2);
-
     const res = await request(makeApp())
         .get('/summoners/ping');
 
