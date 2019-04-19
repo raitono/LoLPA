@@ -1,6 +1,6 @@
 // Global setup
 require('dotenv').config();
-const debug: any = require('debug')('app');
+const debug: any = require('debug')('lolpa:app');
 
 // Third party imports
 import * as HttpStatus from 'http-status-codes';

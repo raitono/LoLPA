@@ -10,7 +10,7 @@
     "prebuild": "rm -rf out/",
     "build": "npm run prebuild && tsc",
     "build:watch": "npm run prebuild && tsc -w",
-    "test": "nyc ava -v",
+    "test": "nyc ava",
     "start": "node out/server.js",
     "start:watch": "nodemon out/server.js",
     "dev": "npm run start:watch"
