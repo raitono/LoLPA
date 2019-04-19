@@ -10,7 +10,7 @@
     "prebuild": "rm -rf out/",
     "build": "npm run prebuild && tsc",
     "build:watch": "npm run prebuild && tsc -w",
-    "test": "ava",
+    "test": "nyc ava -v",
     "start": "node out/server.js",
     "start:watch": "nodemon out/server.js",
     "dev": "npm run start:watch"
@@ -54,6 +54,7 @@
     "eslint": "^5.16.0",
     "eslint-plugin-ava": "^6.0.0",
     "nodemon": "^1.18.11",
+    "nyc": "^14.0.0",
     "supertest": "^4.0.2",
     "tslint": "^5.15.0",
     "tslint-config-airbnb": "^5.11.1",
