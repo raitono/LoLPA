@@ -2,7 +2,7 @@
   "name": "lolpa",
   "version": "0.0.0",
   "description": "League of Legends Performance Analyzer",
-  "main": "index.js",
+  "main": "out/server.js",
   "engines": {
     "node": ">=10"
   },
@@ -49,10 +49,12 @@
     "@types/koa-json": "^2.0.18",
     "@types/koa-router": "^7.0.40",
     "@types/node": "^10.11.2",
+    "@types/supertest": "^2.0.7",
     "ava": "^1.4.1",
     "eslint": "^5.16.0",
     "eslint-plugin-ava": "^6.0.0",
     "nodemon": "^1.18.11",
+    "supertest": "^4.0.2",
     "tslint": "^5.15.0",
     "tslint-config-airbnb": "^5.11.1",
     "typescript": "^3.4.3"
