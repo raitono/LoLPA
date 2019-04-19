@@ -24,5 +24,5 @@ test('ping', async t => {
         .get('/summoners/ping');
 
     t.is(res.status, 200);
-    t.is(res.text, '{"msg":"pong"}');
+    t.is(res.body.msg, 'pong');
 });
