@@ -8,7 +8,7 @@
   },
   "scripts": {
     "prebuild": "rm -rf out/",
-    "build": "npm run prebuild && tsc",
+    "build": "tsc",
     "build:watch": "npm run prebuild && tsc -w",
     "test": "nyc ava",
     "start": "node out/server.js",
