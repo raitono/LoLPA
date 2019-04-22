@@ -1,4 +1,3 @@
-import * as Koa from 'koa';
 import * as Router from 'koa-router';
 
 import { SummonerService } from '../services/summoner.service'
