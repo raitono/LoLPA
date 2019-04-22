@@ -12,7 +12,7 @@ import * as Koa from 'koa';
 const app:Koa = new Koa();
 
 // My imports
-import summonerController from './controllers/summoner.controller';
+import { apiRouter } from './routes'
 
 // Database setup
 const knex: Knex = Knex(require('../knexfile')[process.env.NODE_ENV]);
@@ -34,8 +34,8 @@ app.use(bodyParser());
 app.use(json());
 
 //Route middleware
-app.use(summonerController.routes());
-app.use(summonerController.allowedMethods());
+app.use(apiRouter.routes());
+app.use(apiRouter.allowedMethods());
 
 app.use(async (ctx:Koa.Context) => (ctx.body = {msg: 'Hello Koa!'}));
 
