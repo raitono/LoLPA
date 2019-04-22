@@ -1,19 +1,19 @@
 import * as Koa from 'koa';
 import * as Router from 'koa-router';
-import { Summoner } from '../models/summoner';
+
+import { SummonerService } from '../services/summoner.service'
 
 export class SummonerController {
   static async getByName(ctx:Router.RouterContext) {
-    const sum = await Summoner.query().alias('s')
-      .where({ name: ctx.params['name'] });
+    const sum = await SummonerService.getByName(ctx.params['name']);
   
-    if(sum[0])
-      ctx.body = sum[0];
+    if(sum)
+      ctx.body = sum;
     else
       ctx.status = 404;
   };
 
   static async getAll(ctx:Router.RouterContext) {
-    ctx.body = await Summoner.query();
+    ctx.body = await SummonerService.getAll();
   };
 }
