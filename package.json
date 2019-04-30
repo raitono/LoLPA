@@ -7,13 +7,15 @@
     "node": ">=10"
   },
   "scripts": {
+    "postinstall": "npm i -g npx",
     "prebuild": "rm -rf out/",
     "build": "tsc",
     "build:watch": "npm run prebuild && tsc -w",
     "test": "nyc ava",
     "start": "node out/server.js",
     "start:watch": "nodemon out/server.js",
-    "dev": "npm run start:watch"
+    "dev": "npm run start:watch",
+    "migrate:latest": "npx knex migrate:latest"
   },
   "repository": {
     "type": "git",
