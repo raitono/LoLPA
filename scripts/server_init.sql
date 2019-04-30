@@ -752,7 +752,7 @@ CREATE TABLE IF NOT EXISTS `xref_participants_perks` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- Dumping structure for trigger riot.champion_after_insert
-SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
+SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION';
 CREATE TRIGGER `champions_after_insert` AFTER INSERT ON `champions` FOR EACH ROW BEGIN
 	INSERT INTO champion_history(`version`, `action`, `championId`, `name`,
 	`title`, `partype`, `hp`, `hpperlevel`, `mp`, `mpperlevel`, `movespeed`,
@@ -771,7 +771,7 @@ END;
 SET SQL_MODE=@OLDTMP_SQL_MODE;
 
 -- Dumping structure for trigger riot.champion_after_update
-SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
+SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION';
 CREATE TRIGGER `champions_after_update` AFTER UPDATE ON `champions` FOR EACH ROW BEGIN
 	IF(NEW.name <> OLD.name OR NEW.title <> OLD.title OR
 	NEW.partype <> OLD.partype OR NEW.hp <> OLD.hp OR
@@ -806,7 +806,7 @@ END;
 SET SQL_MODE=@OLDTMP_SQL_MODE;
 
 -- Dumping structure for trigger riot.item_after_insert
-SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
+SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION';
 CREATE TRIGGER `items_after_insert` AFTER INSERT ON `items` FOR EACH ROW BEGIN
 	INSERT INTO item_history(version, action, `itemId`, `name`, `description`,
 	`colloq`, `plaintext`, `goldBase`, `purchasable`, `goldTotal`, `goldSellsFor`,
@@ -821,7 +821,7 @@ END;
 SET SQL_MODE=@OLDTMP_SQL_MODE;
 
 -- Dumping structure for trigger riot.item_after_update
-SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
+SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION';
 CREATE TRIGGER `items_after_update` AFTER UPDATE ON `items` FOR EACH ROW BEGIN
 	IF(NEW.name <> OLD.name OR IFNULL(NEW.description, '') <> IFNULL(OLD.description, '') OR
 		IFNULL(NEW.colloq, '') <> IFNULL(OLD.colloq, '') OR IFNULL(NEW.plaintext, '') <> IFNULL(OLD.plaintext, '') OR
@@ -849,7 +849,7 @@ END;
 SET SQL_MODE=@OLDTMP_SQL_MODE;
 
 -- Dumping structure for trigger riot.item_stat_after_delete
-SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
+SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION';
 CREATE TRIGGER `item_stats_after_delete` AFTER DELETE ON `item_stats` FOR EACH ROW BEGIN
 	DECLARE patch varchar(10);
 	
@@ -861,7 +861,7 @@ END;
 SET SQL_MODE=@OLDTMP_SQL_MODE;
 
 -- Dumping structure for trigger riot.item_stat_after_insert
-SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
+SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION';
 CREATE TRIGGER `item_stats_after_insert` AFTER INSERT ON `item_stats` FOR EACH ROW BEGIN
 	INSERT INTO item_stat_history(`version`, `action`, `itemId`, `type`, `value`)
 	VALUES(NEW.version, 'I', NEW.itemId, NEW.type, NEW.value);
@@ -869,7 +869,7 @@ END;
 SET SQL_MODE=@OLDTMP_SQL_MODE;
 
 -- Dumping structure for trigger riot.item_stat_after_update
-SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
+SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION';
 CREATE TRIGGER `item_stats_after_update` AFTER UPDATE ON `item_stats` FOR EACH ROW BEGIN
 	IF(NEW.value <> OLD.value) THEN
 	INSERT INTO item_stat_history(`version`, `action`, `itemId`, `type`, `value`)
@@ -879,7 +879,7 @@ END;
 SET SQL_MODE=@OLDTMP_SQL_MODE;
 
 -- Dumping structure for trigger riot.xref_item_map_after_delete
-SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
+SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION';
 CREATE TRIGGER `xref_items_maps_after_delete` AFTER DELETE ON `xref_items_maps` FOR EACH ROW BEGIN
 	DECLARE patch varchar(10);
 	
@@ -891,7 +891,7 @@ END;
 SET SQL_MODE=@OLDTMP_SQL_MODE;
 
 -- Dumping structure for trigger riot.xref_item_map_after_insert
-SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
+SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION';
 CREATE TRIGGER `xref_items_maps_after_insert` AFTER INSERT ON `xref_items_maps` FOR EACH ROW BEGIN
 	INSERT INTO xref_item_map_history(`version`, `action`, `itemId`, `mapId`, `enabled`)
 	VALUES (NEW.`version`, 'I', NEW.`itemId`, NEW.`mapId`, NEW.`enabled`);
@@ -899,7 +899,7 @@ END;
 SET SQL_MODE=@OLDTMP_SQL_MODE;
 
 -- Dumping structure for trigger riot.xref_item_map_after_update
-SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
+SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION';
 CREATE TRIGGER `xref_items_maps_after_update` AFTER UPDATE ON `xref_items_maps` FOR EACH ROW BEGIN
 	IF(NEW.enabled <> OLD.enabled) THEN
 	INSERT INTO xref_item_map_history(`version`, `action`, `itemId`, `mapId`, `enabled`)
@@ -909,7 +909,7 @@ END;
 SET SQL_MODE=@OLDTMP_SQL_MODE;
 
 -- Dumping structure for trigger riot.xref_item_tag_after_delete
-SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
+SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION';
 CREATE TRIGGER `xref_items_tags_after_delete` AFTER DELETE ON `xref_items_tags` FOR EACH ROW BEGIN
 	DECLARE patch varchar(10);
 	
@@ -921,7 +921,7 @@ END;
 SET SQL_MODE=@OLDTMP_SQL_MODE;
 
 -- Dumping structure for trigger riot.xref_item_tag_after_insert
-SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
+SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION';
 CREATE TRIGGER `xref_items_tags_after_insert` AFTER INSERT ON `xref_items_tags` FOR EACH ROW BEGIN
 	INSERT INTO xref_item_tag_history(`version`, `action`, `itemId`, `tagId`)
 	VALUES (NEW.version, 'I', NEW.itemId, NEW.tagId);
