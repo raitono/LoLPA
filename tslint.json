@@ -3,5 +3,6 @@
     "rules": {
         "quotemark": [true, "single"],
         "import-name": false,
+        "brace-style": false
     }
 }
