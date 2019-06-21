@@ -8,25 +8,25 @@ import * as request from 'supertest';
 // My imports
 import { SummonerController } from './summoner.controller';
 
-function makeApp() {
-    const app:Koa = new Koa();
+// function makeApp() {
+//     const app:Koa = new Koa();
 
-    const summonerRouter: Router = new Router({ prefix: '/summoners' });
+//     const summonerRouter: Router = new Router({ prefix: '/summoners' });
 
-    summonerRouter.get('/:name', SummonerController.getByName);
-    summonerRouter.get('/', SummonerController.getAll);
+//     summonerRouter.get('/:name', SummonerController.getByName);
+//     summonerRouter.get('/', SummonerController.getAll);
 
-    app.use(bodyParser());
-    app.use(summonerRouter.routes());
-    app.use(summonerRouter.allowedMethods());
+//     app.use(bodyParser());
+//     app.use(summonerRouter.routes());
+//     app.use(summonerRouter.allowedMethods());
 
-    return app.listen();
-}
+//     return app.listen();
+// }
 
-test('ping', async t => {
-    const res = await request(makeApp())
-        .get('/summoners/ping');
+// test('ping', async t => {
+//     const res = await request(makeApp())
+//         .get('/summoners/ping');
 
-    t.is(res.status, 200);
-    t.is(res.body.msg, 'pong');
-});
+//     t.is(res.status, 200);
+//     t.is(res.body.msg, 'pong');
+// });
