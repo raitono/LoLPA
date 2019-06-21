@@ -7,14 +7,18 @@ const adminRouter: Router = new Router({ prefix: '/admin' });
 const apiRouter: Router = new Router({ prefix: '/api' });
 const summonerRouter: Router = new Router({ prefix: '/summoners' });
 
+const summonerController = new SummonerController();
+
 adminRouter.get('/patch', AdminController.patch);
 
-summonerRouter.get('/:name', SummonerController.getByName);
+summonerRouter.get('/:name', async (ctx) => {
+  await SummonerController.getByName(ctx, summonerController);
+});
 // summonerRouter.get('/', SummonerController.getAll);
 
 apiRouter.use(
-    summonerRouter.routes(),
-    summonerRouter.allowedMethods(),
+  summonerRouter.routes(),
+  summonerRouter.allowedMethods(),
 );
 
 export { adminRouter, apiRouter };

@@ -1,21 +1,43 @@
 import * as Router from 'koa-router';
-import axios from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import { CircuitBreaker } from '../util/CircuitBreaker';
 const debug: any = require('debug')('lolpa:summoner.controller');
+import * as url from 'url';
+import * as crypto from 'crypto';
 
 const circuitBreaker = new CircuitBreaker();
 
 export class SummonerController {
-  static async getByName(ctx:Router.RouterContext) {
-    const { ip, port } = await SummonerController.getService(process.env.SUMMONER_SERVICE_VERSION);
+  cache:any;
 
-    ctx.body = (await circuitBreaker.callService({
+  constructor() {
+    this.cache = {};
+  }
+
+  static async getByName(ctx:Router.RouterContext, cnt:SummonerController) {
+    const { ip, port } = await cnt.getService(process.env.SUMMONER_SERVICE_VERSION);
+
+    ctx.body = (await cnt.callService({
       method: 'get',
       url: `http://${ip}:${port}/v4/summoner/${ctx.params['name']}`,
     }));
   }
-  static async getService(version:String) {
+  async getService(version:String) {
     return (await axios.get(`${process.env.REGISTRY_URL}:${process.env.REGISTRY_PORT}`
     + `/service/find/summoner-service/${version}`)).data;
+  }
+  async callService(options:AxiosRequestConfig) {
+    const servicePath = url.parse(options.url).path;
+    const cacheKey = crypto.createHash('md5').update(options.method + servicePath.toLowerCase())
+      .digest('hex');
+    const result = await circuitBreaker.callService(options);
+
+    if (!result) {
+      if (this.cache[cacheKey]) return this.cache[cacheKey];
+      return false;
+    }
+
+    this.cache[cacheKey] = result;
+    return result;
   }
 }
