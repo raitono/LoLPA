@@ -1,4 +1,3 @@
-import * as Koa from 'koa';
 import * as Router from 'koa-router';
 
 import { SummonerController } from './controllers/summoner.controller';
@@ -15,7 +14,7 @@ summonerRouter.get('/:name', SummonerController.getByName);
 
 apiRouter.use(
     summonerRouter.routes(),
-    summonerRouter.allowedMethods()
+    summonerRouter.allowedMethods(),
 );
 
 export { adminRouter, apiRouter };
