@@ -1,19 +1,21 @@
 import * as Router from 'koa-router';
-
-import { SummonerService } from '../services/summoner.service';
+import axios, { AxiosRequestConfig } from 'axios';
+const debug: any = require('debug')('lolpa:summoner.controller');
 
 export class SummonerController {
   static async getByName(ctx:Router.RouterContext) {
-    const sum = await SummonerService.getByName(ctx.params['name']);
+    const { ip, port } = await SummonerController.getService(process.env.SUMMONER_SERVICE_VERSION);
 
-    if (sum) {
-      ctx.body = sum;
-    } else {
-      ctx.status = 404;
-    }
+    ctx.body = (await SummonerController.callService({
+      method: 'get',
+      url: `http://${ip}:${port}/v4/summoner/${ctx.params['name']}`,
+    }));
   }
-
-  static async getAll(ctx:Router.RouterContext) {
-    ctx.body = await SummonerService.getAll();
+  static async callService(options:AxiosRequestConfig) {
+    return (await axios(options)).data;
+  }
+  static async getService(version:String) {
+    return (await axios.get(`${process.env.REGISTRY_URL}:${process.env.REGISTRY_PORT}`
+    + `/service/find/summoner-service/${version}`)).data;
   }
 }
