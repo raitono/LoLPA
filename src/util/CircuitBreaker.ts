@@ -14,7 +14,7 @@ export class CircuitBreaker {
     this.requestTimeout = 1;
   }
 
-  initState(endpoint:string) {
+  initState(endpoint:string): void {
     this.states[endpoint] = {
       failures: 0,
       cooldownPeriod: this.cooldownPeriod,
@@ -23,11 +23,11 @@ export class CircuitBreaker {
     };
   }
 
-  onSuccess(endpoint:string) {
+  onSuccess(endpoint:string): void {
     this.initState(endpoint);
   }
 
-  onFailure(endpoint:string) {
+  onFailure(endpoint:string): void {
     const state = this.states[endpoint];
     state.failures += 1;
 
@@ -38,7 +38,7 @@ export class CircuitBreaker {
     }
   }
 
-  canRequest(endpoint:string) {
+  canRequest(endpoint:string): boolean {
     if (!this.states[endpoint]) this.initState(endpoint);
     const state = this.states[endpoint];
     if (state.circuit === 'CLOSED') return true;
@@ -49,10 +49,10 @@ export class CircuitBreaker {
     return false;
   }
 
-  async callService(options:AxiosRequestConfig) {
+  async callService(options:AxiosRequestConfig): Promise<string> {
     const endpoint = `${options.method}:${options.url}`;
 
-    if (!this.canRequest(endpoint)) return false;
+    if (!this.canRequest(endpoint)) return '{status: \'error\'}';
 
     options.timeout = this.requestTimeout * 1000;
 
@@ -62,7 +62,7 @@ export class CircuitBreaker {
       return response.data;
     } catch (error) {
       this.onFailure(endpoint);
-      return false;
+      return '{status: \'error\'}';
     }
   }
 }

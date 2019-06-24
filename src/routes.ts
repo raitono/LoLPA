@@ -2,6 +2,7 @@ import * as Router from 'koa-router';
 
 import { SummonerController } from './controllers/summoner.controller';
 import { AdminController } from './controllers/admin.controller';
+const debug: any = require('debug')('lolpa:routes');
 
 const adminRouter: Router = new Router({ prefix: '/admin' });
 const apiRouter: Router = new Router({ prefix: '/api' });
