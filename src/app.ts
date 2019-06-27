@@ -12,7 +12,7 @@ import * as Koa from 'koa';
 const app:Koa = new Koa();
 
 // My imports
-import { adminRouter, apiRouter } from './routes'
+import { adminRouter, apiRouter } from './routes';
 
 // Database setup
 const knex: Knex = Knex(require('../knexfile')[process.env.NODE_ENV]);
@@ -33,13 +33,13 @@ app.use(async (ctx: Koa.Context, next: () => Promise<any>) => {
 app.use(bodyParser());
 app.use(json());
 
-//Route middleware
+// Route middleware
 app.use(apiRouter.routes());
 app.use(apiRouter.allowedMethods());
 app.use(adminRouter.routes());
 app.use(adminRouter.allowedMethods());
 
-app.use(async (ctx:Koa.Context) => (ctx.body = {msg: 'Hello Koa!'}));
+app.use(async (ctx:Koa.Context) => (ctx.body = { msg: 'Hello Koa!' }));
 
 // Application error logging.
 app.on('error', console.error);
