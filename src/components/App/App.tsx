@@ -1,5 +1,5 @@
 import React from 'react';
-import logo from './logo.svg';
+import logo from '../../logo.svg';
 import './App.css';
 
 function App() {
@@ -8,6 +8,7 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
+          {/* eslint-disable-next-line react/jsx-one-expression-per-line */}
           Edit <code>src/App.tsx</code> and save to reload.
         </p>
         <a
