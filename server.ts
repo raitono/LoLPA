@@ -1,8 +1,12 @@
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
 import createError from 'http-errors';
 import express, { NextFunction } from 'express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
+import passport from 'passport';
 
 import apiRouter from './routes/api';
 import HttpException from './exceptions/HttpException';
@@ -11,9 +15,11 @@ var app = express();
 
 app.use(logger('dev'));
 app.use(express.json());
+app.use(passport.initialize());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'client', 'dist')));
+app.use();
 
 app.use('/api', apiRouter);
 
