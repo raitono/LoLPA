@@ -11,8 +11,8 @@
     "migrations": "npm run build:db && npx sequelize db:migrate --env production --config dist/config/config.js --migrations-path dist/migrations",
     "seeders": "npm run build:db && npx sequelize db:seed:all --env production --config dist/config/config.js --seeders-path dist/seeders",
     "start": "npm run migrations && npm run seeders && node dist/server.js",
-    "start-client": "cd ./client && npm start",
-    "start-server": "DEBUG=lolpa:* nodemon ./server.ts"
+    "start:client": "cd ./client && npm start",
+    "start:server": "nodemon ./server.ts --ignore client/"
   },
   "dependencies": {
     "@types/cookie-parser": "^1.4.2",
@@ -38,5 +38,9 @@
     "sequelize-cli": "^6.4.1",
     "socket.io": "^4.4.1",
     "typescript": "^4.5.4"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15",
+    "ts-node": "^10.4.0"
   }
 }

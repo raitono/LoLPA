@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "description": "League of Legends Performance Analyzer",
-  "main": "server.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/raitono/LoLPA.git"
@@ -13,7 +12,6 @@
   "bugs": {
     "url": "https://github.com/raitono/LoLPA/issues"
   },
-  "homepage": "https://github.com/raitono/LoLPA#readme",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -32,6 +30,7 @@
       "last 1 safari version"
     ]
   },
+  "proxy": "http://localhost:8080",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
@@ -51,6 +50,7 @@
     "autoprefixer": "^10.4.2",
     "eslint": "^8.2.0",
     "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-react-app": "^7.0.0",
     "eslint-plugin-import": "^2.25.3",
     "eslint-plugin-jsx-a11y": "^6.5.1",
     "eslint-plugin-react": "^7.28.0",
