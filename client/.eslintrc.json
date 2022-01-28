@@ -6,15 +6,10 @@
         "airbnb/hooks"
     ],
     "rules": {
-        "react/jsx-filename-extension": [
-            1,
-            {
-                "extensions": [
-                    ".js",
-                    ".jsx",
-                    ".tsx"
-                ]
-            }
+        "@typescript-eslint/no-shadow": "error",
+        "arrow-parens": [
+            "warn",
+            "as-needed"
         ],
         "import/extensions": [
             "error",
@@ -25,7 +20,31 @@
                 "ts": "never",
                 "tsx": "never"
             }
-        ]
+        ],
+        "linebreak-style": "off",
+        "max-len": "warn",
+        "no-shadow": "off",
+        "radix": [
+            "warn",
+            "as-needed"
+        ],
+        "react/function-component-definition": [
+            "error",
+            {
+                "namedComponents": "arrow-function"
+            }
+        ],
+        "react/jsx-filename-extension": [
+            "warn",
+            {
+                "extensions": [
+                    ".js",
+                    ".jsx",
+                    ".tsx"
+                ]
+            }
+        ],
+        "react/jsx-one-expression-per-line": "off"
     },
     "settings": {
         "import/resolver": {
