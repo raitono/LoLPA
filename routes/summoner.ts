@@ -2,7 +2,7 @@ import express from 'express';
 import { LolApi } from 'twisted';
 import { Regions, RegionGroups } from 'twisted/dist/constants';
 import { ChampionsDataDragonDetails } from 'twisted/dist/models-dto';
-import riotKeyCheck from '../middleware/riotKeyCheck';
+import { riotKeyCheck } from '../middleware/riotKeyCheck';
 import { IChampionMastery, getChampionByName } from '../models/Champion';
 
 let router = express.Router();

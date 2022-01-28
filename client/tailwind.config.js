@@ -1,11 +1,7 @@
 module.exports = {
   content: [
-    './public/**/*.{js,ts,jsx,tsx}',
-    './src/components/**/*.{js,ts,jsx,tsx}',
-    './src/index.{js,jsx,tsx}',
+    './src/**/*.{ts,tsx}',
   ],
-  // purge: ['./pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
-  darkMode: 'class', // or 'media' or 'class'
   theme: {
     container: {
       center: true,
@@ -16,4 +12,8 @@ module.exports = {
       },
     },
   },
+  plugins: [
+    // eslint-disable-next-line global-require
+    require('tailwind-nord'),
+  ],
 };

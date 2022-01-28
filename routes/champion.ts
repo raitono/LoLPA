@@ -1,7 +1,7 @@
 import express from 'express';
 import { LolApi } from 'twisted';
 import { IChampion } from '../models/Champion';
-import riotKeyCheck from '../middleware/riotKeyCheck';
+import { riotKeyCheck } from '../middleware/riotKeyCheck';
 
 let router = express.Router();
 
