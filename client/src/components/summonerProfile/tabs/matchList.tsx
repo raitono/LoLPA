@@ -56,11 +56,11 @@ const generateTeamInfoRow = (match: MatchV5DTOs.MatchDto, position: TeamPosition
 
   return (
     <>
-      <Link to={`/summoner/${blueSide?.summonerName}`}><span className="col-span-3 pl-1 truncate bg-foreground-default">{blueSide?.summonerName}</span></Link>
+      <span className="col-span-3 pl-1 truncate bg-foreground-default"><Link to={`/summoner/${blueSide?.summonerName}`}>{blueSide?.summonerName}</Link></span>
       <span className="flex justify-center"><img alt={`${blueSide?.teamPosition} champion`} className="w-6 h-6 rounded-full" src={`http://ddragon.leagueoflegends.com/cdn/${process.env.REACT_APP_CURRENT_PATCH}/img/champion/${blueSide?.championName}.png`} /></span>
       <span className="flex justify-center"><img alt={`${blueSide?.teamPosition} lane`} className="w-6 h-6 rounded-full bg-foreground-default" src={`/positions/${blueSide?.teamPosition}.png`} /></span>
       <span className="flex justify-center"><img alt={`${redSide?.teamPosition} champion`} className="w-6 h-6 rounded-full" src={`http://ddragon.leagueoflegends.com/cdn/${process.env.REACT_APP_CURRENT_PATCH}/img/champion/${redSide?.championName}.png`} /></span>
-      <Link to={`/summoner/${redSide?.summonerName}`}><span className="col-span-3 pl-1 truncate bg-foreground-default">{redSide?.summonerName}</span></Link>
+      <span className="col-span-3 pl-1 truncate bg-foreground-default"><Link to={`/summoner/${redSide?.summonerName}`}>{redSide?.summonerName}</Link></span>
     </>
   );
 };
@@ -134,12 +134,12 @@ const MatchSummary: React.FC<MatchSummaryProps> = ({ summonerName, match, runes 
     <div className="match" data-win={team.win}>{/* theme div */}
       <div className="my-2 bg-background-default text-on-background-default border win:border-success-default loss:border-error-default">{/* content border/bg */}
         <div className="grid grid-cols-3 justify-items-center w-full win:bg-success-default loss:bg-error-default">
-          <div>{`${gameTime.toISOString().substr(11, 8)}`}</div>
+          <div>{`${gameTime.toISOString().substring(11, 19)}`}</div>
           <div>{match.info.gameVersion.split('.', 2).join('.')}</div>
           <div>{GameQueues.find(q => q.queueId === match.info.queueId)?.queueName}</div>
         </div>
         <div className="flex justify-between p-2">
-          <div className="flex-shrink-0 flex flex-col items-center">{/* Result and items */}
+          <div className="shrink-0 flex flex-col items-center">{/* Result and items */}
             <div className=" text-xl px-2 py-1 mb-1 win:bg-success-default loss:bg-error-default">{team.win ? 'Victory' : 'Defeat'}</div>
             <div>{participant.totalMinionsKilled} CS ({(participant.totalMinionsKilled / (match.info.gameDuration / 60)).toFixed(2)} CS/M)</div>
             <div>{participant.kills}/{participant.deaths}/{participant.assists} ({(participant.kills + participant.assists / (participant.deaths || 1)).toFixed(2)} KD/A)</div>
@@ -153,7 +153,7 @@ const MatchSummary: React.FC<MatchSummaryProps> = ({ summonerName, match, runes 
               {generateItem(5, participant.item5)}
             </div>
           </div>
-          <div className="flex-shrink-0 mx-2 mb-3 relative"> {/* Champion Icon and spells */}
+          <div className="shrink-0 mx-2 mb-3 relative"> {/* Champion Icon and spells */}
             <img alt="champion" className="w-[160px] h-[160px] rounded-full border-2 border-on-background-muted" src={`http://ddragon.leagueoflegends.com/cdn/${process.env.REACT_APP_CURRENT_PATCH}/img/champion/${participant.championName}.png`} />
             <div className="flex absolute -bottom-1 -left-1 items-end">
               <div className="flex items-center justify-center text-3xl font-medium w-12 h-11 rounded-full bg-foreground-default border-2 border-on-background-muted">{participant.champLevel}</div>
@@ -169,7 +169,7 @@ const MatchSummary: React.FC<MatchSummaryProps> = ({ summonerName, match, runes 
               </div>
             </div>
           </div>
-          <div className="flex-shrink max-w-[300px] grid grid-cols-9 grid-rows-team-info gap-x-1"> {/* Team information */}
+          <div className="shrink max-w-[300px] grid grid-cols-9 grid-rows-team-info gap-x-1"> {/* Team information */}
             {teamInfo.map((i, idx) => {
               if (i) {
                 return (
