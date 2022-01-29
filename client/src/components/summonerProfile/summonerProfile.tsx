@@ -22,7 +22,7 @@ const SummonerProfile: React.FC = () => {
     return (
       <div className="bg-background-default h-full">
         <SearchHeader />
-        <div className="container">
+        <div className="container md:px-12 lg:px-24">
           <ProfileHeader summoner={summoner} />
           <ProfileShowcase summonerName={summoner.name} />
           <MatchList summonerName={summoner.name} />

@@ -131,16 +131,16 @@ const MatchSummary: React.FC<MatchSummaryProps> = ({ summonerName, match, runes 
   gameTime.setUTCHours(0, 0, match.info.gameDuration, 0);
 
   return (
-    <div className="match" data-win={team.win}>{/* theme div */}
-      <div className="my-2 bg-background-default text-on-background-default border win:border-success-default loss:border-error-default">{/* content border/bg */}
-        <div className="grid grid-cols-3 justify-items-center w-full win:bg-success-default loss:bg-error-default">
+    <div className="match">{/* theme div */}
+      <div className={`my-2 bg-surface-default text-on-surface-default border ${team.win ? 'border-success-400/50' : 'border-error-400/50'}`}>{/* content border/bg */}
+        <div className={`grid grid-cols-3 justify-items-center w-full ${team.win ? 'bg-success-400/50' : 'bg-error-400/50'}`}>
           <div>{`${gameTime.toISOString().substring(11, 19)}`}</div>
           <div>{match.info.gameVersion.split('.', 2).join('.')}</div>
           <div>{GameQueues.find(q => q.queueId === match.info.queueId)?.queueName}</div>
         </div>
-        <div className="flex justify-between p-2">
+        <div className="flex justify-around p-2">
           <div className="shrink-0 flex flex-col items-center">{/* Result and items */}
-            <div className=" text-xl px-2 py-1 mb-1 win:bg-success-default loss:bg-error-default">{team.win ? 'Victory' : 'Defeat'}</div>
+            <div className={`text-xl px-2 py-1 mb-1 ${team.win ? 'bg-success-400/50' : 'bg-error-400/50'}`}>{team.win ? 'Victory' : 'Defeat'}</div>
             <div>{participant.totalMinionsKilled} CS ({(participant.totalMinionsKilled / (match.info.gameDuration / 60)).toFixed(2)} CS/M)</div>
             <div>{participant.kills}/{participant.deaths}/{participant.assists} ({(participant.kills + participant.assists / (participant.deaths || 1)).toFixed(2)} KD/A)</div>
             <div className="grid grid-cols-4 grid-rows-2 items-center gap-1 mt-2">

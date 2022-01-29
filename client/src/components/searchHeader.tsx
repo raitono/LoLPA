@@ -43,7 +43,7 @@ const SearchHeader: React.FC = () => {
       </aside>
       <header className="flex items-center bg-on-background-muted h-12">
         <div className="flex items-center ml-4">
-          <div className="text-lg font-medium text-on-uncommon-default">
+          <div className="text-lg font-medium text-on-uncommon">
             {/* <IconButton aria-label="menu tray" className="z-10" onClick={toggleMenu}>
               <MenuIcon color="inherit" />
             </IconButton> */}
