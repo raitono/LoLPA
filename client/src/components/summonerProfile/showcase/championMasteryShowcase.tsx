@@ -44,7 +44,7 @@ const ChampionMasteryShowcase: React.FC<ChampionMasteryShowcaseProps> = (
     );
   }
 
-  return <div />;
+  return <div className="w-[200px] h-[200px]" />;
 };
 
 ChampionMasteryShowcase.defaultProps = {

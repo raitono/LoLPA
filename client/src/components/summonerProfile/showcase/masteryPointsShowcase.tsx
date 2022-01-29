@@ -7,7 +7,7 @@ interface MasteryPointShowcaseProps {
 const MasteryPointShowcase: React.FC<MasteryPointShowcaseProps> = (
   { summonerName }: MasteryPointShowcaseProps,
 ) => {
-  const [masteryPoints, setMasteryPoints] = useState<number>(0);
+  const [masteryPoints, setMasteryPoints] = useState<number>();
 
   useEffect(() => {
     if (summonerName) {
@@ -17,13 +17,17 @@ const MasteryPointShowcase: React.FC<MasteryPointShowcaseProps> = (
     }
   }, [summonerName]);
 
-  return (
-    <div className="w-[200px] h-[200px] flex flex-col items-center bg-foreground-default text-on-foreground-default">
-      <img className="w-28" alt="Mastery Badge" src="/champion-mastery/7.png" />
-      <div className="text-3xl">Mastery Points</div>
-      <span className="bottom-1 text-black text-5xl">{masteryPoints}</span>
-    </div>
-  );
+  if (masteryPoints) {
+    return (
+      <div className="w-[200px] h-[200px] flex flex-col items-center bg-foreground-default text-on-foreground-default">
+        <img className="w-28" alt="Mastery Badge" src="/champion-mastery/7.png" />
+        <div className="text-3xl">Mastery Points</div>
+        <span className="bottom-1 text-black text-outline-white text-5xl font-medium">{masteryPoints}</span>
+      </div>
+    );
+  }
+
+  return <div className="w-[200px] h-[200px] flex flex-col items-center bg-foreground-default text-on-foreground-default" />;
 };
 
 export default MasteryPointShowcase;

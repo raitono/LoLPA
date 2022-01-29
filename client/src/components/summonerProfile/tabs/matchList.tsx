@@ -70,7 +70,7 @@ const MatchSummary: React.FC<MatchSummaryProps> = ({ summonerName, match, runes 
 
   if (!participant) {
     return (
-      <div>Summoner &quot{summonerName}&quot not found in match...</div>
+      <div>Summoner "{summonerName}" not found in match...</div>
     );
   }
 
