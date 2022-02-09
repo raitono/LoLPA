@@ -5,6 +5,8 @@ import { ChampionsDataDragonDetails } from 'twisted/dist/models-dto';
 import { riotKeyCheck } from '../middleware/riotKeyCheck';
 import { IChampionMastery, getChampionByName } from '../models/Champion';
 
+import { ISummoner, Summoner } from '../models/SummonerModel';
+
 let router = express.Router();
 
 router.use(riotKeyCheck);
@@ -60,26 +62,30 @@ router.get('/:region/:name/recent-matches', async (req, res, next) => {
 router.get('/:region/:name', async (req, res, next) => {
   let { region, name } = req.params;
 
-  // const conn = await createConnection();
-  // const summonerRepo = conn.getRepository(SummonerEntity);
-  // let summoner: ISummoner | undefined = await summonerRepo.findOne({ name });
+  let summoner: ISummoner | null = await Summoner.findOne({ where: { name } });
 
-  // if (!summoner) {
-  try {
-    console.debug(`Summoner ${name} not found, getting from Riot API...`)
-    const api = new LolApi(process.env.RIOT_API_KEY!);
-    let summoner = (await api.Summoner.getByName(name, Regions.AMERICA_NORTH)).response;
+  if (summoner) {
     res.status(200).json(summoner);
-    // console.debug(`Creating new Summoner ${name}`)
-    // const newSummoner = summonerRepo.create(summoner);
-    // summonerRepo.save(newSummoner);
-  } catch (error: unknown) {
-    res.sendStatus(404);
-    return;
-  }
-  // }
+  } else {
+    try {
+      console.debug(`Summoner ${name} not found, getting from Riot API...`)
+      const api = new LolApi(process.env.RIOT_API_KEY!);
+      let riotSummoner = (await api.Summoner.getByName(name, Regions.AMERICA_NORTH)).response;
+      console.debug(`Creating new Summoner ${name}`)
 
-  // res.status(200).json(summoner);
+      // change the name from id => summonerId and then overwrite it to null, since the db's id is autoincrement
+      Summoner.create({ summonerId: riotSummoner.id, ...riotSummoner, id: null })
+
+      res.status(200).json(riotSummoner);
+
+    } catch (error: unknown) {
+      console.error(error);
+      res.sendStatus(404);
+      return;
+    }
+  }
+
+
 });
 
 export default router;

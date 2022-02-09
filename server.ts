@@ -5,16 +5,17 @@ import createError from 'http-errors';
 import express, { NextFunction } from 'express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
-import logger from 'morgan';
+import httpLogger from 'morgan';
 import passport from 'passport';
 
 import apiRouter from './routes/api';
 import HttpException from './exceptions/HttpException';
 import Env from './env';
+import db from './models';
 
 var app = express();
 
-app.use(logger('dev'));
+app.use(httpLogger('dev'));
 app.use(express.json());
 app.use(passport.initialize());
 app.use(express.urlencoded({ extended: false }));
@@ -38,6 +39,8 @@ app.use(function (err: HttpException, req: express.Request, res: express.Respons
   res.status(err.status || 500);
 });
 
+
+db.init();
 app.listen(Env.PORT, () => console.log(`🚀 Server listening on port ${Env.PORT}...`));
 
 export { app };
