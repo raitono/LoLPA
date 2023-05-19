@@ -19,6 +19,13 @@
         "<node_internals>/**"
       ],
       "type": "pwa-node"
+    },
+    {
+      "name": "Launch Chrome",
+      "request": "launch",
+      "type": "pwa-chrome",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}/client/src"
     }
   ]
 }
